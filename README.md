@@ -2,7 +2,7 @@
 
 # Coffee-Shop
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.10.
 
 ## Initialization project
 
@@ -47,13 +47,13 @@ This will compile your project and store the build artifacts in the `dist/` dire
 ## ESLint
 
 ```bash
-
+ng lint
 ```
 
 ## Prettier
 
 ```bash
-
+npm run format:fix
 ```
 
 ## Running unit tests
