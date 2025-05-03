@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-root',
   imports: [CommonModule],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
   title = 'coffee-shop';
