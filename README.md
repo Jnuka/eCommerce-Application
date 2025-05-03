@@ -4,13 +4,23 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.10.
 
+## Technology stack
+
+**Frontend**
+
+* Angular
+* TypeScript
+* ESLint
+* Prettier
+* Tailwind CSS
+* Husky and Lint-staged
+* Karma tests
+
+**Backend**
+
+* CommerceTools
+
 ## Initialization project
-
-Before initializing the project, go to the coffee-shop project folder, run:
-
-```bash
-cd coffee-shop
-```
 
 To initialize the project, run:
 
