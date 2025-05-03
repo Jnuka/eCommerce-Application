@@ -2,6 +2,17 @@
 
 # Coffee-Shop
 
+## Overview
+
+The project was developed as part of the [JS/FE Rolling Scopes School 2024Q4](https://rs.school/courses/javascript-ru) course and was created by a team:
+
+1. [Jnuka](https://github.com/jnuka)
+2. [Goldbergz](https://github.com/goldbergz)
+3. [Alinalitvinka](https://github.com/alinalitvinka)
+
+This project is a Single-page Application (SPA) for the sale of different types of coffee that utilizes the [CommerceTools.com](https://commercetools.com) platform.
+The application allows users to register for an account and log in. Once logged in, users can add desired coffee products to their cart using filters or the website search function.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.10.
 
 ## Technology stack
