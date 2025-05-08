@@ -28,11 +28,15 @@ export class CtpApiService {
       'Authorization': `Basic ${authHeader}`
     });
 
-    this.http.post<AccessTokenResponse>(environment.ctp_auth_url, body, { headers })
+    this.http.post<AccessTokenResponse>(`${environment.ctp_auth_url}/oauth/token`, body, { headers })
     .subscribe({
       next: res => this.accessToken$.next(res.access_token),
       error: err => console.error('Error receiving token', err)
     })
+  }
+
+  getAccessToken() {
+    return this.accessToken$.asObservable();
   }
 }
 
