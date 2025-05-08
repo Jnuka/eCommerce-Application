@@ -22,7 +22,6 @@ export default tseslint.config(
       ...angular.configs.tsRecommended      
     ],
     linterOptions: {
-      noInlineConfig: true,
       reportUnusedDisableDirectives: true,
     },
     languageOptions: {
@@ -60,14 +59,13 @@ export default tseslint.config(
         "error",
         { "assertionStyle": "never" }
       ],
-      "@typescript-eslint/consistent-type-imports": "error",
       "@typescript-eslint/explicit-function-return-type": "error",
       "@typescript-eslint/explicit-member-accessibility": [
         "error",
         { "accessibility": "explicit", "overrides": { "constructors": "off" } }
       ],
       "@typescript-eslint/member-ordering": "error",
-      "@typescript-eslint/consistent-type-definitions": ["error", "type"],
+      "@typescript-eslint/consistent-type-definitions": ["error"],
       "@typescript-eslint/await-thenable": "error",
       "unicorn/better-regex": "error",
       "unicorn/no-array-callback-reference": "off",
