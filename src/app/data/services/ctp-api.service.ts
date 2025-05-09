@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AccessTokenResponse } from '../interfaces/ctp-api.interface';
+import { ToastService } from '../../helpers/toast.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,7 @@ import { AccessTokenResponse } from '../interfaces/ctp-api.interface';
 export class CtpApiService {
   private http = inject(HttpClient);
   private accessToken$ = new BehaviorSubject<string | null>(null);
+  private toastService = inject(ToastService);
 
   constructor() {
     this.initAccessToken();
@@ -33,8 +35,13 @@ export class CtpApiService {
     this.http
       .post<AccessTokenResponse>(`${environment.ctp_auth_url}/oauth/token`, body, { headers })
       .subscribe({
-        next: response => this.accessToken$.next(response.access_token),
-        error: error => console.error('Error receiving token', error), // eslint-disable-line no-console
+        next: response => {
+          this.accessToken$.next(response.access_token);
+          this.toastService.show('Access Token received');
+        },
+        error: () => {
+          this.toastService.show('Error receiving access token');
+        },
       });
   }
 }

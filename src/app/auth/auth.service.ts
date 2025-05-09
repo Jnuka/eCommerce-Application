@@ -4,6 +4,10 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CtpApiService } from '../data/services/ctp-api.service';
+import { ToastService } from '../helpers/toast.service';
+import { catchError } from 'rxjs/operators';
+import { AuthErrorResponse } from './auth.interfaces';
+import { HttpErrorResponse } from './auth.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -11,6 +15,7 @@ import { CtpApiService } from '../data/services/ctp-api.service';
 export class AuthService {
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
+  private toastService = inject(ToastService);
 
   private customerToken$ = new BehaviorSubject<string | null>(null);
   private refreshToken$ = new BehaviorSubject<string | null>(null);
@@ -19,6 +24,7 @@ export class AuthService {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) {
+          this.toastService.show('No access token for login');
           throw new Error('No access token available');
         }
         const authHeader = btoa(`${environment.ctp_client_id}:${environment.ctp_client_secret}`);
@@ -47,6 +53,13 @@ export class AuthService {
       tap((response: CustomerTokenResponse) => {
         this.customerToken$.next(response.access_token || null);
         this.refreshToken$.next(response.refresh_token || null);
+        this.toastService.show('Successful entry');
+      }),
+      catchError((error: HttpErrorResponse) => {
+        const authError: AuthErrorResponse = error.error;
+        const description = authError.message || 'Unknown login error';
+        this.toastService.show(description);
+        throw Error(description);
       }),
     );
   }
