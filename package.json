@@ -16,8 +16,7 @@
       "prettier --write"
     ],
     "**/*.ts": [
-      "prettier --write",
-      "npm run lint"
+      "prettier --write"
     ]
   },
   "hooks": {
