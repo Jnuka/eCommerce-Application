@@ -1,7 +1,7 @@
 <form class="max-w-[300px] flex flex-col gap-[20px] items-center">
   <h1 class="text-3xl">Welcome</h1>
 
-  <div class="flex flex-col">
+  <div class="flex flex-col gap-2.5">
     <mat-form-field>
       <mat-label>Email</mat-label>
       <input matInput />
@@ -18,5 +18,9 @@
     >
       Log In
     </button>
+    <div class="flex gap-[5px] justify-center">
+      <p>or</p>
+      <button (click)="goRegistration()" class="text-[gray] cursor-pointer">Sing Up</button>
+    </div>
   </div>
 </form>
