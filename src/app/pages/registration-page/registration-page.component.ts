@@ -22,7 +22,12 @@ import { NgForOf } from '@angular/common';
   styleUrl: './registration-page.component.css',
 })
 export class RegistrationPageComponent {
-  public country = [
+  public shippingCountry = [
+    { value: 'opt-1', viewValue: 'Option 1' },
+    { value: 'opt-2', viewValue: 'Option 2' },
+    { value: 'opt-3', viewValue: 'Option 3' },
+  ];
+  public billingCountry = [
     { value: 'opt-1', viewValue: 'Option 1' },
     { value: 'opt-2', viewValue: 'Option 2' },
     { value: 'opt-3', viewValue: 'Option 3' },

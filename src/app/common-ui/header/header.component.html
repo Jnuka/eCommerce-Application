@@ -4,18 +4,19 @@
       <img ngSrc="/logo.svg" alt="logo" class="logo" height="72" width="72" />
     </button>
 
-    <div class="control-btn flex gap-5">
-      <button
-        (click)="goLogin()"
-        class="bg-[#6B3C21] text-white cursor-pointer p-2.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
-      >
-        Sing In
-      </button>
+    <div class="control-btn flex gap-2">
       <button
         (click)="goRegistration()"
         class="bg-[#6B3C21] text-white cursor-pointer p-2.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
       >
-        Registration
+        <img src="/svg/signUp.svg" alt="signUp" style="width: 20px" />
+      </button>
+      <button
+        (click)="goLogin()"
+        class="bg-[#6B3C21] text-white cursor-pointer p-2.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+        mat-card-image
+      >
+        <img src="/svg/logIn.svg" alt="logIn" style="width: 20px" />
       </button>
     </div>
   </div>

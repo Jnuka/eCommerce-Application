@@ -1,2 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
 @import 'tailwindcss';
+.mat-mdc-select-panel{
+  background-color: #eae3d7 !important;
+}
+.mat-datepicker-content-container {
+  background-color: #eae3d7 !important;
+}
+.mat-mdc-text-field-wrapper {
+  border-radius: 3px !important;
+  border: 1px solid #C3C2C2E5 !important;
+}
+.mdc-floating-label,
+.mat-mdc-select-placeholder {
+  color: gray !important;
+}
