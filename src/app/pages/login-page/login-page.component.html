@@ -1,0 +1,26 @@
+<form class="max-w-[300px] flex flex-col gap-[20px] items-center">
+  <h1 class="text-3xl">Welcome</h1>
+
+  <div class="flex flex-col gap-2.5">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput />
+    </mat-form-field>
+
+    <button
+      type="submit"
+      class="bg-[#6B3C21] text-white cursor-pointer p-2.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+    >
+      Log In
+    </button>
+    <div class="flex gap-[5px] justify-center">
+      <p>or</p>
+      <button (click)="goRegistration()" class="text-[gray] cursor-pointer">Sing Up</button>
+    </div>
+  </div>
+</form>

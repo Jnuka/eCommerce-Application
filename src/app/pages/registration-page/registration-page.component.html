@@ -1,0 +1,111 @@
+<form class="max-w-[750px] flex flex-col gap-[20px] items-center">
+  <h1 class="text-3xl">Create new account</h1>
+
+  <div class="flex flex-col">
+    <div class="grid grid-cols-[repeat(2,1fr)] gap-5">
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Password</mat-label>
+        <input matInput />
+      </mat-form-field>
+    </div>
+    <div class="flex justify-between gap-5">
+      <mat-form-field>
+        <mat-label>First Name</mat-label>
+        <input matInput />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Second Name</mat-label>
+        <input matInput />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Date of Birth</mat-label>
+        <input matInput [matDatepicker]="picker" />
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    </div>
+
+    <div class="address grid grid-cols-[repeat(2,1fr)] gap-5">
+      <div class="shipping flex flex-col">
+        <p class="title text-center text-lg font-[bold]">Shipping Address</p>
+        <mat-form-field>
+          <mat-label>Street</mat-label>
+          <input matInput />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>City</mat-label>
+          <input matInput />
+        </mat-form-field>
+
+        <mat-form-field hintLabel="">
+          <mat-label>Postal Code</mat-label>
+          <input matInput #input maxlength="6" placeholder="123456" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Country">
+            <mat-option
+              *ngFor="let shippingCountry of shippingCountry"
+              [value]="shippingCountry.value"
+            >
+              {{ shippingCountry.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <section>
+          <mat-checkbox>Set as default shipping address</mat-checkbox>
+        </section>
+      </div>
+      <div class="billing flex flex-col">
+        <p class="title text-center text-lg font-[bold]">Billing Address</p>
+        <mat-form-field>
+          <mat-label>Street</mat-label>
+          <input matInput />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>City</mat-label>
+          <input matInput />
+        </mat-form-field>
+
+        <mat-form-field hintLabel="">
+          <mat-label>Postal Code</mat-label>
+          <input matInput #input maxlength="6" placeholder="123456" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-select placeholder="Country">
+            <mat-option
+              *ngFor="let billingCountry of billingCountry"
+              [value]="billingCountry.value"
+            >
+              {{ billingCountry.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <section>
+          <mat-checkbox>Set as default billing address</mat-checkbox>
+        </section>
+      </div>
+    </div>
+  </div>
+  <button
+    type="submit"
+    class="bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer p-2.5 rounded-[3px] w-full"
+  >
+    Sign Up
+  </button>
+  <div class="flex gap-[5px] justify-center">
+    <p>or</p>
+    <button (click)="goLogin()" class="text-[gray] cursor-pointer">Sing In</button>
+  </div>
+</form>
