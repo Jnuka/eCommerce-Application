@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { CustomerTokenResponse } from './auth.interfaces';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, switchMap, tap, throwError } from 'rxjs';
+import { Observable, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CtpApiService } from '../data/services/ctp-api.service';
 import { ToastService } from '../helpers/toast.service';
@@ -17,8 +17,12 @@ export class AuthService {
   public ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
 
-  private customerToken$ = new BehaviorSubject<string | null>(null);
-  private refreshToken$ = new BehaviorSubject<string | null>(null);
+  private customerToken: string | null = null;
+  private refreshToken: string | null = null;
+
+  public get isAuth(): boolean {
+    return !!this.customerToken;
+  }
 
   public login(payload: { email: string; password: string }): Observable<CustomerTokenResponse> {
     return this.ctpApiService.getAccessToken().pipe(
@@ -31,6 +35,7 @@ export class AuthService {
         const headers = new HttpHeaders({
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': `Basic ${authHeader}`,
+          'X-Use-Customer-Token': 'true',
         });
 
         const body = new HttpParams()
@@ -51,8 +56,8 @@ export class AuthService {
         );
       }),
       tap((response: CustomerTokenResponse) => {
-        this.customerToken$.next(response.access_token || null);
-        this.refreshToken$.next(response.refresh_token || null);
+        this.customerToken = response.access_token;
+        this.refreshToken = response.refresh_token;
         this.toastService.success('Successful entry');
       }),
       catchError((error: HttpErrorResponse) => {
@@ -64,11 +69,11 @@ export class AuthService {
     );
   }
 
-  public getCustomerToken(): Observable<string | null> {
-    return this.customerToken$.asObservable();
+  public getCustomerToken(): string | null {
+    return this.customerToken;
   }
 
-  public getRefreshToken(): Observable<string | null> {
-    return this.refreshToken$.asObservable();
+  public getRefreshToken(): string | null {
+    return this.refreshToken;
   }
 }
