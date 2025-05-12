@@ -8,6 +8,10 @@ export const authInterceptor: HttpInterceptorFn = (request, next) => {
   const authService = inject(AuthService);
   const ctpApiService = inject(CtpApiService);
 
+  if (request.url.includes('/oauth/')) {
+    return next(request);
+  }
+
   const isCustomerRequest = request.headers.get('X-Use-Customer-Token') === 'true';
   let modifiedRequest = request.clone({
     headers: request.headers.delete('X-Use-Customer-Token'),
