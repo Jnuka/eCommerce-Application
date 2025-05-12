@@ -37,10 +37,9 @@ export class CtpApiService {
       .subscribe({
         next: response => {
           this.accessToken$.next(response.access_token);
-          this.toastService.show('Access Token received');
         },
         error: () => {
-          this.toastService.show('Error receiving access token');
+          this.toastService.error('Error receiving access token');
         },
       });
   }

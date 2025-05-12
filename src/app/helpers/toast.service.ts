@@ -13,7 +13,15 @@ export class ToastService {
     stopOnFocus: true,
   };
 
-  public show(message: string, options: Partial<Toastify.Options> = {}): void {
+  public error(message: string): void {
+    this.show(`❌ ${message}`, { backgroundColor: '#f87171' });
+  }
+
+  public success(message: string): void {
+    this.show(`✅ ${message}`, { backgroundColor: '#34d399' });
+  }
+
+  private show(message: string, options: Partial<Toastify.Options> = {}): void {
     Toastify({
       text: message,
       ...this.defaultOptions,
