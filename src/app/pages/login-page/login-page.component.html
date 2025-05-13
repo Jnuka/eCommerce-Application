@@ -1,15 +1,19 @@
-<form class="max-w-[300px] flex flex-col gap-[20px] items-center">
+<form
+  class="max-w-[300px] flex flex-col gap-[20px] items-center"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+>
   <h1 class="text-3xl">Welcome</h1>
 
   <div class="flex flex-col gap-2.5">
     <mat-form-field>
       <mat-label>Email</mat-label>
-      <input matInput />
+      <input matInput formControlName="email" type="email" />
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Password</mat-label>
-      <input matInput />
+      <input matInput formControlName="password" type=" password" />
     </mat-form-field>
 
     <button
