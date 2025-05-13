@@ -35,7 +35,6 @@ export class AuthService {
         const headers = new HttpHeaders({
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': `Basic ${authHeader}`,
-          'X-Use-Customer-Token': 'true',
         });
 
         const body = new HttpParams()
