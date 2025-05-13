@@ -13,12 +13,12 @@ export class CtpApiService {
   private accessToken$ = new BehaviorSubject<string | null>(null);
   private toastService = inject(ToastService);
 
-  constructor() {
-    this.initAccessToken();
-  }
-
   public getAccessToken(): Observable<string | null> {
     return this.accessToken$.asObservable();
+  }
+
+  public init(): void {
+    this.initAccessToken();
   }
 
   private initAccessToken(): void {
