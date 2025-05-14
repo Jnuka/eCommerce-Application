@@ -125,7 +125,8 @@
   </div>
   <button
     type="submit"
-    class="bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer p-2.5 rounded-[3px] w-full"
+    class="bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer p-2.5 rounded-[3px] w-full disabled:border-gray-200 disabled:bg-[#504742] disabled:shadow-none disabled:pointer-events-none"
+    [disabled]="regForm.invalid"
   >
     Sign Up
   </button>
