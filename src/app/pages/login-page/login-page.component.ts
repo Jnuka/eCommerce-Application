@@ -1,29 +1,57 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { Router } from '@angular/router';
-import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  ReactiveFormsModule,
+  FormsModule,
+} from '@angular/forms';
 import { AuthService } from '../../auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { emailValidator } from '../../shared/validators';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, MatSelectModule, ReactiveFormsModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIconModule,
+    CommonModule,
+    FormsModule,
+  ],
+
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.css',
 })
 export class LoginPageComponent {
-  public form = new FormGroup({
-    email: new FormControl('', [
+  public loginForm = new FormGroup({
+    email: new FormControl('', [emailValidator()]),
+    password: new FormControl('', [
       Validators.required.bind(Validators),
-      Validators.email.bind(Validators),
+      Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$'),
     ]),
-    password: new FormControl('', Validators.required.bind(Validators)),
   });
+
+  public hidePassword = signal(true);
 
   private router = inject(Router);
   private authService = inject(AuthService);
+
+  public clickEvent(event: MouseEvent): void {
+    this.hidePassword.set(!this.hidePassword());
+    event.stopPropagation();
+  }
 
   public async goRegistration(): Promise<void> {
     await this.router.navigate(['registration']);
@@ -34,9 +62,9 @@ export class LoginPageComponent {
   }
 
   public onSubmit = (): void => {
-    if (this.form.invalid) return;
+    if (this.loginForm.invalid) return;
 
-    const { email, password } = this.form.value;
+    const { email, password } = this.loginForm.value;
     if (!email || !password) return;
     this.authService.login({ email, password }).subscribe({
       next: () => {
