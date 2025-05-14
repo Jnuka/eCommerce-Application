@@ -19,3 +19,19 @@ export function emailValidator(): ValidatorFn {
     return null;
   };
 }
+
+export function ageValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const birthday: Date = control?.value instanceof Date ? control?.value : new Date();
+    const today: Date = new Date();
+    const birthdayDate: Date = new Date(birthday);
+
+    const age: number = today.getFullYear() - birthdayDate.getFullYear();
+
+    if (age < 13) {
+      return { userAge: false };
+    }
+
+    return null;
+  };
+}
