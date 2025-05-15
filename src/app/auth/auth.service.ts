@@ -8,6 +8,8 @@ import { ToastService } from '../helpers/toast.service';
 import { catchError } from 'rxjs/operators';
 import { AuthErrorResponse } from './auth.interfaces';
 import { HttpErrorResponse } from './auth.interfaces';
+import { CookieService } from 'ngx-cookie-service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +18,17 @@ export class AuthService {
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
+  private cookieService = inject(CookieService);
+  private router = inject(Router);
 
   private customerToken: string | null = null;
   private refreshToken: string | null = null;
 
   public get isAuth(): boolean {
+    if (!this.customerToken) {
+      this.customerToken = this.cookieService.get('token');
+      this.refreshToken = this.cookieService.get('refreshToken');
+    }
     return !!this.customerToken;
   }
 
@@ -55,8 +63,7 @@ export class AuthService {
         );
       }),
       tap((response: CustomerTokenResponse) => {
-        this.customerToken = response.access_token;
-        this.refreshToken = response.refresh_token;
+        this.saveTokens(response);
         this.toastService.success('Successful entry');
       }),
       catchError((error: HttpErrorResponse) => {
@@ -74,5 +81,43 @@ export class AuthService {
 
   public getRefreshToken(): string | null {
     return this.refreshToken;
+  }
+
+  public refreshAuthToken(): Observable<CustomerTokenResponse> {
+    const authHeader = btoa(`${environment.ctp_client_id}:${environment.ctp_client_secret}`);
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Basic ${authHeader}`,
+    });
+
+    const body = new HttpParams()
+      .set('grant_type', 'refresh_token')
+      .set('refresh_token', this.refreshToken || '');
+
+    return this.http
+      .post<CustomerTokenResponse>(`${environment.ctp_auth_url}/oauth/token`, body, { headers })
+      .pipe(
+        tap(response => {
+          this.saveTokens(response);
+        }),
+        catchError((error: HttpErrorResponse) => {
+          this.logout();
+          return throwError(() => error);
+        }),
+      );
+  }
+
+  public logout(): void {
+    this.cookieService.deleteAll();
+    this.customerToken = null;
+    this.refreshToken = null;
+    void this.router.navigate(['login']);
+  }
+
+  private saveTokens(response: CustomerTokenResponse): void {
+    this.customerToken = response.access_token;
+    this.refreshToken = response.refresh_token;
+    this.cookieService.set('token', this.customerToken);
+    this.cookieService.set('refreshToken', this.refreshToken);
   }
 }
