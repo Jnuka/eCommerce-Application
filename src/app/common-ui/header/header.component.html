@@ -1,19 +1,31 @@
-<header class="bg-[#3F2F2A]">
+<header
+  class="max-w-[1440px] m-auto px-10 py-0"
+  style="
+    background: linear-gradient(
+      90deg,
+      rgba(63, 47, 42, 1) 45%,
+      rgba(124, 87, 60, 1) 65%,
+      rgba(95, 68, 49, 1) 90%
+    );
+  "
+>
   <div class="wrapper max-w-screen-xl flex justify-between items-center m-auto px-10 py-0">
     <button (click)="goHome()" class="cursor-pointer">
-      <img ngSrc="/logo.svg" alt="logo" class="logo" height="72" width="72" />
+      <img src="/logo.svg" alt="logo" class="logo" height="72" width="72" />
     </button>
 
     <div class="control-btn flex gap-2">
       <button
         (click)="goRegistration()"
-        class="bg-[#6B3C21] text-white cursor-pointer p-2.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+        class="bg-[#6B3C21] text-white cursor-pointer p-3.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+        title="Sign Up"
       >
         <img class="w-5" src="/svg/signUp.svg" alt="signUp" />
       </button>
       <button
         (click)="goLogin()"
-        class="bg-[#6B3C21] text-white cursor-pointer p-2.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+        class="bg-[#6B3C21] text-white cursor-pointer p-3.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+        title="Log In"
       >
         <img class="w-5" src="/svg/logIn.svg" alt="logIn" />
       </button>
