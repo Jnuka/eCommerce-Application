@@ -1,37 +1,62 @@
-<form class="max-w-[750px] flex flex-col gap-[20px] items-center">
+<form class="max-w-[750px] flex flex-col gap-[20px] items-center" [formGroup]="regForm">
   <h1 class="text-3xl">Create new account</h1>
 
   <div class="flex flex-col">
     <div class="grid grid-cols-[repeat(2,1fr)] gap-5">
       <mat-form-field>
         <mat-label>Email</mat-label>
-        <input matInput />
+        <input
+          matInput
+          placeholder="user@example.com"
+          formControlName="email"
+          name="email"
+          required
+          type="email"
+        />
+        <mat-error *ngIf="regForm.get('email')?.hasError('required')"
+          >This field is required</mat-error
+        >
+        <mat-error *ngIf="regForm.value.email">Please, enter correct email.</mat-error>
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>Password</mat-label>
-        <input matInput />
+        <input matInput formControlName="password" name="password" required type="text" />
+        <mat-error *ngIf="regForm.get('password')?.hasError('required')"
+          >This field is required.</mat-error
+        >
+        <mat-error *ngIf="regForm.get('password')?.hasError('pattern')"
+          >Password must be a combination of lower-case, upper-case, numbers at least 8 characters
+          long.</mat-error
+        >
       </mat-form-field>
     </div>
-    <div class="flex justify-between gap-5">
+    <div class="mt-[20px] flex justify-between gap-5">
       <mat-form-field>
         <mat-label>First Name</mat-label>
-        <input matInput />
+        <input matInput formControlName="firstName" name="firstName" type="text" />
+        <mat-error *ngIf="regForm.get('firstName')?.hasError('pattern')"
+          >Name must contain only latin letters at least one character.</mat-error
+        >
       </mat-form-field>
       <mat-form-field>
         <mat-label>Second Name</mat-label>
-        <input matInput />
+        <input matInput formControlName="lastName" name="lastName" type="text" />
+        <mat-error *ngIf="regForm.get('lastName')?.hasError('pattern')"
+          >Last name must contain only latin letters at least one character.</mat-error
+        >
       </mat-form-field>
 
       <mat-form-field>
         <mat-label>Date of Birth</mat-label>
-        <input matInput [matDatepicker]="picker" />
+        <input matInput [matDatepicker]="picker" formControlName="userAge" />
         <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
+        <mat-error *ngIf="regForm.value.userAge">You must be over 13 years old.</mat-error>
       </mat-form-field>
     </div>
 
-    <div class="address grid grid-cols-[repeat(2,1fr)] gap-5">
+    <div class="address grid grid-cols-[repeat(2,1fr)] gap-5 mt-[20px]">
       <div class="shipping flex flex-col">
         <p class="title text-center text-lg font-[bold]">Shipping Address</p>
         <mat-form-field>
@@ -100,7 +125,8 @@
   </div>
   <button
     type="submit"
-    class="bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer p-2.5 rounded-[3px] w-full"
+    class="bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer p-2.5 rounded-[3px] w-full disabled:border-gray-200 disabled:bg-[#504742] disabled:shadow-none disabled:pointer-events-none"
+    [disabled]="regForm.invalid"
   >
     Sign Up
   </button>
