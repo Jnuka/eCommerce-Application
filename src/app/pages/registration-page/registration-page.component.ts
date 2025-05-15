@@ -31,29 +31,6 @@ import { ToastService } from '../../helpers/toast.service';
   styleUrl: './registration-page.component.css',
 })
 export class RegistrationPageComponent {
-  public form = new FormGroup({
-    email: new FormControl('', [
-      Validators.required.bind(Validators),
-      Validators.email.bind(Validators),
-    ]),
-    password: new FormControl('', Validators.required.bind(Validators)),
-    firstName: new FormControl(''),
-    lastName: new FormControl(''),
-    dateOfBirth: new FormControl('', Validators.required.bind(Validators)),
-
-    shippingStreet: new FormControl(''),
-    shippingCity: new FormControl(''),
-    shippingPostalCode: new FormControl(''),
-    shippingCountry: new FormControl('UNDEFINED'),
-    setDefaultShipping: new FormControl(''),
-
-    billingStreet: new FormControl(''),
-    billingCity: new FormControl(''),
-    billingPostalCode: new FormControl(''),
-    billingCountry: new FormControl('UNDEFINED'),
-    setDefaultBilling: new FormControl(''),
-  });
-
   public shippingCountry = [
     { value: 'US', viewValue: 'United States' },
     { value: 'GB', viewValue: 'Great Britain' },
@@ -80,6 +57,18 @@ export class RegistrationPageComponent {
       Validators.pattern('^[A-z]+$'),
     ]),
     userAge: new FormControl('', ageValidator()),
+
+    shippingStreet: new FormControl(''),
+    shippingCity: new FormControl(''),
+    shippingPostalCode: new FormControl(''),
+    shippingCountry: new FormControl('UNDEFINED'),
+    setDefaultShipping: new FormControl(''),
+
+    billingStreet: new FormControl(''),
+    billingCity: new FormControl(''),
+    billingPostalCode: new FormControl(''),
+    billingCountry: new FormControl('UNDEFINED'),
+    setDefaultBilling: new FormControl(''),
   });
 
   private router = inject(Router);
@@ -95,16 +84,16 @@ export class RegistrationPageComponent {
   }
 
   public onSubmit = (): void => {
-    if (this.form.invalid) {
+    if (this.regForm.invalid) {
       this.toastService.error('Invalid form values');
       return;
     }
-    const formData = this.form.value;
-    if (!formData.email || !formData.password || !formData.dateOfBirth) {
+    const formData = this.regForm.value;
+    if (!formData.email || !formData.password || !formData.userAge) {
       this.toastService.error('Missing required form values');
       return;
     }
-    const isoDate = new Date(formData.dateOfBirth).toISOString().split('T')[0];
+    const isoDate = new Date(formData.userAge).toISOString().split('T')[0];
 
     const shippingAddress = {
       country: formData.shippingCountry ?? undefined,
