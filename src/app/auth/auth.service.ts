@@ -39,13 +39,19 @@ export class AuthService {
           this.toastService.error('No access token for login');
           throw new Error('No access token available');
         }
+
+        this.cookieService.delete('anonymous_token');
+        this.cookieService.delete('anonymous_refresh_token');
+
+        const anonymousId = this.cookieService.get('anonymous_id');
+
         const authHeader = btoa(`${environment.ctp_client_id}:${environment.ctp_client_secret}`);
         const headers = new HttpHeaders({
           'Content-Type': 'application/x-www-form-urlencoded',
           'Authorization': `Basic ${authHeader}`,
         });
 
-        const body = new HttpParams()
+        let body = new HttpParams()
           .set('grant_type', 'password')
           .set('username', payload.email)
           .set('password', payload.password)
@@ -55,6 +61,9 @@ export class AuthService {
               .map(scope => `${scope}:${environment.ctp_project_key}`)
               .join(' '),
           );
+        if (anonymousId) {
+          body = body.set('anonymousId', anonymousId);
+        }
 
         return this.http.post<CustomerTokenResponse>(
           `${environment.ctp_auth_url}/oauth/${environment.ctp_project_key}/customers/token`,
