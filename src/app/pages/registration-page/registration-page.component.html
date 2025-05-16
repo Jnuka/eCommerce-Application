@@ -39,16 +39,22 @@
       <div class="mt-[20px] flex justify-between gap-5">
         <mat-form-field>
           <mat-label>First Name</mat-label>
-          <input matInput formControlName="firstName" name="firstName" type="text" />
+          <input matInput formControlName="firstName" name="firstName" type="text" required />
           <mat-error *ngIf="regForm.get('firstName')?.hasError('pattern')"
             >Name must contain only latin letters at least one character.</mat-error
+          >
+          <mat-error *ngIf="regForm.get('firstName')?.hasError('required')"
+            >This field is required</mat-error
           >
         </mat-form-field>
         <mat-form-field>
           <mat-label>Second Name</mat-label>
-          <input matInput formControlName="lastName" name="lastName" type="text" />
+          <input matInput formControlName="lastName" name="lastName" type="text" required />
           <mat-error *ngIf="regForm.get('lastName')?.hasError('pattern')"
             >Last name must contain only latin letters at least one character.</mat-error
+          >
+          <mat-error *ngIf="regForm.get('lastName')?.hasError('required')"
+            >This field is required</mat-error
           >
         </mat-form-field>
 
@@ -67,17 +73,23 @@
           <p class="title text-center text-lg font-[bold]">Shipping Address</p>
           <mat-form-field>
             <mat-label>Street</mat-label>
-            <input matInput formControlName="shippingStreet" type="text" />
+            <input matInput formControlName="shippingStreet" type="text" required />
             <mat-error *ngIf="regForm.get('shippingStreet')?.hasError('pattern')"
               >Must contain at least one character.</mat-error
+            >
+            <mat-error *ngIf="regForm.get('shippingStreet')?.hasError('required')"
+              >This field is required</mat-error
             >
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>City</mat-label>
-            <input matInput formControlName="shippingCity" type="text" />
+            <input matInput formControlName="shippingCity" type="text" required />
             <mat-error *ngIf="regForm.value.shippingCity"
               >Must contain at least one character and no special characters or numbers</mat-error
+            >
+            <mat-error *ngIf="regForm.get('shippingCity')?.hasError('required')"
+              >This field is required</mat-error
             >
           </mat-form-field>
 
@@ -91,14 +103,18 @@
               placeholder="12345"
               formControlName="shippingPostalCode"
               type="number"
+              required
             />
             <mat-error *ngIf="regForm.value.shippingPostalCode"
               >Enter correct postal code (5 numbers).</mat-error
             >
+            <mat-error *ngIf="regForm.get('shippingPostalCode')?.hasError('required')"
+              >This field is required</mat-error
+            >
           </mat-form-field>
 
           <mat-form-field>
-            <mat-select placeholder="Country" formControlName="shippingCountry">
+            <mat-select placeholder="Country" formControlName="shippingCountry" required>
               <mat-option
                 *ngFor="let shippingCountry of shippingCountry"
                 [value]="shippingCountry.value"
@@ -106,6 +122,9 @@
                 {{ shippingCountry.viewValue }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="regForm.get('shippingCountry')?.hasError('required')"
+              >Select country.</mat-error
+            >
           </mat-form-field>
 
           <section>
@@ -119,7 +138,10 @@
           <p class="title text-center text-lg font-[bold]">Billing Address</p>
           <mat-form-field>
             <mat-label>Street</mat-label>
-            <input matInput formControlName="billingStreet" type="text" />
+            <input matInput formControlName="billingStreet" type="text" required />
+            <mat-error *ngIf="regForm.get('billingStreet')?.hasError('required')"
+              >This field is required</mat-error
+            >
             <mat-error *ngIf="regForm.get('billingStreet')?.hasError('pattern')"
               >Must contain at least one character.</mat-error
             >
@@ -127,7 +149,10 @@
 
           <mat-form-field>
             <mat-label>City</mat-label>
-            <input matInput formControlName="billingCity" type="text" />
+            <input matInput formControlName="billingCity" type="text" required />
+            <mat-error *ngIf="regForm.get('billingCity')?.hasError('required')"
+              >This field is required</mat-error
+            >
             <mat-error *ngIf="regForm.value.billingCity"
               >Must contain at least one character and no special characters or numbers</mat-error
             >
@@ -142,14 +167,18 @@
               placeholder="12345"
               formControlName="billingPostalCode"
               type="number"
+              required
             />
+            <mat-error *ngIf="regForm.get('billingPostalCode')?.hasError('required')"
+              >This field is required</mat-error
+            >
             <mat-error *ngIf="regForm.value.billingPostalCode"
               >Enter correct postal code (5 numbers).</mat-error
             >
           </mat-form-field>
 
           <mat-form-field>
-            <mat-select placeholder="Country" formControlName="billingCountry">
+            <mat-select placeholder="Country" formControlName="billingCountry" required>
               <mat-option
                 *ngFor="let billingCountry of billingCountry"
                 [value]="billingCountry.value"
@@ -157,6 +186,9 @@
                 {{ billingCountry.viewValue }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="regForm.get('billingCountry')?.hasError('required')"
+              >Select country.</mat-error
+            >
           </mat-form-field>
 
           <section>

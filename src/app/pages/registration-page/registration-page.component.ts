@@ -56,13 +56,13 @@ export class RegistrationPageComponent {
     shippingStreet: new FormControl('', Validators.pattern('(?=.*[A-Za-z0-9]).+')),
     shippingCity: new FormControl('', cityValidator()),
     shippingPostalCode: new FormControl('', Validators.pattern('[0-9]{5}')),
-    shippingCountry: new FormControl('UNDEFINED'),
+    shippingCountry: new FormControl('', Validators.required.bind(Validators)),
     setDefaultShipping: new FormControl(''),
 
     billingStreet: new FormControl('', Validators.pattern('(?=.*[A-z0-9]).+')),
     billingCity: new FormControl('', cityValidator()),
     billingPostalCode: new FormControl('', Validators.pattern('[0-9]{5}')),
-    billingCountry: new FormControl('UNDEFINED'),
+    billingCountry: new FormControl(''),
     setDefaultBilling: new FormControl(''),
   });
 
@@ -84,7 +84,22 @@ export class RegistrationPageComponent {
       return;
     }
     const formData = this.regForm.value;
-    if (!formData.email || !formData.password || !formData.userAge) {
+
+    if (
+      !formData.email ||
+      !formData.password ||
+      !formData.userAge ||
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.shippingStreet ||
+      !formData.shippingCity ||
+      !formData.shippingPostalCode ||
+      !formData.shippingCountry ||
+      !formData.billingStreet ||
+      !formData.billingCity ||
+      !formData.billingPostalCode ||
+      !formData.billingCountry
+    ) {
       this.toastService.error('Missing required form values');
       return;
     }
@@ -94,14 +109,14 @@ export class RegistrationPageComponent {
       country: formData.shippingCountry ?? undefined,
       streetName: formData.shippingStreet ?? undefined,
       city: formData.shippingCity ?? undefined,
-      postalCode: formData.shippingPostalCode ?? undefined,
+      postalCode: formData.shippingPostalCode.toString() ?? undefined,
     };
 
     const billingAddress = {
       country: formData.billingCountry ?? undefined,
       streetName: formData.billingStreet ?? undefined,
       city: formData.billingCity ?? undefined,
-      postalCode: formData.billingPostalCode ?? undefined,
+      postalCode: formData.billingPostalCode.toString() ?? undefined,
     };
 
     const customerDraft: CustomerDraft = {
