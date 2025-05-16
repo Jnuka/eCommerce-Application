@@ -55,3 +55,19 @@ export function ageValidator(): ValidatorFn {
     return null;
   };
 }
+
+export function cityValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const city: string = typeof control?.value === 'string' ? control?.value : '';
+
+    if (!city) {
+      return null;
+    }
+
+    if (/[\d!#$%&()*@^_]/.test(city)) {
+      return { city: false };
+    }
+
+    return null;
+  };
+}
