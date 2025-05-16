@@ -75,6 +75,7 @@ export class AnonymousService {
           this.cookieService.set('anonymous_refresh_token', this.refreshToken);
         }),
         catchError((error: HttpErrorResponse) => {
+          // TODO: remove display error, add console.error
           this.toastService.error('Anonymous authorization error');
           return throwError(() => error);
         }),

@@ -46,11 +46,12 @@ export class RegistrationService {
         });
       }),
       catchError((error: HttpErrorResponse) => {
-        if (error.error.statusCode === 400) {
-          this.toastService.error('The form has empty fields or the data is incorrect');
-          return throwError(() => error);
-        }
-        const description = error.error.message || 'Unknown registration error';
+        // if (error.error.statusCode === 400) {
+        //   this.toastService.error('The form has empty fields or the data is incorrect');
+        //   return throwError(() => error);
+        // }
+        const description =
+          error.error.message || 'Unknown registration error. Try registering again';
         this.toastService.error(description);
         return throwError(() => error);
       }),
