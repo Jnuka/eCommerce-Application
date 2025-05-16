@@ -8,8 +8,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NgForOf, CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { emailValidator } from '../../shared/validators';
-import { ageValidator } from '../../shared/validators';
+import { emailValidator, passwordValidator, ageValidator } from '../../shared/validators';
 import { RegistrationService } from '../../registration/registration.service';
 import { CustomerDraft } from '../../registration/registration.interfaces';
 import { ToastService } from '../../helpers/toast.service';
@@ -43,20 +42,11 @@ export class RegistrationPageComponent {
   ];
 
   public regForm = new FormGroup({
-    email: new FormControl('', emailValidator()),
-    password: new FormControl('', [
-      Validators.required.bind(Validators),
-      Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$'),
-    ]),
-    firstName: new FormControl('', [
-      Validators.required.bind(Validators),
-      Validators.pattern('^[A-z]+$'),
-    ]),
-    lastName: new FormControl('', [
-      Validators.required.bind(Validators),
-      Validators.pattern('^[A-z]+$'),
-    ]),
-    userAge: new FormControl('', ageValidator()),
+    email: new FormControl('', [Validators.required.bind(Validators), emailValidator()]),
+    password: new FormControl('', [Validators.required.bind(Validators), passwordValidator()]),
+    firstName: new FormControl('', [Validators.pattern('^[A-z]+$')]),
+    lastName: new FormControl('', [Validators.pattern('^[A-z]+$')]),
+    userAge: new FormControl('', [Validators.required.bind(Validators), ageValidator()]),
 
     shippingStreet: new FormControl(''),
     shippingCity: new FormControl(''),
