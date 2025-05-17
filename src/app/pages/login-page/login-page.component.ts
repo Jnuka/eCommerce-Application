@@ -14,7 +14,7 @@ import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { emailValidator, passwordValidator } from '../../shared/validators';
+import { emailValidator, passwordValidator, spacesCheck } from '../../shared/validators';
 
 @Component({
   selector: 'app-login-page',
@@ -36,8 +36,12 @@ import { emailValidator, passwordValidator } from '../../shared/validators';
 })
 export class LoginPageComponent {
   public loginForm = new FormGroup({
-    email: new FormControl('', [emailValidator()]),
-    password: new FormControl('', [Validators.required.bind(Validators), passwordValidator()]),
+    email: new FormControl('', [spacesCheck(), emailValidator()]),
+    password: new FormControl('', [
+      Validators.required.bind(Validators),
+      spacesCheck(),
+      passwordValidator(),
+    ]),
   });
 
   public hidePassword = signal(true);

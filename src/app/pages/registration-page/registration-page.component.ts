@@ -13,6 +13,7 @@ import {
   passwordValidator,
   ageValidator,
   cityValidator,
+  spacesCheck,
 } from '../../shared/validators';
 import { RegistrationService } from '../../registration/registration.service';
 import { CustomerDraft } from '../../registration/registration.interfaces';
@@ -47,8 +48,16 @@ export class RegistrationPageComponent {
   ];
 
   public regForm = new FormGroup({
-    email: new FormControl('', [Validators.required.bind(Validators), emailValidator()]),
-    password: new FormControl('', [Validators.required.bind(Validators), passwordValidator()]),
+    email: new FormControl('', [
+      Validators.required.bind(Validators),
+      spacesCheck(),
+      emailValidator(),
+    ]),
+    password: new FormControl('', [
+      Validators.required.bind(Validators),
+      spacesCheck(),
+      passwordValidator(),
+    ]),
     firstName: new FormControl('', [Validators.pattern('^[A-z]+$')]),
     lastName: new FormControl('', [Validators.pattern('^[A-z]+$')]),
     userAge: new FormControl('', [Validators.required.bind(Validators), ageValidator()]),

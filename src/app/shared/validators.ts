@@ -1,23 +1,35 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
+export function spacesCheck(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const inputString: string = typeof control?.value === 'string' ? control?.value : '';
+
+    if (inputString.includes(' ')) {
+      return { containSpaces: 'false' };
+    }
+
+    return null;
+  };
+}
+
 export function emailValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const login: string = typeof control?.value === 'string' ? control?.value : '';
     const index = typeof login === 'string' ? login.lastIndexOf('@') : null;
 
-    if (login.includes(' ')) {
-      return { email: false };
+    if (!login) {
+      return null;
     }
 
     if (index) {
       const domain: string = login?.slice(index + 1);
       if (!domain.includes('.')) {
-        return { email: false };
+        return { email: 'false' };
       }
     }
 
-    if (!/^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$/.test(login)) {
-      return { email: false };
+    if (!/[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}/.test(login)) {
+      return { email: 'false' };
     }
 
     return null;
@@ -28,12 +40,8 @@ export function passwordValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const password: string = typeof control?.value === 'string' ? control?.value : '';
 
-    if (password.includes(' ')) {
-      return { password: false };
-    }
-
     if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[a-z]).{8,}$/.test(password)) {
-      return { password: false };
+      return { password: 'false' };
     }
 
     return null;
