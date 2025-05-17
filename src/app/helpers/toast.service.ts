@@ -8,17 +8,17 @@ export class ToastService {
   private readonly defaultOptions: Partial<Toastify.Options> = {
     duration: 3000,
     gravity: 'top',
-    position: 'right',
+    position: 'center',
     close: true,
     stopOnFocus: true,
   };
 
   public error(message: string): void {
-    this.show(`❌ ${message}`, { backgroundColor: '#f87171' });
+    this.show(`❌ ${message}`, { backgroundColor: 'rgb(82, 65, 57)' });
   }
 
   public success(message: string): void {
-    this.show(`✅ ${message}`, { backgroundColor: '#34d399' });
+    this.show(`✅ ${message}`, { backgroundColor: '#6B3C21' });
   }
 
   private show(message: string, options: Partial<Toastify.Options> = {}): void {
