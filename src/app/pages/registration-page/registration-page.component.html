@@ -1,13 +1,13 @@
 <div class="flex flex-col items-center mt-[50px]">
   <form
-    class="max-w-[750px] flex flex-col gap-[20px] items-center"
+    class="max-w-[750px] flex flex-col gap-[20px] items-center mb-[30px]"
     [formGroup]="regForm"
     (ngSubmit)="onSubmit()"
   >
     <h1 class="text-3xl">Create new account</h1>
 
     <div class="flex flex-col">
-      <div class="grid grid-cols-[repeat(2,1fr)] gap-5">
+      <div class="grid grid-cols-[repeat(2,1fr)] gap-5 max-md:flex max-md:flex-col">
         <mat-form-field>
           <mat-label>Email</mat-label>
           <input
@@ -36,7 +36,7 @@
           >
         </mat-form-field>
       </div>
-      <div class="mt-[20px] flex justify-between gap-5">
+      <div class="mt-[20px] flex justify-between gap-5 max-md:flex max-md:flex-col">
         <mat-form-field>
           <mat-label>First Name</mat-label>
           <input matInput formControlName="firstName" name="firstName" type="text" required />
@@ -68,7 +68,9 @@
         </mat-form-field>
       </div>
 
-      <div class="address grid grid-cols-[repeat(2,1fr)] gap-5 mt-[20px]">
+      <div
+        class="address grid grid-cols-[repeat(2,1fr)] gap-5 mt-[20px] max-md:flex max-md:flex-col"
+      >
         <div class="shipping flex flex-col">
           <p class="title text-center text-lg font-[bold]">Shipping Address</p>
           <mat-form-field>
@@ -114,7 +116,7 @@
           </mat-form-field>
 
           <mat-form-field>
-            <mat-select placeholder="Country" formControlName="shippingCountry" required>
+            <mat-select placeholder="Country*" formControlName="shippingCountry" required>
               <mat-option
                 *ngFor="let shippingCountry of shippingCountry"
                 [value]="shippingCountry.value"
@@ -178,7 +180,7 @@
           </mat-form-field>
 
           <mat-form-field>
-            <mat-select placeholder="Country" formControlName="billingCountry" required>
+            <mat-select placeholder="Country*" formControlName="billingCountry" required>
               <mat-option
                 *ngFor="let billingCountry of billingCountry"
                 [value]="billingCountry.value"
@@ -210,7 +212,7 @@
       Sign Up
     </button>
     <div class="flex gap-[5px] justify-center">
-      <p>or</p>
+      <p>Already have an account?</p>
       <button (click)="goLogin()" class="text-[gray] cursor-pointer">Sing In</button>
     </div>
   </form>
