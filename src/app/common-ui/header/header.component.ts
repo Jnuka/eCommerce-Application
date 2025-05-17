@@ -29,4 +29,7 @@ export class HeaderComponent {
   public async goRegistration(): Promise<void> {
     await this.router.navigate(['registration']);
   }
+  public async goAbout(): Promise<void> {
+    await this.router.navigate(['about']);
+  }
 }
