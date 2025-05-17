@@ -1,4 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { RegistrationService } from '../registration/registration.service';
 
 export function spacesCheck(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -6,6 +7,16 @@ export function spacesCheck(): ValidatorFn {
 
     if (inputString.includes(' ')) {
       return { containSpaces: 'false' };
+    }
+
+    return null;
+  };
+}
+
+export function isEmailExist(): ValidatorFn {
+  return (): ValidationErrors | null => {
+    if (RegistrationService.emailExist()) {
+      return { registration: 'false' };
     }
 
     return null;

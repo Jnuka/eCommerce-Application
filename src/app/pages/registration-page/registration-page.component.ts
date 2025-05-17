@@ -14,6 +14,7 @@ import {
   ageValidator,
   cityValidator,
   spacesCheck,
+  isEmailExist,
 } from '../../shared/validators';
 import { RegistrationService } from '../../registration/registration.service';
 import { CustomerDraft } from '../../registration/registration.interfaces';
@@ -52,6 +53,7 @@ export class RegistrationPageComponent {
       Validators.required.bind(Validators),
       spacesCheck(),
       emailValidator(),
+      isEmailExist(),
     ]),
     password: new FormControl('', [
       Validators.required.bind(Validators),

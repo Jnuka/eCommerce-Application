@@ -17,6 +17,7 @@
             name="email"
             required
             type="text"
+            id="emailReg"
           />
           <mat-error *ngIf="regForm.get('email')?.hasError('required')"
             >This field is required</mat-error
@@ -26,6 +27,9 @@
           >
           <mat-error *ngIf="regForm.get('email')?.errors?.['containSpaces']"
             >Please, delete spaces.</mat-error
+          >
+          <mat-error *ngIf="regForm.get('email')?.errors?.['registration']"
+            >User with this email already exists.</mat-error
           >
         </mat-form-field>
 
