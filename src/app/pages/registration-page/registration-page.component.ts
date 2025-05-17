@@ -8,7 +8,12 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { NgForOf, CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { emailValidator, passwordValidator, ageValidator } from '../../shared/validators';
+import {
+  emailValidator,
+  passwordValidator,
+  ageValidator,
+  cityValidator,
+} from '../../shared/validators';
 import { RegistrationService } from '../../registration/registration.service';
 import { CustomerDraft } from '../../registration/registration.interfaces';
 import { ToastService } from '../../helpers/toast.service';
@@ -32,12 +37,12 @@ import { ToastService } from '../../helpers/toast.service';
 export class RegistrationPageComponent {
   public shippingCountry = [
     { value: 'US', viewValue: 'United States' },
-    { value: 'GB', viewValue: 'Great Britain' },
+    { value: 'IT', viewValue: 'Italy' },
     { value: 'ES', viewValue: 'Spain' },
   ];
   public billingCountry = [
     { value: 'US', viewValue: 'United States' },
-    { value: 'GB', viewValue: 'Great Britain' },
+    { value: 'IT', viewValue: 'Italy' },
     { value: 'ES', viewValue: 'Spain' },
   ];
 
@@ -48,16 +53,16 @@ export class RegistrationPageComponent {
     lastName: new FormControl('', [Validators.pattern('^[A-z]+$')]),
     userAge: new FormControl('', [Validators.required.bind(Validators), ageValidator()]),
 
-    shippingStreet: new FormControl(''),
-    shippingCity: new FormControl(''),
-    shippingPostalCode: new FormControl(''),
-    shippingCountry: new FormControl('UNDEFINED'),
+    shippingStreet: new FormControl('', Validators.pattern('(?=.*[A-Za-z0-9]).+')),
+    shippingCity: new FormControl('', cityValidator()),
+    shippingPostalCode: new FormControl('', Validators.pattern('[0-9]{5}')),
+    shippingCountry: new FormControl('', Validators.required.bind(Validators)),
     setDefaultShipping: new FormControl(''),
 
-    billingStreet: new FormControl(''),
-    billingCity: new FormControl(''),
-    billingPostalCode: new FormControl(''),
-    billingCountry: new FormControl('UNDEFINED'),
+    billingStreet: new FormControl('', Validators.pattern('(?=.*[A-z0-9]).+')),
+    billingCity: new FormControl('', cityValidator()),
+    billingPostalCode: new FormControl('', Validators.pattern('[0-9]{5}')),
+    billingCountry: new FormControl(''),
     setDefaultBilling: new FormControl(''),
   });
 
@@ -79,7 +84,22 @@ export class RegistrationPageComponent {
       return;
     }
     const formData = this.regForm.value;
-    if (!formData.email || !formData.password || !formData.userAge) {
+
+    if (
+      !formData.email ||
+      !formData.password ||
+      !formData.userAge ||
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.shippingStreet ||
+      !formData.shippingCity ||
+      !formData.shippingPostalCode ||
+      !formData.shippingCountry ||
+      !formData.billingStreet ||
+      !formData.billingCity ||
+      !formData.billingPostalCode ||
+      !formData.billingCountry
+    ) {
       this.toastService.error('Missing required form values');
       return;
     }
@@ -89,14 +109,14 @@ export class RegistrationPageComponent {
       country: formData.shippingCountry ?? undefined,
       streetName: formData.shippingStreet ?? undefined,
       city: formData.shippingCity ?? undefined,
-      postalCode: formData.shippingPostalCode ?? undefined,
+      postalCode: formData.shippingPostalCode.toString() ?? undefined,
     };
 
     const billingAddress = {
       country: formData.billingCountry ?? undefined,
       streetName: formData.billingStreet ?? undefined,
       city: formData.billingCity ?? undefined,
-      postalCode: formData.billingPostalCode ?? undefined,
+      postalCode: formData.billingPostalCode.toString() ?? undefined,
     };
 
     const customerDraft: CustomerDraft = {
