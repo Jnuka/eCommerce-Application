@@ -28,6 +28,13 @@
           <mat-error *ngIf="regForm.get('email')?.errors?.['containSpaces']"
             >Please, delete spaces.</mat-error
           >
+          <mat-error *ngIf="regForm.get('email')?.errors?.['domain']"
+            >Email address must contain a domain name (e.g., example.com).</mat-error
+          >
+          <mat-error *ngIf="regForm.get('email')?.errors?.['dog']"
+            >Email address must contain an '"&#64;"' symbol separating local part and domain
+            name.</mat-error
+          >
           <mat-error *ngIf="regForm.get('email')?.errors?.['registration']"
             >User with this email already exists.</mat-error
           >
@@ -39,11 +46,20 @@
           <mat-error *ngIf="regForm.get('password')?.hasError('required')"
             >This field is required.</mat-error
           >
-          <mat-error *ngIf="regForm.get('password')?.errors?.['password']"
-            >Must contain lower-case, upper-case, numbers. At least 8 characters</mat-error
-          >
           <mat-error *ngIf="regForm.get('password')?.errors?.['containSpaces']"
             >Please, delete spaces.</mat-error
+          >
+          <mat-error *ngIf="regForm.get('password')?.errors?.['lower']"
+            >Must contain at least 1 lower-case letter.</mat-error
+          >
+          <mat-error *ngIf="regForm.get('password')?.errors?.['upper']"
+            >Must contain at least 1 upper-case letter.</mat-error
+          >
+          <mat-error *ngIf="regForm.get('password')?.errors?.['number']"
+            >Must contain at least 1 digit.</mat-error
+          >
+          <mat-error *ngIf="regForm.get('password')?.errors?.['length']"
+            >Must contain at least 8 characters</mat-error
           >
         </mat-form-field>
       </div>
