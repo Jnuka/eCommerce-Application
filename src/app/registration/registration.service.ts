@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { CustomerDraft } from './registration.interfaces';
 import { environment } from '../../environments/environment';
 import { CtpApiService } from '../data/services/ctp-api.service';
@@ -13,6 +13,7 @@ import { CustomerTokenResponse } from '../auth/auth.interfaces';
   providedIn: 'root',
 })
 export class RegistrationService {
+  public static emailExist = signal(false);
   private http = inject(HttpClient);
   private ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
@@ -50,6 +51,12 @@ export class RegistrationService {
         //   this.toastService.error('The form has empty fields or the data is incorrect');
         //   return throwError(() => error);
         // }
+        const emailInput = document.getElementById('emailReg');
+        RegistrationService.emailExist.set(true);
+        const event = new Event('input');
+        emailInput?.dispatchEvent(event);
+        RegistrationService.emailExist.set(false);
+
         const description =
           error.error.message || 'Unknown registration error. Try registering again';
         this.toastService.error(description);

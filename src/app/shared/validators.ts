@@ -1,23 +1,65 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { RegistrationService } from '../registration/registration.service';
+import { AuthService } from '../auth/auth.service';
+
+export function spacesCheck(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const inputString: string = typeof control?.value === 'string' ? control?.value : '';
+
+    if (inputString.includes(' ')) {
+      return { containSpaces: 'false' };
+    }
+
+    return null;
+  };
+}
+
+export function isEmailExist(): ValidatorFn {
+  return (): ValidationErrors | null => {
+    if (RegistrationService.emailExist()) {
+      return { registration: 'false' };
+    }
+
+    return null;
+  };
+}
+
+export function isCustomerExist(): ValidatorFn {
+  return (): ValidationErrors | null => {
+    if (AuthService.incorrectCredentials) {
+      return { notFound: 'false' };
+    }
+
+    return null;
+  };
+}
 
 export function emailValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const login: string = typeof control?.value === 'string' ? control?.value : '';
     const index = typeof login === 'string' ? login.lastIndexOf('@') : null;
 
-    if (login.includes(' ')) {
-      return { email: false };
+    if (!login) {
+      return null;
+    }
+
+    if (index === -1) {
+      return { dog: 'false' };
+    }
+
+    if (!/[\d.A-Za-z-][^.]+\.[A-Za-z]{2,}/.test(login)) {
+      return { domain: 'false' };
     }
 
     if (index) {
       const domain: string = login?.slice(index + 1);
       if (!domain.includes('.')) {
-        return { email: false };
+        return { email: 'false' };
       }
     }
 
-    if (!/^[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}$/.test(login)) {
-      return { email: false };
+    if (!/[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}/.test(login)) {
+      return { email: 'false' };
     }
 
     return null;
@@ -28,12 +70,24 @@ export function passwordValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     const password: string = typeof control?.value === 'string' ? control?.value : '';
 
-    if (password.includes(' ')) {
-      return { password: false };
+    if (!password) {
+      return null;
     }
 
-    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[a-z]).{8,}$/.test(password)) {
-      return { password: false };
+    if (!/^(?=.*[a-z]).+$/.test(password)) {
+      return { lower: 'false' };
+    }
+
+    if (!/^(?=.*[A-Z]).+$/.test(password)) {
+      return { upper: 'false' };
+    }
+
+    if (!/^(?=.*\d).+$/.test(password)) {
+      return { number: 'false' };
+    }
+
+    if (password.length < 8) {
+      return { length: 'false' };
     }
 
     return null;
@@ -65,6 +119,10 @@ export function cityValidator(): ValidatorFn {
     }
 
     if (/[\d!#$%&()*@^_]/.test(city)) {
+      return { city: false };
+    }
+
+    if (!/(?=.*[\dA-Za-z]).+/.test(city)) {
       return { city: false };
     }
 

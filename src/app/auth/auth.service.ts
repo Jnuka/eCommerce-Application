@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
+  public static incorrectCredentials = false;
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
@@ -76,6 +77,14 @@ export class AuthService {
         this.toastService.success('Successful entry');
       }),
       catchError((error: HttpErrorResponse) => {
+        const emailInput = document.getElementById('emailLog');
+        const passwordInput = document.getElementById('passwordLog');
+        AuthService.incorrectCredentials = true;
+        const event = new Event('input');
+        emailInput?.dispatchEvent(event);
+        passwordInput?.dispatchEvent(event);
+        AuthService.incorrectCredentials = false;
+
         const authError: AuthErrorResponse = error.error;
         const description = authError.message || 'Unknown login error';
         this.toastService.error(description);

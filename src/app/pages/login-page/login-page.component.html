@@ -16,14 +16,27 @@
           placeholder="user@example.com"
           name="email"
           required
+          id="emailLog"
         />
-        <mat-error *ngIf="loginForm.get('email')?.hasError('required')"
-          >This field is required</mat-error
+        <mat-error *ngIf="loginForm.get('email')?.errors?.['email']"
+          >Please, enter correct email.</mat-error
         >
-        <mat-error *ngIf="loginForm.value.email">Please, enter correct email.</mat-error>
+        <mat-error *ngIf="loginForm.get('email')?.errors?.['containSpaces']"
+          >Please, delete spaces.</mat-error
+        >
+        <mat-error *ngIf="loginForm.get('email')?.errors?.['domain']"
+          >Email address must contain a domain name (e.g., example.com).</mat-error
+        >
+        <mat-error *ngIf="loginForm.get('email')?.errors?.['dog']"
+          >Email address must contain an '&#64;' symbol separating local part and domain
+          name.</mat-error
+        >
+        <mat-error *ngIf="loginForm.get('email')?.errors?.['notFound']"
+          >Customer account with the given credentials not found.</mat-error
+        >
       </mat-form-field>
 
-      <mat-form-field>
+      <mat-form-field class="mt-[8px]">
         <mat-label>Password</mat-label>
 
         <input
@@ -32,6 +45,7 @@
           [type]="hidePassword() ? 'password' : 'text'"
           name="password"
           required
+          id="passwordLog"
         />
         <button
           mat-icon-button
@@ -45,9 +59,23 @@
         <mat-error *ngIf="loginForm.get('password')?.hasError('required')"
           >This field is required.</mat-error
         >
-        <mat-error *ngIf="loginForm.value.password"
-          >Password must be a combination of lower-case, upper-case, numbers at least 8 characters
-          long.</mat-error
+        <mat-error *ngIf="loginForm.get('password')?.errors?.['containSpaces']"
+          >Please, delete spaces.</mat-error
+        >
+        <mat-error *ngIf="loginForm.get('password')?.errors?.['lower']"
+          >Must contain at least 1 lower-case letter.</mat-error
+        >
+        <mat-error *ngIf="loginForm.get('password')?.errors?.['upper']"
+          >Must contain at least 1 upper-case letter.</mat-error
+        >
+        <mat-error *ngIf="loginForm.get('password')?.errors?.['number']"
+          >Must contain at least 1 number.</mat-error
+        >
+        <mat-error *ngIf="loginForm.get('password')?.errors?.['length']"
+          >Must contain at least 8 characters</mat-error
+        >
+        <mat-error *ngIf="loginForm.get('password')?.errors?.['notFound']"
+          >Customer account with the given credentials not found.</mat-error
         >
       </mat-form-field>
 
