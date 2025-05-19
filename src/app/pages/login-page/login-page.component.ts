@@ -46,7 +46,6 @@ export class LoginPageComponent {
       Validators.required.bind(Validators),
       spacesCheck(),
       passwordValidator(),
-      isCustomerExist(),
     ]),
   });
 
@@ -77,8 +76,8 @@ export class LoginPageComponent {
       next: () => {
         void this.goMain();
       },
-      error: error => {
-        console.error('Login error:', error); // eslint-disable-line no-console
+      error: () => {
+        console.log('Login incomplete'); // eslint-disable-line no-console
       },
     });
   };
