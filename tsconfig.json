@@ -28,7 +28,7 @@
     "strictPropertyInitialization": true,
     "useUnknownInCatchVariables": true,
     "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

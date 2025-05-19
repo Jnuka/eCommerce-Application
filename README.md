@@ -19,17 +19,17 @@ This project was generated using [Angular CLI](https://github.com/angular/angula
 
 **Frontend**
 
-* Angular
-* TypeScript
-* ESLint
-* Prettier
-* Tailwind CSS
-* Husky and Lint-staged
-* Karma tests
+- Angular
+- TypeScript
+- ESLint
+- Prettier
+- Tailwind CSS
+- Husky and Lint-staged
+- Karma tests
 
 **Backend**
 
-* CommerceTools
+- CommerceTools
 
 ## Initialization project
 
@@ -47,7 +47,7 @@ To start a local development server, run:
 ng serve
 ```
 
-**___or___**
+\***\*_or_\*\***
 
 ```bash
 npm start
