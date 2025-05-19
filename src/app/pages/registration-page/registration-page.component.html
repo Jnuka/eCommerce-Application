@@ -166,7 +166,13 @@
           <p class="title text-center text-lg font-[bold]">Billing Address</p>
           <mat-form-field>
             <mat-label>Street</mat-label>
-            <input matInput formControlName="billingStreet" type="text" required />
+            <input
+              matInput
+              formControlName="billingStreet"
+              type="text"
+              required
+              [ngClass]="{ 'disabled-form-control': getFormControl('billingStreet')?.disabled }"
+            />
             <mat-error *ngIf="regForm.get('billingStreet')?.hasError('required')"
               >This field is required</mat-error
             >
@@ -177,7 +183,13 @@
 
           <mat-form-field>
             <mat-label>City</mat-label>
-            <input matInput formControlName="billingCity" type="text" required />
+            <input
+              matInput
+              formControlName="billingCity"
+              type="text"
+              required
+              [ngClass]="{ 'disabled-form-control': getFormControl('billingCity')?.disabled }"
+            />
             <mat-error *ngIf="regForm.get('billingCity')?.hasError('required')"
               >This field is required</mat-error
             >
@@ -196,6 +208,7 @@
               formControlName="billingPostalCode"
               type="number"
               required
+              [ngClass]="{ 'disabled-form-control': getFormControl('billingPostalCode')?.disabled }"
             />
             <mat-error *ngIf="regForm.get('billingPostalCode')?.hasError('required')"
               >This field is required</mat-error
@@ -206,7 +219,12 @@
           </mat-form-field>
 
           <mat-form-field>
-            <mat-select placeholder="Country*" formControlName="billingCountry" required>
+            <mat-select
+              placeholder="Country*"
+              formControlName="billingCountry"
+              required
+              [ngClass]="{ 'disabled-form-control': getFormControl('billingCountry')?.disabled }"
+            >
               <mat-option
                 *ngFor="let billingCountry of billingCountry"
                 [value]="billingCountry.value"
@@ -228,7 +246,9 @@
       </div>
     </div>
     <section>
-      <mat-checkbox>Set Billing address the same as Shipping address</mat-checkbox>
+      <mat-checkbox formControlName="sameAddress" (change)="toggleValidation()"
+        >Set Billing address the same as Shipping address</mat-checkbox
+      >
     </section>
     <button
       type="submit"
