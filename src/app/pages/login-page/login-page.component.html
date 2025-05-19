@@ -25,7 +25,7 @@
           >Please, delete spaces.</mat-error
         >
         <mat-error *ngIf="loginForm.get('email')?.errors?.['domain']"
-          >Email address must contain a domain name (e.g., example.com).</mat-error
+          >Email address must contain a domain name.</mat-error
         >
         <mat-error *ngIf="loginForm.get('email')?.errors?.['dog']"
           >Email address must contain an '&#64;' symbol.
