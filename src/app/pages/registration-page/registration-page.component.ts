@@ -75,11 +75,35 @@ export class RegistrationPageComponent {
     billingPostalCode: new FormControl('', Validators.pattern('[0-9]{5}')),
     billingCountry: new FormControl(''),
     setDefaultBilling: new FormControl(''),
+
+    sameAddress: new FormControl(''),
   });
 
   private router = inject(Router);
   private registrationService = inject(RegistrationService);
   private toastService = inject(ToastService);
+  private arrayInputsValue = ['Street', 'City', 'PostalCode', 'Country'];
+
+  public getFormControl(controlName: string): FormControl | null {
+    const control = this.regForm.get(controlName);
+    return control instanceof FormControl ? control : null;
+  }
+
+  public toggleValidation(): void {
+    const shouldDisable = this.regForm.get('sameAddress')?.value;
+    if (shouldDisable) {
+      this.arrayInputsValue.forEach(value => {
+        this.regForm.get(`billing${value}`)?.disable();
+      });
+    } else {
+      this.arrayInputsValue.forEach(value => {
+        this.regForm.get(`billing${value}`)?.enable();
+      });
+    }
+    this.arrayInputsValue.forEach(value => {
+      this.regForm.get(`billing${value}`)?.updateValueAndValidity();
+    });
+  }
 
   public async goLogin(): Promise<void> {
     await this.router.navigate(['login']);
@@ -90,10 +114,23 @@ export class RegistrationPageComponent {
   }
 
   public onSubmit = (): void => {
+    const shouldDisable = this.regForm.get('sameAddress')?.value;
+    if (shouldDisable) {
+      this.arrayInputsValue.forEach(value => {
+        const pathValue = `billing${value}`;
+        this.regForm.get(pathValue)?.setValue(this.regForm.get(`shipping${value}`)?.value || '');
+      });
+    }
+
     if (this.regForm.invalid) {
       this.toastService.error('Invalid form values');
       return;
     }
+
+    this.arrayInputsValue.forEach(value => {
+      this.regForm.get(`billing${value}`)?.enable();
+    });
+
     const formData = this.regForm.value;
 
     if (
