@@ -52,10 +52,6 @@ export class RegistrationService {
         const event = new Event('input');
         emailInput?.dispatchEvent(event);
         RegistrationService.emailExist.set(false);
-
-        const description =
-          error.error.message || 'Unknown registration error. Try registering again';
-        this.toastService.error(description);
         return throwError(() => error);
       }),
     );

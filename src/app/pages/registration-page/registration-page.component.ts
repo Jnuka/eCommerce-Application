@@ -18,7 +18,6 @@ import {
 } from '../../shared/validators';
 import { RegistrationService } from '../../registration/registration.service';
 import { CustomerDraft } from '../../registration/registration.interfaces';
-import { ToastService } from '../../helpers/toast.service';
 
 @Component({
   selector: 'app-registration-page',
@@ -81,7 +80,6 @@ export class RegistrationPageComponent {
 
   private router = inject(Router);
   private registrationService = inject(RegistrationService);
-  private toastService = inject(ToastService);
   private arrayInputsValue = ['Street', 'City', 'PostalCode', 'Country'];
 
   public getFormControl(controlName: string): FormControl | null {
@@ -123,7 +121,7 @@ export class RegistrationPageComponent {
     }
 
     if (this.regForm.invalid) {
-      this.toastService.error('Invalid form values');
+      console.log('Invalid form values'); // eslint-disable-line no-console
       return;
     }
 
@@ -148,7 +146,6 @@ export class RegistrationPageComponent {
       !formData.billingPostalCode ||
       !formData.billingCountry
     ) {
-      this.toastService.error('Missing required form values');
       return;
     }
     const isoDate = new Date(formData.userAge).toISOString().split('T')[0];
@@ -184,7 +181,9 @@ export class RegistrationPageComponent {
 
     this.registrationService.signUp(customerDraft).subscribe({
       next: () => void this.goMain(),
-      error: error => console.error('Registration error:', error), // eslint-disable-line no-console
+      error: () => {
+        console.log('Registartion incomplete'); // eslint-disable-line no-console
+      },
     });
   };
 }

@@ -6,7 +6,6 @@ import { environment } from '../../environments/environment';
 import { CtpApiService } from '../data/services/ctp-api.service';
 import { ToastService } from '../helpers/toast.service';
 import { catchError } from 'rxjs/operators';
-import { AuthErrorResponse } from './auth.interfaces';
 import { HttpErrorResponse } from './auth.interfaces';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
@@ -39,7 +38,6 @@ export class AuthService {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) {
-          this.toastService.error('No access token for login');
           throw new Error('No access token available');
         }
 
@@ -106,10 +104,6 @@ export class AuthService {
         emailInput?.dispatchEvent(event);
         passwordInput?.dispatchEvent(event);
         AuthService.incorrectCredentials = false;
-
-        const authError: AuthErrorResponse = error.error;
-        const description = authError.message || 'Unknown login error';
-        this.toastService.error(description);
         return throwError(() => error);
       }),
     );

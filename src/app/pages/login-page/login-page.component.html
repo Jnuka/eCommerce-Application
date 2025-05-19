@@ -73,9 +73,6 @@
         <mat-error *ngIf="loginForm.get('password')?.errors?.['length']"
           >Must contain at least 8 characters</mat-error
         >
-        <mat-error *ngIf="loginForm.get('password')?.errors?.['notFound']"
-          >Customer account with the given credentials not found.</mat-error
-        >
       </mat-form-field>
 
       <button
