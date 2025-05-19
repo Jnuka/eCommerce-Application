@@ -10,12 +10,14 @@ import { AuthErrorResponse } from './auth.interfaces';
 import { HttpErrorResponse } from './auth.interfaces';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
+import { CustomerSignInResult } from './auth.interfaces';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   public static incorrectCredentials = false;
+  public customerData: CustomerSignInResult | null = null;
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
@@ -33,7 +35,7 @@ export class AuthService {
     return !!this.customerToken;
   }
 
-  public login(payload: { email: string; password: string }): Observable<CustomerTokenResponse> {
+  public login(payload: { email: string; password: string }): Observable<CustomerSignInResult> {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) {
@@ -74,7 +76,27 @@ export class AuthService {
       }),
       tap((response: CustomerTokenResponse) => {
         this.saveTokens(response);
+      }),
+      switchMap(() => {
+        const headers = new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.customerToken}`,
+        });
+
+        const customerBody = {
+          email: payload.email,
+          password: payload.password,
+        };
+
+        return this.http.post<CustomerSignInResult>(
+          `${environment.ctp_api_url}/${environment.ctp_project_key}/login`,
+          customerBody,
+          { headers },
+        );
+      }),
+      tap((customerResponse: CustomerSignInResult) => {
         this.toastService.success('Successful entry');
+        this.customerData = customerResponse;
       }),
       catchError((error: HttpErrorResponse) => {
         const emailInput = document.getElementById('emailLog');

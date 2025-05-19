@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpErrorResponse } from './registration.interfaces';
 import { ToastService } from '../helpers/toast.service';
 import { AuthService } from '../auth/auth.service';
-import { CustomerTokenResponse } from '../auth/auth.interfaces';
+import { CustomerSignInResult } from '../auth/auth.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class RegistrationService {
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
 
-  public signUp(customerDraft: CustomerDraft): Observable<CustomerTokenResponse> {
+  public signUp(customerDraft: CustomerDraft): Observable<CustomerSignInResult> {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) {
