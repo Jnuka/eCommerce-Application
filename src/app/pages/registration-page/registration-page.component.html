@@ -32,9 +32,8 @@
             >Email address must contain a domain name (e.g., example.com).</mat-error
           >
           <mat-error *ngIf="regForm.get('email')?.errors?.['dog']"
-            >Email address must contain an '"&#64;"' symbol separating local part and domain
-            name.</mat-error
-          >
+            >Email address must contain an '&#64;' symbol.
+          </mat-error>
           <mat-error *ngIf="regForm.get('email')?.errors?.['registration']"
             >User with this email already exists.</mat-error
           >
