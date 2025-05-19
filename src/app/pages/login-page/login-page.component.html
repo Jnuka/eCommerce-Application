@@ -28,9 +28,8 @@
           >Email address must contain a domain name (e.g., example.com).</mat-error
         >
         <mat-error *ngIf="loginForm.get('email')?.errors?.['dog']"
-          >Email address must contain an '&#64;' symbol separating local part and domain
-          name.</mat-error
-        >
+          >Email address must contain an '&#64;' symbol.
+        </mat-error>
         <mat-error *ngIf="loginForm.get('email')?.errors?.['notFound']"
           >Customer account with the given credentials not found.</mat-error
         >
