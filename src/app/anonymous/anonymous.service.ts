@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import { HttpHeaders, HttpParams, HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { tap, catchError, throwError, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ToastService } from '../helpers/toast.service';
 import { AnonymousTokenResponse } from './anonymous.interfaces';
 import { CookieService } from 'ngx-cookie-service';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
   providedIn: 'root',
 })
 export class AnonymousService {
-  private toastService = inject(ToastService);
   private http = inject(HttpClient);
   private cookieService = inject(CookieService);
 
@@ -75,8 +73,7 @@ export class AnonymousService {
           this.cookieService.set('anonymous_refresh_token', this.refreshToken);
         }),
         catchError((error: HttpErrorResponse) => {
-          // TODO: remove display error, add console.error
-          this.toastService.error('Anonymous authorization error');
+          console.log('Authorization cannot be done anonymously'); // eslint-disable-line no-console
           return throwError(() => error);
         }),
       );

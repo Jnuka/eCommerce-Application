@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpErrorResponse } from './registration.interfaces';
 import { ToastService } from '../helpers/toast.service';
 import { AuthService } from '../auth/auth.service';
-import { CustomerTokenResponse } from '../auth/auth.interfaces';
+import { CustomerSignInResult } from '../auth/auth.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +19,7 @@ export class RegistrationService {
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
 
-  public signUp(customerDraft: CustomerDraft): Observable<CustomerTokenResponse> {
+  public signUp(customerDraft: CustomerDraft): Observable<CustomerSignInResult> {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) {
@@ -47,10 +47,6 @@ export class RegistrationService {
         });
       }),
       catchError((error: HttpErrorResponse) => {
-        // if (error.error.statusCode === 400) {
-        //   this.toastService.error('The form has empty fields or the data is incorrect');
-        //   return throwError(() => error);
-        // }
         const emailInput = document.getElementById('emailReg');
         RegistrationService.emailExist.set(true);
         const event = new Event('input');

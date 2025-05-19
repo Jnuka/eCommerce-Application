@@ -22,3 +22,14 @@ interface Errors {
   code: string;
   message: string;
 }
+
+export interface Customer {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+}
+
+export interface CustomerSignInResult {
+  customer: Customer;
+}
