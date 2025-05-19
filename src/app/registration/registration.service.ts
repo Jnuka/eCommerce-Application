@@ -47,10 +47,6 @@ export class RegistrationService {
         });
       }),
       catchError((error: HttpErrorResponse) => {
-        // if (error.error.statusCode === 400) {
-        //   this.toastService.error('The form has empty fields or the data is incorrect');
-        //   return throwError(() => error);
-        // }
         const emailInput = document.getElementById('emailReg');
         RegistrationService.emailExist.set(true);
         const event = new Event('input');

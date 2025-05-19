@@ -14,11 +14,15 @@ export class ToastService {
   };
 
   public error(message: string): void {
-    this.show(`❌ ${message}`, { backgroundColor: 'rgb(82, 65, 57)' });
+    this.show(`❌ ${message}`, {
+      style: { background: 'rgb(82, 65, 57)' },
+    });
   }
 
   public success(message: string): void {
-    this.show(`✅ ${message}`, { backgroundColor: '#6B3C21' });
+    this.show(`✅ ${message}`, {
+      style: { background: '#6B3C21' },
+    });
   }
 
   private show(message: string, options: Partial<Toastify.Options> = {}): void {
