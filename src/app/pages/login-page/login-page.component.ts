@@ -23,7 +23,6 @@ import {
 
 @Component({
   selector: 'app-login-page',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatFormFieldModule,
