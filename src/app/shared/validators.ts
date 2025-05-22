@@ -7,7 +7,7 @@ export function spacesCheck(): ValidatorFn {
     const inputString: string = typeof control?.value === 'string' ? control?.value : '';
 
     if (inputString.includes(' ')) {
-      return { containSpaces: 'false' };
+      return { containSpaces: true };
     }
 
     return null;
@@ -17,7 +17,7 @@ export function spacesCheck(): ValidatorFn {
 export function isEmailExist(): ValidatorFn {
   return (): ValidationErrors | null => {
     if (RegistrationService.emailExist()) {
-      return { registration: 'false' };
+      return { registration: true };
     }
 
     return null;
@@ -27,7 +27,7 @@ export function isEmailExist(): ValidatorFn {
 export function isCustomerExist(): ValidatorFn {
   return (): ValidationErrors | null => {
     if (AuthService.incorrectCredentials) {
-      return { notFound: 'false' };
+      return { notFound: true };
     }
 
     return null;
@@ -44,22 +44,22 @@ export function emailValidator(): ValidatorFn {
     }
 
     if (index === -1) {
-      return { dog: 'false' };
+      return { dog: true };
     }
 
     if (!/[\d.A-Za-z-][^.]+\.[A-Za-z]{2,}/.test(login)) {
-      return { domain: 'false' };
+      return { domain: true };
     }
 
     if (index) {
       const domain: string = login?.slice(index + 1);
       if (!domain.includes('.')) {
-        return { email: 'false' };
+        return { email: true };
       }
     }
 
     if (!/[\w%+.-]+@[\d.A-Za-z-]+\.[A-Za-z]{2,}/.test(login)) {
-      return { email: 'false' };
+      return { email: true };
     }
 
     return null;
@@ -75,19 +75,19 @@ export function passwordValidator(): ValidatorFn {
     }
 
     if (!/^(?=.*[a-z]).+$/.test(password)) {
-      return { lower: 'false' };
+      return { lower: true };
     }
 
     if (!/^(?=.*[A-Z]).+$/.test(password)) {
-      return { upper: 'false' };
+      return { upper: true };
     }
 
     if (!/^(?=.*\d).+$/.test(password)) {
-      return { number: 'false' };
+      return { number: true };
     }
 
     if (password.length < 8) {
-      return { length: 'false' };
+      return { length: true };
     }
 
     return null;
@@ -103,7 +103,7 @@ export function ageValidator(): ValidatorFn {
     const age: number = today.getFullYear() - birthdayDate.getFullYear();
 
     if (age < 13) {
-      return { userAge: false };
+      return { userAge: true };
     }
 
     return null;
@@ -119,11 +119,11 @@ export function cityValidator(): ValidatorFn {
     }
 
     if (/[\d!#$%&()*@^_]/.test(city)) {
-      return { city: false };
+      return { city: true };
     }
 
     if (!/(?=.*[\dA-Za-z]).+/.test(city)) {
-      return { city: false };
+      return { city: true };
     }
 
     return null;
