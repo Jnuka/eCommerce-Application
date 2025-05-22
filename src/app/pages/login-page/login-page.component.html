@@ -3,6 +3,7 @@
     <h1 class="text-3xl">Welcome</h1>
 
     <div class="w-[270px] flex flex-col gap-2.5">
+      <p class="customer-error">Customer account with the given credentials not found.</p>
       <mat-form-field>
         <mat-label>Email</mat-label>
         <input
@@ -29,9 +30,6 @@
         <mat-error *ngIf="loginForm.get('email')?.errors?.['dog']"
           >Email address must contain an '&#64;' symbol.
         </mat-error>
-        <mat-error *ngIf="loginForm.get('email')?.errors?.['notFound']"
-          >Customer account with the given credentials not found.</mat-error
-        >
       </mat-form-field>
 
       <mat-form-field class="mt-[8px]">
@@ -77,7 +75,6 @@
       <button
         type="submit"
         class="bg-[#6B3C21] text-white cursor-pointer mt-2 p-2.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:border-gray-200 disabled:bg-[#504742] disabled:shadow-none disabled:pointer-events-none"
-        [disabled]="loginForm.invalid"
         (click)="onSubmit()"
       >
         Log In
