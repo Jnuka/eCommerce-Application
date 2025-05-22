@@ -97,13 +97,15 @@ export class AuthService {
         this.customerData = customerResponse;
       }),
       catchError((error: HttpErrorResponse) => {
-        const emailInput = document.getElementById('emailLog');
-        const passwordInput = document.getElementById('passwordLog');
-        AuthService.incorrectCredentials = true;
-        const event = new Event('input');
-        emailInput?.dispatchEvent(event);
-        passwordInput?.dispatchEvent(event);
-        AuthService.incorrectCredentials = false;
+        const customError = document.querySelector('.customer-error');
+        if (customError instanceof HTMLElement) {
+          if (
+            error.error.error_description ===
+            'Customer account with the given credentials not found.'
+          ) {
+            customError.classList.add('show');
+          }
+        }
         return throwError(() => error);
       }),
     );
