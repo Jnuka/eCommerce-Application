@@ -1,6 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { RegistrationService } from '../registration/registration.service';
-import { AuthService } from '../auth/auth.service';
 
 export function spacesCheck(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -18,16 +17,6 @@ export function isEmailExist(): ValidatorFn {
   return (): ValidationErrors | null => {
     if (RegistrationService.emailExist()) {
       return { registration: true };
-    }
-
-    return null;
-  };
-}
-
-export function isCustomerExist(): ValidatorFn {
-  return (): ValidationErrors | null => {
-    if (AuthService.incorrectCredentials) {
-      return { notFound: true };
     }
 
     return null;
