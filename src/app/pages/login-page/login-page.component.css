@@ -1,0 +1,9 @@
+.customer-error {
+  display: none;
+  color: var(--error-color);
+  font-size: 12px;
+}
+
+.show {
+  display: flex;
+}

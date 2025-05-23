@@ -2,6 +2,8 @@
 @import 'tailwindcss';
 
 :root {
+  --error-color: #ff3d00;
+
   .mat-mdc-select-panel {
     background-color: #eae3d7;
   }
