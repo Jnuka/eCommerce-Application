@@ -64,7 +64,7 @@ export class LoginPageComponent {
   public onSubmit = (): void => {
     if (this.loginForm.invalid) return;
     const customError = document.querySelector('.customer-error');
-    if (customError instanceof HTMLElement) {
+    if (customError instanceof HTMLElement && customError.classList.contains('show')) {
       customError.classList.remove('show');
     }
     const { email, password } = this.loginForm.value;

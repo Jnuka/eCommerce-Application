@@ -15,7 +15,6 @@ import { CustomerSignInResult } from './auth.interfaces';
   providedIn: 'root',
 })
 export class AuthService {
-  public static incorrectCredentials = false;
   public customerData: CustomerSignInResult | null = null;
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
