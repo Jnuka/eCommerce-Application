@@ -1,0 +1,8 @@
+.title-main {
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  @media (max-width: 1050px) {
+    font-weight: 800;
+    -webkit-text-fill-color: #524139ff;
+  }
+}

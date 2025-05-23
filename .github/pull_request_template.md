@@ -2,7 +2,7 @@
 
 ### This is a ...
 
-***Remove unnecessary options***
+**_Remove unnecessary options_**
 
 - [ ] 🌟 feat: new feature
 - [ ] ⚙️ chore: for implementing installing/removing dependencies,configuring the project/tools
