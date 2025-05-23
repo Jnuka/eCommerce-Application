@@ -8,6 +8,7 @@ import { CatalogProductPageComponent } from './pages/catalog-product-page/catalo
 import { AboutUsPageComponent } from './pages/about-us-page/about-us-page.component';
 import { noAuthGuard } from './guards/no-auth.guard';
 import { DetailedProductPageComponent } from './pages/detailed-product-page/detailed-product-page.component';
+import { UserProfileComponent } from './pages/user-profile/user-profile/user-profile.component';
 
 export const routes: Routes = [
   {
@@ -28,6 +29,7 @@ export const routes: Routes = [
       { path: 'catalog', component: CatalogProductPageComponent },
       { path: 'about', component: AboutUsPageComponent },
       { path: 'product', component: DetailedProductPageComponent },
+      { path: 'profile', component: UserProfileComponent },
       { path: '**', component: NotFoundPageComponent },
     ],
   },

@@ -1,0 +1,109 @@
+<div class="flex justify-center mt-[80px] px-4">
+  <div class="w-full max-w-[800px] flex flex-col items-center gap-10">
+    <h1 class="text-3xl font-semibold">My Account</h1>
+
+    <mat-tab-group class="w-full">
+      <mat-tab label="Personal Information">
+        <div
+          *ngIf="customer() as customerResult"
+          class="bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6"
+        >
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-6 border rounded-xl p-4 shadow-sm bg-gradient-to-r from-[#3F2F2A] from-45% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+          >
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">First Name</p>
+              <p class="text-base text-[#ffffff]">{{ customerResult.customer.firstName }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Last Name</p>
+              <p class="text-base text-[#ffffff]">{{ customerResult.customer.lastName }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Email</p>
+              <p class="text-base text-[#ffffff]">{{ customerResult.customer.email }}</p>
+            </div>
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Date of Birth</p>
+              <p class="text-bas text-[#ffffff]">{{ customerResult.customer.dateOfBirth }}</p>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Addresses">
+        <div
+          *ngIf="customer() as customerResult"
+          class="bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6"
+        >
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="border rounded-xl p-4 shadow-sm flex flex-col gap-2">
+              <h3 class="text-lg font-semibold mb-2">Shipping Address</h3>
+
+              <div>
+                <p class="text-sm text-gray-500">Street</p>
+                <p class="text-base">{{ customerResult.customer.addresses[0].streetName }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">City</p>
+                <p class="text-base">{{ customerResult.customer.addresses[0].city }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Postal Code</p>
+                <p class="text-base">{{ customerResult.customer.addresses[0].postalCode }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Country</p>
+                <p class="text-base">{{ customerResult.customer.addresses[0].country }}</p>
+              </div>
+            </div>
+
+            <div class="border rounded-xl p-4 shadow-sm flex flex-col gap-2">
+              <h3 class="text-lg font-semibold mb-2">Billing Address</h3>
+
+              <div>
+                <p class="text-sm text-gray-500">Street</p>
+                <p class="text-base">{{ customerResult.customer.addresses[1].streetName }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">City</p>
+                <p class="text-base">{{ customerResult.customer.addresses[1].city }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Postal Code</p>
+                <p class="text-base">{{ customerResult.customer.addresses[1].postalCode }}</p>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Country</p>
+                <p class="text-base">{{ customerResult.customer.addresses[1].country }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+      <mat-tab label="Secure information">
+        <div class="bg-white shadow-lg rounded-2xl p-8">
+          <h2 class="text-2xl font-semibold">Security Settings</h2>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <div class="flex flex-wrap justify-center gap-6 mt-6">
+      <button
+        mat-raised-button
+        color="primary"
+        class="bg-[#6B3C21] hover:bg-[#7e4727] text-white py-3 px-6 rounded-lg transition"
+      >
+        My Card
+      </button>
+      <button
+        mat-stroked-button
+        color="warn"
+        (click)="logout()"
+        class="py-3 px-6 rounded-lg border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition"
+      >
+        Logout
+      </button>
+    </div>
+  </div>
+</div>

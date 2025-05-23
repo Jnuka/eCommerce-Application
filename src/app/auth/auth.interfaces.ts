@@ -28,6 +28,20 @@ export interface Customer {
   email: string;
   firstName?: string;
   lastName?: string;
+  dateOfBirth: string;
+  addresses: Address[];
+  defaultBillingAddressId?: string;
+  shippingAddressIds: string;
+  billingAddressIds: string;
+  defaultShippingAddressId?: string;
+}
+
+export interface Address {
+  id: string;
+  streetName: string;
+  postalCode: string;
+  city: string;
+  country: string;
 }
 
 export interface CustomerSignInResult {

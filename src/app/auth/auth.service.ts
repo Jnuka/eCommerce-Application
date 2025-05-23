@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { CustomerTokenResponse } from './auth.interfaces';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, switchMap, tap, throwError } from 'rxjs';
@@ -15,7 +15,8 @@ import { CustomerSignInResult } from './auth.interfaces';
   providedIn: 'root',
 })
 export class AuthService {
-  public customerData: CustomerSignInResult | null = null;
+  public readonly _customerData = signal<CustomerSignInResult | null>(null);
+  public readonly customerData = this._customerData;
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
@@ -93,7 +94,7 @@ export class AuthService {
       }),
       tap((customerResponse: CustomerSignInResult) => {
         this.toastService.success('Successful entry');
-        this.customerData = customerResponse;
+        this._customerData.set(customerResponse);
       }),
       catchError((error: HttpErrorResponse) => {
         const customError = document.querySelector('.customer-error');
@@ -143,6 +144,7 @@ export class AuthService {
   }
 
   public logout(): void {
+    this._customerData.set(null);
     this.cookieService.deleteAll();
     this.customerToken = null;
     this.refreshToken = null;

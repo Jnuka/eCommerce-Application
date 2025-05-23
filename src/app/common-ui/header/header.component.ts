@@ -32,4 +32,7 @@ export class HeaderComponent {
   public async goAbout(): Promise<void> {
     await this.router.navigate(['about']);
   }
+  public async goProfile(): Promise<void> {
+    await this.router.navigate(['profile']);
+  }
 }
