@@ -40,7 +40,7 @@ describe('RegistrationPageComponent', () => {
 });
 
 describe('Custom validators testing', () => {
-  it('should return error if email doesn`t not contain @', () => {
+  it('should return error if email not valid', () => {
     const control = new FormControl('', emailValidator());
 
     expect(control.errors).toBeNull();
