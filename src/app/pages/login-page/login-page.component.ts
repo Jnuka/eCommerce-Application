@@ -14,16 +14,10 @@ import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import {
-  emailValidator,
-  isCustomerExist,
-  passwordValidator,
-  spacesCheck,
-} from '../../shared/validators';
+import { emailValidator, passwordValidator, spacesCheck } from '../../shared/validators';
 
 @Component({
   selector: 'app-login-page',
-  standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     MatFormFieldModule,
@@ -41,7 +35,7 @@ import {
 })
 export class LoginPageComponent {
   public loginForm = new FormGroup({
-    email: new FormControl('', [spacesCheck(), emailValidator(), isCustomerExist()]),
+    email: new FormControl('', [spacesCheck(), emailValidator()]),
     password: new FormControl('', [
       Validators.required.bind(Validators),
       spacesCheck(),
@@ -69,7 +63,10 @@ export class LoginPageComponent {
 
   public onSubmit = (): void => {
     if (this.loginForm.invalid) return;
-
+    const customError = document.querySelector('.customer-error');
+    if (customError instanceof HTMLElement && customError.classList.contains('show')) {
+      customError.classList.remove('show');
+    }
     const { email, password } = this.loginForm.value;
     if (!email || !password) return;
     this.authService.login({ email, password }).subscribe({
