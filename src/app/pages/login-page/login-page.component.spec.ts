@@ -44,6 +44,17 @@ describe('LoginPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('Hide password function', () => {
+    it('should update the DOM', () => {
+      const previousValue = component.hidePassword();
+      const click = new MouseEvent('click');
+      component.clickEvent(click);
+      fixture.detectChanges();
+      const actualValue = component.hidePassword();
+      expect(!previousValue).toBe(actualValue);
+    });
+  });
+
   describe('Navigate', () => {
     it('should navigate to registration', fakeAsync(async () => {
       await component.goRegistration();
@@ -230,14 +241,5 @@ describe('LoginPageComponent', () => {
         ).toBeTruthy();
       }
     });
-    
-    describe('Hide password function', () => {
-    it('should update the DOM', () => {
-      const previousValue = component.hidePassword();
-      const click = new MouseEvent('click');
-      component.clickEvent(click);
-      fixture.detectChanges();
-      const actualValue = component.hidePassword();
-      expect(!previousValue).toBe(actualValue);
   });
 });
