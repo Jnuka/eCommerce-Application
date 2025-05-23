@@ -29,4 +29,15 @@ describe('LoginPageComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  describe('Hide password function', () => {
+    it('should update the DOM', () => {
+      const previousValue = component.hidePassword();
+      const click = new MouseEvent('click');
+      component.clickEvent(click);
+      fixture.detectChanges();
+      const actualValue = component.hidePassword();
+      expect(!previousValue).toBe(actualValue);
+    });
+  });
 });

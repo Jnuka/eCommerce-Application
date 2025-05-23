@@ -41,23 +41,33 @@ describe('RegistrationPageComponent', () => {
 
 describe('Custom validators testing', () => {
   it('should return error if email doesn`t not contain @', () => {
-    const control = new FormControl('user123', emailValidator());
+    const control = new FormControl('', emailValidator());
+
+    expect(control.errors).toBeNull();
+
+    control.setValue('user123');
+    expect(control.errors).toBeTruthy();
     expect(control.errors?.['dog']).toBeTrue();
-  });
 
-  it('should return error if email doesn`t not contain domain', () => {
-    const control = new FormControl('ywer123@', emailValidator());
+    control.setValue('ywer123@');
+    expect(control.errors).toBeTruthy();
     expect(control.errors?.['domain']).toBeTrue();
-  });
 
-  it('should return error if email is not correct', () => {
-    const control = new FormControl('ywer123@.yu', emailValidator());
+    control.setValue('ywer123@.yu');
+    expect(control.errors).toBeTruthy();
     expect(control.errors?.['email']).toBeTrue();
+
+    control.setValue('rew@mail.ru');
+    expect(control.errors).toBeNull();
   });
 
   it('should return error if input contains spaces', () => {
     const control = new FormControl(' ywer123@mail.yu ', spacesCheck());
+    expect(control.errors).toBeTruthy();
     expect(control.errors?.['containSpaces']).toBeTrue();
+
+    control.setValue('rew@mail.ru');
+    expect(control.errors).toBeNull();
   });
 
   it('should return error if password doesn`t not contain lower-case letter', () => {
