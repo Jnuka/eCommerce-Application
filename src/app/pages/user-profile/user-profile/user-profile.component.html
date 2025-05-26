@@ -1,6 +1,10 @@
 <div class="flex justify-center mt-[80px] px-4">
   <div class="w-full max-w-[800px] flex flex-col items-center gap-10">
-    <h1 class="text-3xl font-semibold">My Account</h1>
+    <h1
+      class="text-3xl font-semibold title-h1 tracking-[3px] leading-[90px] text-center text-[#524139ff]"
+    >
+      My Account
+    </h1>
 
     <mat-tab-group class="w-full">
       <mat-tab label="Personal Information">
@@ -13,19 +17,27 @@
           >
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">First Name</p>
-              <p class="text-base text-[#ffffff]">{{ customerResult.customer.firstName }}</p>
+              <p class="text-base text-[#ffffff] text-[20px]">
+                {{ customerResult.customer.firstName }}
+              </p>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Last Name</p>
-              <p class="text-base text-[#ffffff]">{{ customerResult.customer.lastName }}</p>
+              <p class="text-base text-[#ffffff] text-[20px]">
+                {{ customerResult.customer.lastName }}
+              </p>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Email</p>
-              <p class="text-base text-[#ffffff]">{{ customerResult.customer.email }}</p>
+              <p class="text-base text-[#ffffff] text-[20px]">
+                {{ customerResult.customer.email }}
+              </p>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Date of Birth</p>
-              <p class="text-bas text-[#ffffff]">{{ customerResult.customer.dateOfBirth }}</p>
+              <p class="text-bas text-[#ffffff] text-[20px]">
+                {{ customerResult.customer.dateOfBirth }}
+              </p>
             </div>
           </div>
         </div>
@@ -37,45 +49,85 @@
           class="bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6"
         >
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div class="border rounded-xl p-4 shadow-sm flex flex-col gap-2">
-              <h3 class="text-lg font-semibold mb-2">Shipping Address</h3>
+            <div
+              class="border rounded-xl p-4 shadow-sm flex flex-col gap-2 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+            >
+              <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
+                Shipping Address
+                <span
+                  *ngIf="
+                    customerResult.customer.defaultShippingAddressId ===
+                    customerResult.customer.addresses[0].id
+                  "
+                  class="ml-2 text-xs bg-500 text-black px-2 py-1 rounded-full bg-[#DABB9E]"
+                  >default</span
+                >
+              </h3>
 
-              <div>
-                <p class="text-sm text-gray-500">Street</p>
-                <p class="text-base">{{ customerResult.customer.addresses[0].streetName }}</p>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Street</p>
+                <p class="text-base text-[#ffffff] text-[20px]">
+                  {{ customerResult.customer.addresses[0].streetName }}
+                </p>
               </div>
-              <div>
-                <p class="text-sm text-gray-500">City</p>
-                <p class="text-base">{{ customerResult.customer.addresses[0].city }}</p>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">City</p>
+                <p class="text-base text-[#ffffff] text-[20px]">
+                  {{ customerResult.customer.addresses[0].city }}
+                </p>
               </div>
-              <div>
-                <p class="text-sm text-gray-500">Postal Code</p>
-                <p class="text-base">{{ customerResult.customer.addresses[0].postalCode }}</p>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                <p class="text-base text-[#ffffff] text-[20px]">
+                  {{ customerResult.customer.addresses[0].postalCode }}
+                </p>
               </div>
-              <div>
-                <p class="text-sm text-gray-500">Country</p>
-                <p class="text-base">{{ customerResult.customer.addresses[0].country }}</p>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Country</p>
+                <p class="text-base text-[#ffffff] text-[20px]">
+                  {{ customerResult.customer.addresses[0].country }}
+                </p>
               </div>
             </div>
 
-            <div class="border rounded-xl p-4 shadow-sm flex flex-col gap-2">
-              <h3 class="text-lg font-semibold mb-2">Billing Address</h3>
+            <div
+              class="border rounded-xl p-4 shadow-sm flex flex-col gap-2 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+            >
+              <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
+                Billing Address
+                <span
+                  *ngIf="
+                    customerResult.customer.defaultBillingAddressId ===
+                    customerResult.customer.addresses[1].id
+                  "
+                  class="ml-2 text-xs bg-500 bg-[#DABB9E] text-black px-2 py-1 rounded-full"
+                  >default</span
+                >
+              </h3>
 
-              <div>
-                <p class="text-sm text-gray-500">Street</p>
-                <p class="text-base">{{ customerResult.customer.addresses[1].streetName }}</p>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Street</p>
+                <p class="text-base text-[#ffffff] text-[20px]">
+                  {{ customerResult.customer.addresses[1].streetName }}
+                </p>
               </div>
-              <div>
-                <p class="text-sm text-gray-500">City</p>
-                <p class="text-base">{{ customerResult.customer.addresses[1].city }}</p>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">City</p>
+                <p class="text-base text-[#ffffff] text-[20px]">
+                  {{ customerResult.customer.addresses[1].city }}
+                </p>
               </div>
-              <div>
-                <p class="text-sm text-gray-500">Postal Code</p>
-                <p class="text-base">{{ customerResult.customer.addresses[1].postalCode }}</p>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                <p class="text-base text-[#ffffff] text-[20px]">
+                  {{ customerResult.customer.addresses[1].postalCode }}
+                </p>
               </div>
-              <div>
-                <p class="text-sm text-gray-500">Country</p>
-                <p class="text-base">{{ customerResult.customer.addresses[1].country }}</p>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Country</p>
+                <p class="text-base text-[#ffffff] text-[20px]">
+                  {{ customerResult.customer.addresses[1].country }}
+                </p>
               </div>
             </div>
           </div>
@@ -102,7 +154,7 @@
         (click)="logout()"
         class="py-3 px-6 rounded-lg border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition"
       >
-        Logout
+        Edit
       </button>
     </div>
   </div>

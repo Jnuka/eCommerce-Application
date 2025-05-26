@@ -22,9 +22,12 @@
         </button>
         <button
           (click)="goProfile()"
-          class="bg-[#6B3C21] text-white cursor-pointer p-3.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+          class="bg-[#6B3C21] text-white cursor-pointer p-3.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] flex items-center gap-2"
         >
-          <img class="w-5" src="/svg/profile.svg" alt="UserProfile" />
+          <img class="w-5 h-5" src="/svg/profile.svg" alt="UserProfile" />
+          <span *ngIf="customer() as customerResult" class="title-h1">{{
+            customerResult.customer.firstName
+          }}</span>
         </button>
       } @else {
         <button
