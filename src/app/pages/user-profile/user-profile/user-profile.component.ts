@@ -4,17 +4,42 @@ import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { Address, Customer, CustomerSignInResult } from '../../../auth/auth.interfaces';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [CommonModule, MatTabsModule, FormsModule, MatCheckboxModule],
+  imports: [
+    CommonModule,
+    MatTabsModule,
+    FormsModule,
+    MatCheckboxModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+  ],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css',
 })
 export class UserProfileComponent {
   public readonly authService = inject(AuthService);
   public customer = inject<AuthService>(AuthService).customerData;
+  public shippingCountry = [
+    { value: 'US', viewValue: 'United States' },
+    { value: 'IT', viewValue: 'Italy' },
+    { value: 'ES', viewValue: 'Spain' },
+  ];
+  public billingCountry = [
+    { value: 'US', viewValue: 'United States' },
+    { value: 'IT', viewValue: 'Italy' },
+    { value: 'ES', viewValue: 'Spain' },
+  ];
 
   public isEditMode = false;
   public editableCustomer: Customer | null = null;
@@ -74,6 +99,12 @@ export class UserProfileComponent {
     this.isEditMode = true;
     const customerResult = this.customer();
     this.editableCustomer = customerResult ? structuredClone(customerResult.customer) : null;
+    if (this.editableCustomer && !this.editableCustomer.addresses) {
+      this.editableCustomer.addresses = [
+        UserProfileComponent.emptyAddress(),
+        UserProfileComponent.emptyAddress(),
+      ];
+    }
   }
 
   public saveChanges(): void {
