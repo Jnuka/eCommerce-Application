@@ -1,5 +1,5 @@
 <div class="m-auto p-20 py-0 h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
-  <div class="max-w-[780px] flex flex-col gap-[10px] items-center justify-center text-center">
+  <div class="max-w-[780px] flex flex-col gap-[30px] items-center justify-center text-center">
     <div style="display: grid; grid-template-columns: 310px 450px; align-items: center; gap: 20px">
       <div>
         @if (products) {
@@ -14,15 +14,23 @@
           <h1 class="title-h1" style="font-size: 40px">
             {{ products.masterData.current.name['en-US'] }}
           </h1>
-          <p>{{ description }}</p>
+          <p style="text-align: start">{{ description }}</p>
           <button
             (click)="moreDescription()"
-            class="more-btn cursor-pointer"
-            style="cursor: pointer"
+            class="more-btn text-[#f8e4be] text-[13px] p-[8px] rounded-[5px] w-[160px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
           >
-            More
+            More Information
           </button>
-          <p>Total: {{ products.masterData.current.masterVariant.prices[0].value.centAmount }}</p>
+          @if (discount !== undefined) {
+            <div style="font-size: 25px">
+              <p>
+                Total: <i style="text-decoration: line-through">{{ totalPrice }}</i>
+                <b style="color: red"> {{ discount }}</b>
+              </p>
+            </div>
+          } @else {
+            <p style="font-size: 25px">Total: {{ totalPrice }}</p>
+          }
           <div style="display: flex; flex-direction: column; align-items: flex-start">
             <p style="font-size: 25px">Attributes</p>
             <p style="text-transform: capitalize">
@@ -49,11 +57,18 @@
         }
       </div>
     </div>
-    <button
-      (click)="goCatalog()"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Back
-    </button>
+    <div class="flex gap-[20px]">
+      <button
+        class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+      >
+        Add to cart
+      </button>
+      <button
+        (click)="goCatalog()"
+        class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+      >
+        Back
+      </button>
+    </div>
   </div>
 </div>

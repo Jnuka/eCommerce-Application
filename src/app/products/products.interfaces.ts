@@ -44,6 +44,7 @@ export interface ProductVariant {
   images: Image[];
   attributes: Attribute[];
 }
+
 export interface SearchKeywords {
   text: string;
 }
@@ -62,6 +63,7 @@ export interface ImageDimensions {
 export interface Price {
   id: string;
   value: TypedMoney;
+  discounted: DiscountedPrice;
 }
 
 export interface TypedMoney {
@@ -79,4 +81,14 @@ export interface Attribute {
 export interface AttributePlainEnumValue {
   key: string;
   label: string;
+}
+
+export interface DiscountedPrice {
+  value: TypedMoney;
+  discount: ProductDiscountReference;
+}
+
+export interface ProductDiscountReference {
+  id: string;
+  typeId: string;
 }

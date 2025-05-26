@@ -13,6 +13,10 @@ export class DetailedProductPageComponent implements OnInit {
   public pageNum: string | null = '';
   public description = '';
   public products: ProductResponse | undefined;
+
+  public totalPrice: string | undefined;
+  public discount: string | undefined;
+
   public productService = inject(ProductsService);
   private router = inject(Router);
 
@@ -31,7 +35,22 @@ export class DetailedProductPageComponent implements OnInit {
       this.description = product.masterData.current.description['en-US'];
       this.description = this.shortDescription();
       this.description += '...';
+      this.getParameters();
     });
+  }
+
+  public getParameters(): void {
+    if (this.products) {
+      this.totalPrice = new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(
+        this.products.masterData.current.masterVariant.prices[0].value.centAmount / 100,
+      );
+      if (this.products.masterData.current.masterVariant.prices[0].discounted) {
+        this.discount = new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(
+          this.products.masterData.current.masterVariant.prices[0].discounted.value.centAmount /
+            100,
+        );
+      }
+    }
   }
 
   public shortDescription(): string {
