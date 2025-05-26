@@ -1,5 +1,5 @@
-<div class="flex justify-center mt-[80px] px-4">
-  <div class="w-full max-w-[800px] flex flex-col items-center gap-10">
+<div class="flex justify-center mt-[35px] px-4">
+  <div class="w-full max-w-[800px] flex flex-col items-center gap-7">
     <h1
       class="text-3xl font-semibold title-h1 tracking-[3px] leading-[90px] text-center text-[#524139ff]"
     >
@@ -17,27 +17,63 @@
           >
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">First Name</p>
-              <p class="text-base text-[#ffffff] text-[20px]">
-                {{ customerResult.customer.firstName }}
-              </p>
+              <ng-container *ngIf="!isEditMode; else editFirstName">
+                <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.firstName }}</p>
+              </ng-container>
+              <ng-template #editFirstName>
+                <ng-container *ngIf="editableCustomer">
+                  <input
+                    type="text"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full max-w-[410px]"
+                    [(ngModel)]="editableCustomer.firstName"
+                  />
+                </ng-container>
+              </ng-template>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Last Name</p>
-              <p class="text-base text-[#ffffff] text-[20px]">
-                {{ customerResult.customer.lastName }}
-              </p>
+              <ng-container *ngIf="!isEditMode; else editLastName">
+                <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.lastName }}</p>
+              </ng-container>
+              <ng-template #editLastName>
+                <ng-container *ngIf="editableCustomer">
+                  <input
+                    type="text"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full max-w-[410px]"
+                    [(ngModel)]="editableCustomer.lastName"
+                  />
+                </ng-container>
+              </ng-template>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Email</p>
-              <p class="text-base text-[#ffffff] text-[20px]">
-                {{ customerResult.customer.email }}
-              </p>
+              <ng-container *ngIf="!isEditMode; else editEmail">
+                <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.email }}</p>
+              </ng-container>
+              <ng-template #editEmail>
+                <ng-container *ngIf="editableCustomer">
+                  <input
+                    type="text"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full max-w-[410px]"
+                    [(ngModel)]="editableCustomer.email"
+                  />
+                </ng-container>
+              </ng-template>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Date of Birth</p>
-              <p class="text-bas text-[#ffffff] text-[20px]">
-                {{ customerResult.customer.dateOfBirth }}
-              </p>
+              <ng-container *ngIf="!isEditMode; else editDateOfBirth">
+                <p class="text-base text-[#ffffff] text-[20px]">{{ formattedDateOfBirth }}</p>
+              </ng-container>
+              <ng-template #editDateOfBirth>
+                <ng-container *ngIf="editableCustomer">
+                  <input
+                    type="date"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full max-w-[410px]"
+                    [(ngModel)]="editableCustomer.dateOfBirth"
+                  />
+                </ng-container>
+              </ng-template>
             </div>
           </div>
         </div>
@@ -50,111 +86,217 @@
         >
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div
-              class="border rounded-xl p-4 shadow-sm flex flex-col gap-2 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+              class="border rounded-xl p-4 shadow-sm flex flex-col gap-2 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90% mt-6"
             >
               <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
                 Shipping Address
-                <span
-                  *ngIf="
-                    customerResult.customer.defaultShippingAddressId ===
-                    customerResult.customer.addresses[0].id
-                  "
-                  class="ml-2 text-xs bg-500 text-black px-2 py-1 rounded-full bg-[#DABB9E]"
-                  >default</span
-                >
+                <ng-container *ngIf="!isEditMode">
+                  <span
+                    *ngIf="isDefaultShipping"
+                    class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
+                    >default</span
+                  >
+                </ng-container>
+                <ng-container *ngIf="isEditMode">
+                  <mat-checkbox
+                    color="accent"
+                    [checked]="isDefaultShippingEdit()"
+                    (change)="setDefaultShipping($event.checked)"
+                    class="ml-4 text-[#DABB9E]"
+                  >
+                    Default
+                  </mat-checkbox>
+                </ng-container>
               </h3>
 
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Street</p>
-                <p class="text-base text-[#ffffff] text-[20px]">
-                  {{ customerResult.customer.addresses[0].streetName }}
-                </p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">City</p>
-                <p class="text-base text-[#ffffff] text-[20px]">
-                  {{ customerResult.customer.addresses[0].city }}
-                </p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                <p class="text-base text-[#ffffff] text-[20px]">
-                  {{ customerResult.customer.addresses[0].postalCode }}
-                </p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Country</p>
-                <p class="text-base text-[#ffffff] text-[20px]">
-                  {{ customerResult.customer.addresses[0].country }}
-                </p>
-              </div>
-            </div>
+              <ng-container *ngIf="isEditMode; else readonlyShipping">
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Street</p>
+                  <input
+                    type="text"
+                    [(ngModel)]="shippingAddress.streetName"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
+                  />
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">City</p>
+                  <input
+                    type="text"
+                    [(ngModel)]="shippingAddress.city"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
+                  />
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                  <input
+                    type="text"
+                    [(ngModel)]="shippingAddress.postalCode"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
+                  />
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Country</p>
+                  <input
+                    type="text"
+                    [(ngModel)]="shippingAddress.country"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
+                  />
+                </div>
+              </ng-container>
 
+              <ng-template #readonlyShipping>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Street</p>
+                  <p class="text-base text-white text-[20px]">{{ shippingAddress.streetName }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">City</p>
+                  <p class="text-base text-white text-[20px]">{{ shippingAddress.city }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                  <p class="text-base text-white text-[20px]">{{ shippingAddress.postalCode }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Country</p>
+                  <p class="text-base text-white text-[20px]">{{ shippingAddress.country }}</p>
+                </div>
+              </ng-template>
+            </div>
+            <!-- Billing Address -->
             <div
-              class="border rounded-xl p-4 shadow-sm flex flex-col gap-2 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+              class="border rounded-xl p-4 shadow-sm flex flex-col gap-2 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90% mt-6"
             >
               <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
                 Billing Address
-                <span
-                  *ngIf="
-                    customerResult.customer.defaultBillingAddressId ===
-                    customerResult.customer.addresses[1].id
-                  "
-                  class="ml-2 text-xs bg-500 bg-[#DABB9E] text-black px-2 py-1 rounded-full"
-                  >default</span
-                >
+                <ng-container *ngIf="!isEditMode">
+                  <span
+                    *ngIf="isDefaultBilling"
+                    class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
+                    >default</span
+                  >
+                </ng-container>
+                <ng-container *ngIf="isEditMode">
+                  <mat-checkbox
+                    color="accent"
+                    [checked]="isDefaultBillingEdit()"
+                    (change)="setDefaultBilling($event.checked)"
+                    class="ml-4 text-[#DABB9E]"
+                  >
+                    Default
+                  </mat-checkbox>
+                </ng-container>
               </h3>
 
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Street</p>
-                <p class="text-base text-[#ffffff] text-[20px]">
-                  {{ customerResult.customer.addresses[1].streetName }}
-                </p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">City</p>
-                <p class="text-base text-[#ffffff] text-[20px]">
-                  {{ customerResult.customer.addresses[1].city }}
-                </p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                <p class="text-base text-[#ffffff] text-[20px]">
-                  {{ customerResult.customer.addresses[1].postalCode }}
-                </p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Country</p>
-                <p class="text-base text-[#ffffff] text-[20px]">
-                  {{ customerResult.customer.addresses[1].country }}
-                </p>
-              </div>
+              <ng-container *ngIf="isEditMode; else readonlyBilling">
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Street</p>
+                  <input
+                    type="text"
+                    [(ngModel)]="billingAddress.streetName"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
+                  />
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">City</p>
+                  <input
+                    type="text"
+                    [(ngModel)]="billingAddress.city"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
+                  />
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                  <input
+                    type="text"
+                    [(ngModel)]="billingAddress.postalCode"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
+                  />
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Country</p>
+                  <input
+                    type="text"
+                    [(ngModel)]="billingAddress.country"
+                    class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
+                  />
+                </div>
+              </ng-container>
+
+              <ng-template #readonlyBilling>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Street</p>
+                  <p class="text-base text-white text-[20px]">{{ billingAddress.streetName }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">City</p>
+                  <p class="text-base text-white text-[20px]">{{ billingAddress.city }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                  <p class="text-base text-white text-[20px]">{{ billingAddress.postalCode }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Country</p>
+                  <p class="text-base text-white text-[20px]">{{ billingAddress.country }}</p>
+                </div>
+              </ng-template>
             </div>
           </div>
         </div>
       </mat-tab>
       <mat-tab label="Secure information">
-        <div class="bg-white shadow-lg rounded-2xl p-8">
-          <h2 class="text-2xl font-semibold">Security Settings</h2>
+        <div *ngIf="customer() as customerResult" class="bg-white shadow-lg rounded-2xl p-8">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-6 border rounded-xl p-4 shadow-sm bg-gradient-to-r from-[#3F2F2A] from-45% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+          >
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Password</p>
+              <p class="text-base text-[#ffffff] text-[20px]">
+                {{ customerResult.customer.password }}
+              </p>
+            </div>
+          </div>
         </div>
       </mat-tab>
     </mat-tab-group>
 
-    <div class="flex flex-wrap justify-center gap-6 mt-6">
+    <div class="flex flex-wrap justify-center gap-6 mt-0">
       <button
+        *ngIf="!isEditMode"
         mat-raised-button
         color="primary"
-        class="bg-[#6B3C21] hover:bg-[#7e4727] text-white py-3 px-6 rounded-lg transition"
+        class="bg-[#3F2F2A] hover:bg-[#7e4727] text-white py-3 px-6 rounded-lg transition"
       >
         My Card
       </button>
       <button
+        *ngIf="isEditMode"
+        mat-raised-button
+        color="warn"
+        (click)="cancelEdit()"
+        class="bg-[#6B3C21] text-white py-3 px-6 rounded-lg transition"
+      >
+        Cancel
+      </button>
+
+      <button
+        *ngIf="!isEditMode"
         mat-stroked-button
         color="warn"
-        (click)="logout()"
+        (click)="enterEditMode()"
         class="py-3 px-6 rounded-lg border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition"
       >
         Edit
+      </button>
+      <button
+        *ngIf="isEditMode"
+        mat-stroked-button
+        color="primary"
+        (click)="saveChanges()"
+        class="py-3 px-6 rounded-lg border border-[#3F2F2A] text-[#3F2F2A] hover:bg-[#E0A872] transition"
+      >
+        Save
       </button>
     </div>
   </div>

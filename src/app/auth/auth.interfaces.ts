@@ -29,6 +29,7 @@ export interface Customer {
   firstName?: string;
   lastName?: string;
   dateOfBirth: string;
+  password: string;
   addresses: Address[];
   defaultBillingAddressId?: string;
   shippingAddressIds: string;
