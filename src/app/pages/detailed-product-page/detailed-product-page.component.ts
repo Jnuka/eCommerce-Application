@@ -10,8 +10,8 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrl: './detailed-product-page.component.css',
 })
 export class DetailedProductPageComponent implements OnInit {
-  public description: string;
   public pageNum: string | null = '';
+  public description = '';
   public products: ProductResponse | undefined;
   public productService = inject(ProductsService);
   private router = inject(Router);

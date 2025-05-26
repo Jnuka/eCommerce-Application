@@ -3,7 +3,10 @@
     <div style="display: grid; grid-template-columns: 310px 450px; align-items: center; gap: 20px">
       <div>
         @if (products) {
-          <img src="{{ products.masterData.current.masterVariant.images[1].url }}" />
+          <img
+            src="{{ products.masterData.current.masterVariant.images[1].url }}"
+            alt="{{ products.masterData.current.masterVariant.images[1].label }}"
+          />
         }
       </div>
       <div>
