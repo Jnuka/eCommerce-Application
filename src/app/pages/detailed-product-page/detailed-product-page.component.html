@@ -5,11 +5,9 @@
         class="flex flex-col items-center gap-5"
         style="display: grid; grid-template-rows: 400px 30px"
       >
-        @if (products) {
-          <div *ngIf="srcImage?.length">
-            <img *ngFor="let src of srcImage" src="{{ src.url }}" alt="{{ src.alt }}" />
-          </div>
-        }
+        <div style="width: 310px; height: 400px">
+          <app-image-slider [srcImage]="srcImage"></app-image-slider>
+        </div>
         <div class="flex gap-5 justify-center">
           <mat-button-toggle-group (change)="changeInToggleGroup()">
             <mat-button-toggle checked value="250g">250g</mat-button-toggle>

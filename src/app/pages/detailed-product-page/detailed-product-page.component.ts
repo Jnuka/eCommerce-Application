@@ -4,19 +4,21 @@ import { ProductsService } from '../../products/products.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForOf, NgIf } from '@angular/common';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import { SliderInterface } from '../../common-ui/interfaces/slider.interface';
+import { ImageSliderComponent } from '../../common-ui/image-slider/image-slider.component';
 
 @Component({
   selector: 'app-detailed-product-page',
   templateUrl: './detailed-product-page.component.html',
   styleUrl: './detailed-product-page.component.css',
-  imports: [NgIf, NgForOf, MatButtonToggleGroup, MatButtonToggle],
+  imports: [NgIf, NgForOf, MatButtonToggleGroup, MatButtonToggle, ImageSliderComponent],
 })
 export class DetailedProductPageComponent implements OnInit {
   public pageNum: string | null = '';
   public description = '';
   public products: ProductResponse | undefined;
 
-  public srcImage: { url: string; alt: string }[] | undefined;
+  public srcImage: SliderInterface[] = [];
   public totalPrice: string | undefined;
   public discount: string | undefined;
   public attributes: { name: string; degree: string }[] | undefined;
@@ -73,15 +75,15 @@ export class DetailedProductPageComponent implements OnInit {
       this.products.masterData.current.masterVariant.attributes[0].value;
       /* eslint-enable */
 
-      this.srcImage = [{ url: '', alt: '' }];
-      this.srcImage.shift();
-
       if (this.isHighWeight) {
         // Картинка
-        this.srcImage.push({
-          ['url']: `${this.products.masterData.current.variants[0].images[0].url}`,
-          ['alt']: `${this.products.masterData.current.variants[0].images[0].label}`,
-        });
+        this.srcImage = [];
+        for (const img of this.products.masterData.current.variants[0].images) {
+          this.srcImage.push({
+            url: `${img.url}`,
+            alt: `${img.label}`,
+          });
+        }
         // Цена продукта
         this.totalPrice = new Intl.NumberFormat('en', {
           style: 'currency',
@@ -106,10 +108,13 @@ export class DetailedProductPageComponent implements OnInit {
         });
       } else {
         // Картинка
-        this.srcImage.push({
-          ['url']: `${this.products.masterData.current.masterVariant.images[0].url}`,
-          ['alt']: `${this.products.masterData.current.masterVariant.images[0].label}`,
-        });
+        this.srcImage = [];
+        for (const img of this.products.masterData.current.masterVariant.images) {
+          this.srcImage.push({
+            url: `${img.url}`,
+            alt: `${img.label}`,
+          });
+        }
         // Цена продукта
         this.totalPrice = new Intl.NumberFormat('en', {
           style: 'currency',
