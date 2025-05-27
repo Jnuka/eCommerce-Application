@@ -26,8 +26,8 @@ interface Errors {
 export interface Customer {
   id: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
+  firstName: string;
+  lastName: string;
   dateOfBirth: string;
   password: string;
   addresses: Address[];

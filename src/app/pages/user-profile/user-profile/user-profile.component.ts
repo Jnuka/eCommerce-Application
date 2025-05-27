@@ -10,9 +10,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { Address, Customer, CustomerSignInResult } from '../../../auth/auth.interfaces';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileModalComponent } from '../../profile-modal/profile-modal/profile-modal.component';
 
 @Component({
   selector: 'app-user-profile',
+
   imports: [
     CommonModule,
     MatTabsModule,
@@ -23,6 +27,7 @@ import { Address, Customer, CustomerSignInResult } from '../../../auth/auth.inte
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatDialogModule,
   ],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css',
@@ -43,6 +48,8 @@ export class UserProfileComponent {
 
   public isEditMode = false;
   public editableCustomer: Customer | null = null;
+
+  constructor(private dialog: MatDialog) {}
 
   public get currentCustomer(): CustomerSignInResult['customer'] | undefined {
     return this.customer()?.customer;
@@ -75,6 +82,20 @@ export class UserProfileComponent {
 
   private static emptyAddress(): Address {
     return { id: '', streetName: '', postalCode: '', city: '', country: '' };
+  }
+
+  public openModal(): void {
+    const customerData = this.currentCustomer;
+    const dialogReference = this.dialog.open(ProfileModalComponent, {
+      width: '600px',
+      data: customerData,
+    });
+
+    dialogReference.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Save data:', result); // eslint-disable-line no-console
+      }
+    });
   }
 
   public isDefaultShippingEdit(): boolean {

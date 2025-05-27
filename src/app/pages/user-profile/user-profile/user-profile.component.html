@@ -17,79 +17,27 @@
           >
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">First Name</p>
-              <ng-container *ngIf="!isEditMode; else editFirstName">
+              <ng-container *ngIf="!isEditMode">
                 <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.firstName }}</p>
               </ng-container>
-              <ng-template #editFirstName>
-                <ng-container *ngIf="editableCustomer">
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full max-w-[410px]"
-                      [(ngModel)]="editableCustomer.firstName"
-                    />
-                  </mat-form-field>
-                </ng-container>
-              </ng-template>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Last Name</p>
-              <ng-container *ngIf="!isEditMode; else editLastName">
+              <ng-container *ngIf="!isEditMode">
                 <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.lastName }}</p>
               </ng-container>
-              <ng-template #editLastName>
-                <ng-container *ngIf="editableCustomer">
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full max-w-[410px]"
-                      [(ngModel)]="editableCustomer.lastName"
-                    />
-                  </mat-form-field>
-                </ng-container>
-              </ng-template>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Email</p>
-              <ng-container *ngIf="!isEditMode; else editEmail">
+              <ng-container *ngIf="!isEditMode">
                 <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.email }}</p>
               </ng-container>
-              <ng-template #editEmail>
-                <ng-container *ngIf="editableCustomer">
-                  <mat-form-field>
-                    <input
-                      required
-                      matInput
-                      type="text"
-                      class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full max-w-[410px]"
-                      [(ngModel)]="editableCustomer.email"
-                    />
-                  </mat-form-field>
-                </ng-container>
-              </ng-template>
             </div>
             <div>
               <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Date of Birth</p>
-              <ng-container *ngIf="!isEditMode; else editDateOfBirth">
+              <ng-container *ngIf="!isEditMode">
                 <p class="text-base text-[#ffffff] text-[20px]">{{ formattedDateOfBirth }}</p>
               </ng-container>
-              <ng-template #editDateOfBirth>
-                <ng-container *ngIf="editableCustomer">
-                  <mat-form-field>
-                    <input
-                      matInput
-                      [matDatepicker]="picker"
-                      class="bg-white text-white border border-gray-300 rounded-lg px-4 py-2 w-full max-w-[410px]"
-                      [(ngModel)]="editableCustomer.dateOfBirth"
-                      required
-                    />
-                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                  </mat-form-field>
-                </ng-container>
-              </ng-template>
             </div>
           </div>
         </div>
@@ -124,55 +72,6 @@
                   </mat-checkbox>
                 </ng-container>
               </h3>
-
-              <ng-container *ngIf="isEditMode; else readonlyShipping">
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Street</p>
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      [(ngModel)]="shippingAddress.streetName"
-                      class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">City</p>
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      [(ngModel)]="shippingAddress.city"
-                      class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      [(ngModel)]="shippingAddress.postalCode"
-                      class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Country</p>
-                  <mat-form-field *ngIf="editableCustomer">
-                    <mat-select required [(ngModel)]="editableCustomer.addresses[0].country">
-                      >
-                      <mat-option
-                        *ngFor="let shippingCountry of shippingCountry"
-                        [value]="shippingCountry.value"
-                        >{{ shippingCountry.viewValue }}</mat-option
-                      >
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-              </ng-container>
 
               <ng-template #readonlyShipping>
                 <div class="p-2">
@@ -218,54 +117,6 @@
                 </ng-container>
               </h3>
 
-              <ng-container *ngIf="isEditMode; else readonlyBilling">
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Street</p>
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      required
-                      [(ngModel)]="billingAddress.streetName"
-                      class="bg-white text-black px-4 py-1"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">City</p>
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      [(ngModel)]="billingAddress.city"
-                      class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                  <mat-form-field>
-                    <input
-                      matInput
-                      type="text"
-                      [(ngModel)]="billingAddress.postalCode"
-                      class="bg-white text-black border border-gray-300 rounded-lg px-4 py-2 w-full"
-                    />
-                  </mat-form-field>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Country</p>
-                  <mat-form-field *ngIf="editableCustomer">
-                    <mat-select required [(ngModel)]="editableCustomer.addresses[1].country">
-                      <mat-option
-                        *ngFor="let billingCountry of billingCountry"
-                        [value]="billingCountry.value"
-                        >{{ billingCountry.viewValue }}</mat-option
-                      >
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-              </ng-container>
               <ng-template #readonlyBilling>
                 <div class="p-2">
                   <p class="text-sm text-[#DABB9E]">Street</p>
@@ -327,7 +178,7 @@
         *ngIf="!isEditMode"
         mat-stroked-button
         color="warn"
-        (click)="enterEditMode()"
+        (click)="openModal()"
         class="py-3 px-6 rounded-lg border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition"
       >
         Edit
