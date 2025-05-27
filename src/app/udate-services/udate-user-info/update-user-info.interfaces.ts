@@ -4,8 +4,11 @@ export interface UpdateCustomer {
 }
 
 export interface Action {
-  action: string;
-  value: string;
+  action: 'changeEmail' | 'setFirstName' | 'setLastName' | 'setDateOfBirth';
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
 }
 
 export interface UpdateCustomerResult {

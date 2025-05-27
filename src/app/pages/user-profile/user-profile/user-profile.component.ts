@@ -6,6 +6,11 @@ import { Address, Customer, CustomerSignInResult } from '../../../auth/auth.inte
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component';
 import { AddressesModalComponent } from '../../modals/adress-modal/addresses-modal/addresses-modal.component';
+import { UpdateUserInfoService } from '../../../udate-services/udate-user-info/update-user-info.service';
+import {
+  Action,
+  UpdateCustomer,
+} from '../../../udate-services/udate-user-info/update-user-info.interfaces';
 
 @Component({
   selector: 'app-user-profile',
@@ -31,6 +36,7 @@ export class UserProfileComponent {
   public isEditMode = false;
   public editableCustomer: Customer | null = null;
   public selectedTabIndex = 0;
+  private updateService = inject(UpdateUserInfoService);
 
   constructor(private dialog: MatDialog) {}
 
@@ -108,18 +114,46 @@ export class UserProfileComponent {
   }
 
   private savePersonalInfo(data: Customer): void {
-    this.customer.update(current => {
-      if (!current) return current;
-      return {
-        ...current,
-        customer: {
-          ...current.customer,
-          ...data,
-        },
-      };
-    });
+    const currentCustomer = this.currentCustomer;
+    if (!currentCustomer) return;
 
-    console.log('Saved personal info', data); // eslint-disable-line no-console
+    const actions: Action[] = [];
+
+    if (data.email !== currentCustomer.email) {
+      actions.push({ action: 'changeEmail', email: data.email });
+    }
+    if (data.firstName !== currentCustomer.firstName) {
+      actions.push({ action: 'setFirstName', firstName: data.firstName });
+    }
+    if (data.lastName !== currentCustomer.lastName) {
+      actions.push({ action: 'setLastName', lastName: data.lastName });
+    }
+
+    if (actions.length === 0) return;
+
+    const updateCustomer: UpdateCustomer = {
+      version: currentCustomer.version,
+      actions,
+    };
+
+    this.updateService.update(currentCustomer.id, updateCustomer).subscribe({
+      next: result => {
+        this.customer.update(current => {
+          if (!current) return current;
+          return {
+            ...current,
+            customer: {
+              ...current.customer,
+              ...data,
+              version: result.version,
+            },
+          };
+        });
+      },
+      error: error => {
+        console.error('Failed to update customer info', error); // eslint-disable-line no-console
+      },
+    });
   }
 
   private saveAddresses(data: {

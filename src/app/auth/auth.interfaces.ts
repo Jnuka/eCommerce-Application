@@ -35,6 +35,7 @@ export interface Customer {
   shippingAddressIds: string;
   billingAddressIds: string;
   defaultShippingAddressId?: string;
+  version: number;
 }
 
 export interface Address {

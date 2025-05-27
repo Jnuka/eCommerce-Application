@@ -19,7 +19,6 @@ import {
 } from '../../../shared/validators';
 import { CommonModule } from '@angular/common';
 
-
 @Component({
   selector: 'app-profile-modal',
   imports: [
