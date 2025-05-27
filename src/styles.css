@@ -41,6 +41,17 @@
     background-color: transparent;
     overflow-y: inherit;
   }
+
+  .mat-mdc-dialog-actions {
+    padding: 0;
+    position: absolute;
+    right: 0;
+
+  }
+  .close-modal {
+    z-index: 2;
+    padding: 20px;
+  }
 }
 
 .mat-form-field-invalid .mat-mdc-form-field-infix,
