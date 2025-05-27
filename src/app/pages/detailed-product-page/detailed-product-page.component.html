@@ -1,20 +1,28 @@
 <div class="m-auto p-20 py-0 h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
   <div class="max-w-[780px] flex flex-col gap-[30px] items-center justify-center text-center">
-    <div style="display: grid; grid-template-columns: 310px 450px; align-items: center; gap: 20px">
-      <div>
+    <div class="grid grid-cols-[310px_450px] items-center gap-5">
+      <div
+        class="flex flex-col items-center gap-5"
+        style="display: grid; grid-template-rows: 400px 30px"
+      >
         @if (products) {
-          <img
-            src="{{ products.masterData.current.masterVariant.images[1].url }}"
-            alt="{{ products.masterData.current.masterVariant.images[1].label }}"
-          />
+          <div *ngIf="srcImage?.length">
+            <img *ngFor="let src of srcImage" src="{{ src.url }}" alt="{{ src.alt }}" />
+          </div>
         }
+        <div class="flex gap-5 justify-center">
+          <mat-button-toggle-group (change)="changeInToggleGroup()">
+            <mat-button-toggle checked value="250g">250g</mat-button-toggle>
+            <mat-button-toggle value="1000g">1000g</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
       </div>
-      <div>
+      <div class="flex flex-col">
         @if (products) {
-          <h1 class="title-h1" style="font-size: 40px">
+          <h1 class="title-h1 text-[40px] text-center">
             {{ products.masterData.current.name['en-US'] }}
           </h1>
-          <p style="text-align: start">{{ description }}</p>
+          <p class="text-start">{{ description }}</p>
           <button
             (click)="moreDescription()"
             class="more-btn text-[#f8e4be] text-[13px] p-[8px] rounded-[5px] w-[160px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
@@ -22,37 +30,22 @@
             More Information
           </button>
           @if (discount !== undefined) {
-            <div style="font-size: 25px">
+            <div class="text-[25px]">
               <p>
-                Total: <i style="text-decoration: line-through">{{ totalPrice }}</i>
-                <b style="color: red"> {{ discount }}</b>
+                Total <span class="line-through">{{ totalPrice }}</span>
+                <span class="text-[red] font-bold"> {{ discount }}</span>
               </p>
             </div>
           } @else {
-            <p style="font-size: 25px">Total: {{ totalPrice }}</p>
+            <p class="text-[25px]">Total {{ totalPrice }}</p>
           }
-          <div style="display: flex; flex-direction: column; align-items: flex-start">
-            <p style="font-size: 25px">Attributes</p>
-            <p style="text-transform: capitalize">
-              {{ products.masterData.current.masterVariant.attributes[0].name }}:
-              {{ products.masterData.current.masterVariant.attributes[0].value.label }}
-            </p>
-            <p style="text-transform: capitalize">
-              {{ products.masterData.current.masterVariant.attributes[1].name }}:
-              {{ products.masterData.current.masterVariant.attributes[1].value.label }}
-            </p>
-            <p style="text-transform: capitalize">
-              {{ products.masterData.current.masterVariant.attributes[2].name }}:
-              {{ products.masterData.current.masterVariant.attributes[2].value.label }}
-            </p>
-            <p style="text-transform: capitalize">
-              {{ products.masterData.current.masterVariant.attributes[3].name }}:
-              {{ products.masterData.current.masterVariant.attributes[3].value }}
-            </p>
-            <p style="text-transform: capitalize">
-              {{ products.masterData.current.masterVariant.attributes[4].name }}:
-              {{ products.masterData.current.masterVariant.attributes[4].value }}
-            </p>
+          <div class="flex flex-col items-start">
+            <div *ngIf="attributes?.length" class="flex flex-col items-start">
+              <p *ngFor="let role of attributes" class="capitalize">
+                <span class="text-[#6E594BFF]">{{ role.name }}</span
+                >: {{ role.degree }}
+              </p>
+            </div>
           </div>
         }
       </div>
