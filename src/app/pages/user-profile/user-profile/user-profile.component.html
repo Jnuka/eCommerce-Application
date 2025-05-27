@@ -6,7 +6,7 @@
       My Account
     </h1>
 
-    <mat-tab-group class="w-full">
+    <mat-tab-group class="w-full" [(selectedIndex)]="selectedTabIndex">
       <mat-tab label="Personal Information">
         <div
           *ngIf="customer() as customerResult"
@@ -61,36 +61,24 @@
                     >default</span
                   >
                 </ng-container>
-                <ng-container *ngIf="isEditMode">
-                  <mat-checkbox
-                    color="accent"
-                    [checked]="isDefaultShippingEdit()"
-                    (change)="setDefaultShipping($event.checked)"
-                    class="ml-4 text-[#DABB9E]"
-                  >
-                    Default
-                  </mat-checkbox>
-                </ng-container>
               </h3>
 
-              <ng-template #readonlyShipping>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Street</p>
-                  <p class="text-base text-white text-[20px]">{{ shippingAddress.streetName }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">City</p>
-                  <p class="text-base text-white text-[20px]">{{ shippingAddress.city }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                  <p class="text-base text-white text-[20px]">{{ shippingAddress.postalCode }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Country</p>
-                  <p class="text-base text-white text-[20px]">{{ shippingAddress.country }}</p>
-                </div>
-              </ng-template>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Street</p>
+                <p class="text-base text-white text-[20px]">{{ shippingAddress.streetName }}</p>
+              </div>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">City</p>
+                <p class="text-base text-white text-[20px]">{{ shippingAddress.city }}</p>
+              </div>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                <p class="text-base text-white text-[20px]">{{ shippingAddress.postalCode }}</p>
+              </div>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Country</p>
+                <p class="text-base text-white text-[20px]">{{ shippingAddress.country }}</p>
+              </div>
             </div>
             <!-- Billing Address -->
             <div
@@ -105,36 +93,24 @@
                     >default</span
                   >
                 </ng-container>
-                <ng-container *ngIf="isEditMode">
-                  <mat-checkbox
-                    color="accent"
-                    [checked]="isDefaultBillingEdit()"
-                    (change)="setDefaultBilling($event.checked)"
-                    class="ml-4 text-[#DABB9E]"
-                  >
-                    Default
-                  </mat-checkbox>
-                </ng-container>
               </h3>
 
-              <ng-template #readonlyBilling>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Street</p>
-                  <p class="text-base text-white text-[20px]">{{ billingAddress.streetName }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">City</p>
-                  <p class="text-base text-white text-[20px]">{{ billingAddress.city }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                  <p class="text-base text-white text-[20px]">{{ billingAddress.postalCode }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Country</p>
-                  <p class="text-base text-white text-[20px]">{{ billingAddress.country }}</p>
-                </div>
-              </ng-template>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Street</p>
+                <p class="text-base text-white text-[20px]">{{ billingAddress.streetName }}</p>
+              </div>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">City</p>
+                <p class="text-base text-white text-[20px]">{{ billingAddress.city }}</p>
+              </div>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                <p class="text-base text-white text-[20px]">{{ billingAddress.postalCode }}</p>
+              </div>
+              <div class="p-2">
+                <p class="text-sm text-[#DABB9E]">Country</p>
+                <p class="text-base text-white text-[20px]">{{ billingAddress.country }}</p>
+              </div>
             </div>
           </div>
         </div>

@@ -12,7 +12,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { Address, Customer, CustomerSignInResult } from '../../../auth/auth.interfaces';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
-import { ProfileModalComponent } from '../../profile-modal/profile-modal/profile-modal.component';
+import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component';
+import { AddressesModalComponent } from '../../modals/adress-modal/addresses-modal/addresses-modal.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -48,6 +49,7 @@ export class UserProfileComponent {
 
   public isEditMode = false;
   public editableCustomer: Customer | null = null;
+  public selectedTabIndex = 0;
 
   constructor(private dialog: MatDialog) {}
 
@@ -61,15 +63,11 @@ export class UserProfileComponent {
   }
 
   public get shippingAddress(): Address {
-    return this.isEditMode
-      ? (this.editableCustomer?.addresses[0] ?? UserProfileComponent.emptyAddress())
-      : (this.currentCustomer?.addresses[0] ?? UserProfileComponent.emptyAddress());
+    return this.currentCustomer?.addresses[0] ?? UserProfileComponent.emptyAddress();
   }
 
   public get billingAddress(): Address {
-    return this.isEditMode
-      ? (this.editableCustomer?.addresses[1] ?? UserProfileComponent.emptyAddress())
-      : (this.currentCustomer?.addresses[1] ?? UserProfileComponent.emptyAddress());
+    return this.currentCustomer?.addresses[1] ?? UserProfileComponent.emptyAddress();
   }
 
   public get isDefaultShipping(): boolean {
@@ -83,19 +81,42 @@ export class UserProfileComponent {
   private static emptyAddress(): Address {
     return { id: '', streetName: '', postalCode: '', city: '', country: '' };
   }
-
   public openModal(): void {
-    const customerData = this.currentCustomer;
-    const dialogReference = this.dialog.open(ProfileModalComponent, {
-      width: '600px',
-      data: customerData,
-    });
+    switch (this.selectedTabIndex) {
+      case 0: // Personal Information
+        this.dialog
+          .open(ProfileModalComponent, {
+            data: this.currentCustomer,
+            width: '600px',
+          })
+          .afterClosed()
+          .subscribe((result: Customer | undefined) => {
+            if (result) {
+              this.savePersonalInfo(result);
+            }
+          });
+        break;
 
-    dialogReference.afterClosed().subscribe(result => {
-      if (result) {
-        console.log('Save data:', result); // eslint-disable-line no-console
-      }
-    });
+      case 1: // Addresses
+        this.dialog
+          .open(AddressesModalComponent, {
+            data: this.currentCustomer,
+            width: '800px',
+            maxWidth: 'unset',
+          })
+          .afterClosed()
+          .subscribe(
+            (result: { shippingAddress: Address; billingAddress: Address } | undefined) => {
+              if (result) {
+                this.saveAddresses(result);
+              }
+            },
+          );
+        break;
+
+      default:
+        break;
+    }
   }
 
   public isDefaultShippingEdit(): boolean {
@@ -116,18 +137,6 @@ export class UserProfileComponent {
     this.editableCustomer.defaultBillingAddressId = checked ? this.billingAddress?.id : undefined;
   }
 
-  public enterEditMode(): void {
-    this.isEditMode = true;
-    const customerResult = this.customer();
-    this.editableCustomer = customerResult ? structuredClone(customerResult.customer) : null;
-    if (this.editableCustomer && !this.editableCustomer.addresses) {
-      this.editableCustomer.addresses = [
-        UserProfileComponent.emptyAddress(),
-        UserProfileComponent.emptyAddress(),
-      ];
-    }
-  }
-
   public saveChanges(): void {
     // API method
     const currentCustomer = this.customer();
@@ -144,5 +153,13 @@ export class UserProfileComponent {
 
   public logout(): void {
     this.authService.logout();
+  }
+  // eslint-disable-next-line class-methods-use-this
+  private savePersonalInfo(data: Customer): void {
+    console.log('Saved personal info', data); // eslint-disable-line no-console
+  }
+  // eslint-disable-next-line class-methods-use-this
+  private saveAddresses(data: { shippingAddress: Address; billingAddress: Address }): void {
+    console.log('Saved addresses', data); // eslint-disable-line no-console
   }
 }
