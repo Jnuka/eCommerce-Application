@@ -6,6 +6,8 @@ import { NgForOf, NgIf } from '@angular/common';
 import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
 import { SliderInterface } from '../../common-ui/interfaces/slider.interface';
 import { ImageSliderComponent } from '../../common-ui/image-slider/image-slider.component';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalWindowComponent } from '../../common-ui/modal-window/modal-window.component';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -25,6 +27,7 @@ export class DetailedProductPageComponent implements OnInit {
 
   public productService = inject(ProductsService);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   private isHighWeight = false;
 
@@ -142,7 +145,7 @@ export class DetailedProductPageComponent implements OnInit {
   }
 
   public shortDescription(): string {
-    return this.description.substring(0, this.description.length - 150);
+    return this.description.substring(0, this.description.length * (1 - 60 / 100));
   }
 
   public moreDescription(): void {
@@ -157,5 +160,11 @@ export class DetailedProductPageComponent implements OnInit {
 
   public async goCatalog(): Promise<void> {
     await this.router.navigate(['catalog']);
+  }
+
+  public openDialog(): void {
+    this.dialog.open(ModalWindowComponent, {
+      data: this.srcImage,
+    });
   }
 }

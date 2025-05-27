@@ -32,6 +32,15 @@
   .disabled-form-control {
     opacity: 0.5;
   }
+
+  .cdk-overlay-backdrop {
+    cursor: pointer;
+  }
+
+  .mat-mdc-dialog-surface  {
+    background-color: transparent;
+    overflow-y: inherit;
+  }
 }
 
 .mat-form-field-invalid .mat-mdc-form-field-infix,

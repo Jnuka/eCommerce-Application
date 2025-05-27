@@ -1,11 +1,15 @@
 <div class="m-auto p-20 py-0 h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
   <div class="max-w-[780px] flex flex-col gap-[30px] items-center justify-center text-center">
     <div class="grid grid-cols-[310px_450px] items-center gap-5">
-      <div
-        class="flex flex-col items-center gap-5"
-        style="display: grid; grid-template-rows: 400px 30px"
-      >
-        <div style="width: 310px; height: 400px">
+      <div class="grid grid-rows-[400px_30px] items-center gap-5">
+        <div class="w-[310px] h-[400px] relative">
+          <button
+            (click)="openDialog()"
+            (keydown)="openDialog()"
+            class="w-[30px] h-[30px] absolute z-[2] cursor-pointer p-[3px] right-[5px] top-[5px]"
+          >
+            <img src="/svg/loupe.svg" alt="loupe" />
+          </button>
           <app-image-slider [srcImage]="srcImage"></app-image-slider>
         </div>
         <div class="flex gap-5 justify-center">

@@ -13,6 +13,9 @@ export class ImageSliderComponent implements OnInit {
   public currentIndex = 0;
 
   public ngOnInit(): void {
+    if (this.srcImage.length !== 0) {
+      return;
+    }
     this.srcImage.push({ url: '', alt: '' });
   }
 
