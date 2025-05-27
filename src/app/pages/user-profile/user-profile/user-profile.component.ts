@@ -2,15 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AuthService } from '../../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
-import { FormsModule } from '@angular/forms';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatInputModule } from '@angular/material/input';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { Address, Customer, CustomerSignInResult } from '../../../auth/auth.interfaces';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component';
 import { AddressesModalComponent } from '../../modals/adress-modal/addresses-modal/addresses-modal.component';
@@ -18,24 +10,13 @@ import { AddressesModalComponent } from '../../modals/adress-modal/addresses-mod
 @Component({
   selector: 'app-user-profile',
 
-  imports: [
-    CommonModule,
-    MatTabsModule,
-    FormsModule,
-    MatCheckboxModule,
-    MatInputModule,
-    MatFormFieldModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatDialogModule,
-  ],
+  imports: [CommonModule, MatTabsModule],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css',
 })
 export class UserProfileComponent {
   public readonly authService = inject(AuthService);
-  public customer = inject<AuthService>(AuthService).customerData;
+  public customer = this.authService.customerData;
   public shippingCountry = [
     { value: 'US', viewValue: 'United States' },
     { value: 'IT', viewValue: 'Italy' },
@@ -83,7 +64,7 @@ export class UserProfileComponent {
   }
   public openModal(): void {
     switch (this.selectedTabIndex) {
-      case 0: // Personal Information
+      case 0:
         this.dialog
           .open(ProfileModalComponent, {
             data: this.currentCustomer,
@@ -97,16 +78,23 @@ export class UserProfileComponent {
           });
         break;
 
-      case 1: // Addresses
+      case 1:
         this.dialog
           .open(AddressesModalComponent, {
-            data: this.currentCustomer,
+            data: {
+              ...this.currentCustomer,
+              isDefaultShipping: this.isDefaultShipping,
+              isDefaultBilling: this.isDefaultBilling,
+            },
             width: '800px',
             maxWidth: 'unset',
           })
           .afterClosed()
           .subscribe(
-            (result: { shippingAddress: Address; billingAddress: Address } | undefined) => {
+            (result: {
+              shippingAddress: Address & { setDefault: boolean };
+              billingAddress: Address & { setDefault: boolean };
+            }) => {
               if (result) {
                 this.saveAddresses(result);
               }
@@ -119,47 +107,50 @@ export class UserProfileComponent {
     }
   }
 
-  public isDefaultShippingEdit(): boolean {
-    return this.editableCustomer?.defaultShippingAddressId === this.shippingAddress?.id;
-  }
-
-  public isDefaultBillingEdit(): boolean {
-    return this.editableCustomer?.defaultBillingAddressId === this.billingAddress?.id;
-  }
-
-  public setDefaultShipping(checked: boolean): void {
-    if (!this.editableCustomer) return;
-    this.editableCustomer.defaultShippingAddressId = checked ? this.shippingAddress?.id : undefined;
-  }
-
-  public setDefaultBilling(checked: boolean): void {
-    if (!this.editableCustomer) return;
-    this.editableCustomer.defaultBillingAddressId = checked ? this.billingAddress?.id : undefined;
-  }
-
-  public saveChanges(): void {
-    // API method
-    const currentCustomer = this.customer();
-    if (currentCustomer && this.editableCustomer) {
-      currentCustomer.customer = { ...this.editableCustomer };
-      this.isEditMode = false;
-    }
-  }
-
-  public cancelEdit(): void {
-    this.isEditMode = false;
-    this.editableCustomer = null;
-  }
-
-  public logout(): void {
-    this.authService.logout();
-  }
-  // eslint-disable-next-line class-methods-use-this
   private savePersonalInfo(data: Customer): void {
+    this.customer.update(current => {
+      if (!current) return current;
+      return {
+        ...current,
+        customer: {
+          ...current.customer,
+          ...data,
+        },
+      };
+    });
+
     console.log('Saved personal info', data); // eslint-disable-line no-console
   }
-  // eslint-disable-next-line class-methods-use-this
-  private saveAddresses(data: { shippingAddress: Address; billingAddress: Address }): void {
+
+  private saveAddresses(data: {
+    shippingAddress: Address & { setDefault: boolean };
+    billingAddress: Address & { setDefault: boolean };
+  }): void {
+    this.customer.update(current => {
+      if (!current) return current;
+
+      const updatedShipping: Address = {
+        ...data.shippingAddress,
+        id: current.customer.addresses[0]?.id || '',
+      };
+      const updatedBilling: Address = {
+        ...data.billingAddress,
+        id: current.customer.addresses[1]?.id || '',
+      };
+
+      return {
+        ...current,
+        customer: {
+          ...current.customer,
+          addresses: [updatedShipping, updatedBilling],
+          defaultShippingAddressId: data.shippingAddress.setDefault
+            ? updatedShipping.id
+            : undefined,
+          defaultBillingAddressId: data.billingAddress.setDefault ? updatedBilling.id : undefined,
+        },
+      };
+    });
+
     console.log('Saved addresses', data); // eslint-disable-line no-console
   }
 }

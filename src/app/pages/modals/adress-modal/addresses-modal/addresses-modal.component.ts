@@ -60,9 +60,18 @@ export class AddressesModalComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
+    const shipping = this.data?.addresses[0];
+    const billing = this.data?.addresses[1];
+
     this.adressEditForm = this.fb.group({
-      shippingAddress: this.createAddressGroup(this.data?.addresses[0]),
-      billingAddress: this.createAddressGroup(this.data?.addresses[1]),
+      shippingAddress: this.createAddressGroup(
+        shipping,
+        this.data?.defaultShippingAddressId === shipping?.id,
+      ),
+      billingAddress: this.createAddressGroup(
+        billing,
+        this.data?.defaultBillingAddressId === billing?.id,
+      ),
     });
   }
 
@@ -83,13 +92,13 @@ export class AddressesModalComponent implements OnInit {
     this.dialogReference.close();
   }
 
-  private createAddressGroup(address: Address): FormGroup {
+  private createAddressGroup(address: Address, isDefault: boolean): FormGroup {
     return this.fb.group({
       streetName: [address.streetName, Validators.pattern('(?=.*[A-Za-z0-9]).+')],
       postalCode: [address.postalCode, Validators.pattern('[0-9]{5}')],
       city: [address.city, cityValidator()],
       country: [address.country, Validators.required.bind(Validators)],
-      setDefault: [false],
+      setDefault: [isDefault],
     });
   }
 }

@@ -141,16 +141,6 @@
         My Card
       </button>
       <button
-        *ngIf="isEditMode"
-        mat-raised-button
-        color="warn"
-        (click)="cancelEdit()"
-        class="bg-[#6B3C21] text-white py-3 px-6 rounded-lg transition"
-      >
-        Cancel
-      </button>
-
-      <button
         *ngIf="!isEditMode"
         mat-stroked-button
         color="warn"
@@ -158,15 +148,6 @@
         class="py-3 px-6 rounded-lg border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition"
       >
         Edit
-      </button>
-      <button
-        *ngIf="isEditMode"
-        mat-stroked-button
-        color="primary"
-        (click)="saveChanges()"
-        class="py-3 px-6 rounded-lg border border-[#3F2F2A] text-[#3F2F2A] hover:bg-[#E0A872] transition"
-      >
-        Save
       </button>
     </div>
   </div>
