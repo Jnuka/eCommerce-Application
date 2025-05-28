@@ -7,8 +7,8 @@ export interface Customer {
   password: string;
   addresses: Address[];
   defaultBillingAddressId?: string;
-  shippingAddressIds: string;
-  billingAddressIds: string;
+  shippingAddressIds: string[];
+  billingAddressIds: string[];
   defaultShippingAddressId?: string;
   version: number;
 }

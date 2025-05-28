@@ -67,11 +67,13 @@
               <div class="flex justify-between items-center">
                 <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
                   {{
-                    address.isShipping
-                      ? 'Shipping Address'
-                      : address.isBilling
-                        ? 'Billing Address'
-                        : 'Address'
+                    address.isShipping && address.isBilling
+                      ? 'Shipping & Billing Address'
+                      : address.isShipping
+                        ? 'Shipping Address'
+                        : address.isBilling
+                          ? 'Billing Address'
+                          : 'Address'
                   }}
                   <ng-container *ngIf="!isEditMode">
                     <span
@@ -82,15 +84,24 @@
                     </span>
                   </ng-container>
                 </h3>
-                <button
-                  *ngIf="!isEditMode"
-                  mat-stroked-button
-                  color="warn"
-                  (click)="openModal(address)"
-                  class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md"
-                >
-                  Edit
-                </button>
+                <div class="flex items-center gap-2" *ngIf="!isEditMode">
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    (click)="openModal(address)"
+                    class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    mat-stroked-button
+                    color="accent"
+                    (click)="deleteAddress(address.id)"
+                    class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-red-300 transition rounded-md"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
 
               <div class="flex justify-between items-start gap-8 text-white flex-wrap">

@@ -10,7 +10,10 @@ import {
   UpdateCustomer,
 } from '../../../udate-services/udate-user-info/update-user-info.interfaces';
 import { UpdateAddressesService } from '../../../udate-services/update-addresses/update-addresses.service';
-import { ActionAddress } from '../../../udate-services/update-addresses/update-addresses.interfaces';
+import {
+  ActionAddress,
+  UpdateAddresses,
+} from '../../../udate-services/update-addresses/update-addresses.interfaces';
 import { UserDataService } from '../../../data/services/user-data.service';
 import {
   Customer,
@@ -117,6 +120,71 @@ export class UserProfileComponent {
     }
   }
 
+  public deleteAddress(addressId: string): void {
+    const currentCustomer = this.currentCustomer;
+    if (!currentCustomer) return;
+
+    const actions: ActionAddress[] = [];
+
+    if (currentCustomer.shippingAddressIds.includes(addressId)) {
+      actions.push({
+        action: 'removeShippingAddressId',
+        addressId,
+      });
+    }
+
+    if (currentCustomer.billingAddressIds.includes(addressId)) {
+      actions.push({
+        action: 'removeBillingAddressId',
+        addressId,
+      });
+    }
+
+    actions.push({
+      action: 'removeAddress',
+      addressId,
+    });
+
+    const updateBody: UpdateAddresses = {
+      version: currentCustomer.version,
+      actions,
+    };
+
+    this.updateAddressesService.update(currentCustomer.id, updateBody).subscribe({
+      next: result => {
+        this.customer.update(current => {
+          if (!current) return current;
+
+          const updatedAddresses = current.customer.addresses.filter(addr => addr.id !== addressId);
+
+          return {
+            ...current,
+            customer: {
+              ...current.customer,
+              addresses: updatedAddresses,
+              version: result.version,
+              defaultShippingAddressId:
+                current.customer.defaultShippingAddressId === addressId
+                  ? ''
+                  : current.customer.defaultShippingAddressId,
+              defaultBillingAddressId:
+                current.customer.defaultBillingAddressId === addressId
+                  ? ''
+                  : current.customer.defaultBillingAddressId,
+              shippingAddressIds: current.customer.shippingAddressIds.filter(
+                id => id !== addressId,
+              ),
+              billingAddressIds: current.customer.billingAddressIds.filter(id => id !== addressId),
+            },
+          };
+        });
+      },
+      error: error => {
+        console.error('Failed to delete address', error); // eslint-disable-line no-console
+      },
+    });
+  }
+
   private savePersonalInfo(data: Customer): void {
     const currentCustomer = this.currentCustomer;
     if (!currentCustomer) return;
@@ -165,11 +233,10 @@ export class UserProfileComponent {
     if (!currentCustomer) return;
 
     const isNew = !address.id;
-
-    const actions: ActionAddress[] = [];
+    const initialActions: ActionAddress[] = [];
 
     if (isNew) {
-      actions.push({
+      initialActions.push({
         action: 'addAddress',
         address: {
           streetName: address.streetName,
@@ -179,7 +246,7 @@ export class UserProfileComponent {
         },
       });
     } else {
-      actions.push({
+      initialActions.push({
         action: 'changeAddress',
         addressId: address.id,
         address: {
@@ -190,24 +257,41 @@ export class UserProfileComponent {
         },
       });
 
-      if (address.isShipping) {
-        actions.push({
-          action: 'addShippingAddressId',
+      const wasShipping = currentCustomer.shippingAddressIds.includes(address.id);
+      const wasBilling = currentCustomer.billingAddressIds.includes(address.id);
+
+      if (address.isShipping !== wasShipping) {
+        initialActions.push({
+          action: address.isShipping ? 'addShippingAddressId' : 'removeShippingAddressId',
           addressId: address.id,
         });
       }
 
-      if (address.isBilling) {
-        actions.push({
-          action: 'addBillingAddressId',
+      if (address.isBilling !== wasBilling) {
+        initialActions.push({
+          action: address.isBilling ? 'addBillingAddressId' : 'removeBillingAddressId',
+          addressId: address.id,
+        });
+      }
+
+      if (address.isDefaultShipping && currentCustomer.defaultShippingAddressId !== address.id) {
+        initialActions.push({
+          action: 'setDefaultShippingAddress',
+          addressId: address.id,
+        });
+      }
+
+      if (address.isDefaultBilling && currentCustomer.defaultBillingAddressId !== address.id) {
+        initialActions.push({
+          action: 'setDefaultBillingAddress',
           addressId: address.id,
         });
       }
     }
 
-    const updateBody = {
+    const updateBody: UpdateAddresses = {
       version: currentCustomer.version,
-      actions,
+      actions: initialActions,
     };
 
     this.updateAddressesService.update(currentCustomer.id, updateBody).subscribe({
@@ -215,43 +299,57 @@ export class UserProfileComponent {
         this.customer.update(current => {
           if (!current) return current;
 
-          let updatedAddresses;
+          const updatedAddresses = result.addresses;
 
           if (isNew) {
-            const newAddress = {
-              ...address,
-              id: `new-${Date.now()}`,
-            };
-            updatedAddresses = [...current.customer.addresses, newAddress];
+            const addedAddress = updatedAddresses.find(
+              a =>
+                a.streetName === address.streetName &&
+                a.postalCode === address.postalCode.toString() &&
+                a.city === address.city &&
+                a.country === address.country,
+            );
 
-            const addressIndex = updatedAddresses.length - 1;
-            const realAddress = current.customer.addresses[addressIndex];
+            if (!addedAddress) return current;
 
             const followUpActions: ActionAddress[] = [];
+
             if (address.isShipping) {
               followUpActions.push({
                 action: 'addShippingAddressId',
-                addressId: realAddress.id,
-              });
-            }
-            if (address.isBilling) {
-              followUpActions.push({
-                action: 'addBillingAddressId',
-                addressId: realAddress.id,
+                addressId: addedAddress.id,
               });
             }
 
-            if (followUpActions.length) {
-              const followUpBody = {
+            if (address.isBilling) {
+              followUpActions.push({
+                action: 'addBillingAddressId',
+                addressId: addedAddress.id,
+              });
+            }
+
+            if (address.isDefaultShipping) {
+              followUpActions.push({
+                action: 'setDefaultShippingAddress',
+                addressId: addedAddress.id,
+              });
+            }
+
+            if (address.isDefaultBilling) {
+              followUpActions.push({
+                action: 'setDefaultBillingAddress',
+                addressId: addedAddress.id,
+              });
+            }
+
+            if (followUpActions.length > 0) {
+              const followUpBody: UpdateAddresses = {
                 version: result.version,
                 actions: followUpActions,
               };
+
               this.updateAddressesService.update(current.customer.id, followUpBody).subscribe();
             }
-          } else {
-            updatedAddresses = current.customer.addresses.map(a =>
-              a.id === address.id ? address : a,
-            );
           }
 
           return {
@@ -261,10 +359,26 @@ export class UserProfileComponent {
               addresses: updatedAddresses,
               version: result.version,
               defaultShippingAddressId: address.isDefaultShipping
-                ? address.id
+                ? isNew
+                  ? (updatedAddresses.find(
+                      a =>
+                        a.streetName === address.streetName &&
+                        a.city === address.city &&
+                        a.postalCode === address.postalCode.toString() &&
+                        a.country === address.country,
+                    )?.id ?? current.customer.defaultShippingAddressId)
+                  : address.id
                 : current.customer.defaultShippingAddressId,
               defaultBillingAddressId: address.isDefaultBilling
-                ? address.id
+                ? isNew
+                  ? (updatedAddresses.find(
+                      a =>
+                        a.streetName === address.streetName &&
+                        a.city === address.city &&
+                        a.postalCode === address.postalCode.toString() &&
+                        a.country === address.country,
+                    )?.id ?? current.customer.defaultBillingAddressId)
+                  : address.id
                 : current.customer.defaultBillingAddressId,
             },
           };
