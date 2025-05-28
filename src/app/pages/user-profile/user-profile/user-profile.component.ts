@@ -363,7 +363,11 @@ export class UserProfileComponent {
                 actions: followUpActions,
               };
 
-              this.updateAddressesService.update(current.customer.id, followUpBody).subscribe();
+              this.updateAddressesService.update(current.customer.id, followUpBody).subscribe({
+                next: () => {
+                  this.userDataService.refreshCustomerData();
+                },
+              });
             }
           }
 
