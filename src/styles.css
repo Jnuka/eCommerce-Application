@@ -37,7 +37,7 @@
     cursor: pointer;
   }
 
-  .mat-mdc-dialog-surface  {
+  .mat-mdc-dialog-surface {
     background-color: transparent;
     overflow-y: inherit;
   }
@@ -46,7 +46,6 @@
     padding: 0;
     position: absolute;
     right: 0;
-
   }
   .close-modal {
     z-index: 2;

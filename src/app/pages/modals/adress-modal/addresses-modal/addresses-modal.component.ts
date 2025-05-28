@@ -17,7 +17,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { Address, Customer } from '../../../../auth/auth.interfaces';
+import { Address, Customer } from '../../../../data/interfaces/user-data.interfaces';
 import { cityValidator } from '../../../../shared/validators';
 import { ProfileModalComponent } from '../../profile-modal/profile-modal.component';
 

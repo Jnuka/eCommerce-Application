@@ -8,7 +8,7 @@ import { CtpApiService } from '../data/services/ctp-api.service';
 import { ToastService } from '../helpers/toast.service';
 import { CustomerDraft } from './registration.interfaces';
 import { of } from 'rxjs';
-import { Customer, CustomerSignInResult } from '../auth/auth.interfaces';
+import { Customer, CustomerSignInResult } from '../data/interfaces/user-data.interfaces';
 
 describe('RegistrationService', () => {
   let httpTestingController: HttpTestingController;

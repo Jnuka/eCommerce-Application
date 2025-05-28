@@ -1,4 +1,4 @@
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { CustomerTokenResponse } from './auth.interfaces';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, switchMap, tap, throwError } from 'rxjs';
@@ -9,19 +9,19 @@ import { catchError } from 'rxjs/operators';
 import { HttpErrorResponse } from './auth.interfaces';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
-import { CustomerSignInResult } from './auth.interfaces';
+import { CustomerSignInResult } from '../data/interfaces/user-data.interfaces';
+import { UserDataService } from '../data/services/user-data.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  public readonly _customerData = signal<CustomerSignInResult | null>(null);
-  public readonly customerData = this._customerData;
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
   private cookieService = inject(CookieService);
   private router = inject(Router);
+  private userDataService = inject(UserDataService);
 
   private customerToken: string | null = null;
   private refreshToken: string | null = null;
@@ -58,7 +58,7 @@ export class AuthService {
           .set('password', payload.password)
           .set(
             'scope',
-            ['manage_orders', 'view_published_products', 'view_products']
+            ['manage_orders', 'view_published_products', 'view_products', 'manage_customers']
               .map(scope => `${scope}:${environment.ctp_project_key}`)
               .join(' '),
           );
@@ -74,27 +74,12 @@ export class AuthService {
       }),
       tap((response: CustomerTokenResponse) => {
         this.saveTokens(response);
+        this.cookieService.set('user_email', payload.email);
+        this.cookieService.set('user_password', payload.password);
       }),
-      switchMap(() => {
-        const headers = new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.customerToken}`,
-        });
-
-        const customerBody = {
-          email: payload.email,
-          password: payload.password,
-        };
-
-        return this.http.post<CustomerSignInResult>(
-          `${environment.ctp_api_url}/${environment.ctp_project_key}/login`,
-          customerBody,
-          { headers },
-        );
-      }),
-      tap((customerResponse: CustomerSignInResult) => {
+      switchMap(() => this.userDataService.loginCustomer(payload.email, payload.password)),
+      tap(() => {
         this.toastService.success('Successful entry');
-        this._customerData.set(customerResponse);
       }),
       catchError((error: HttpErrorResponse) => {
         const customError = document.querySelector('.customer-error');
@@ -144,7 +129,7 @@ export class AuthService {
   }
 
   public logout(): void {
-    this._customerData.set(null);
+    this.userDataService.logout();
     this.cookieService.deleteAll();
     this.customerToken = null;
     this.refreshToken = null;

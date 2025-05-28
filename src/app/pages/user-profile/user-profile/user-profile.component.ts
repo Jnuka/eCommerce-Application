@@ -1,8 +1,6 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Address, Customer, CustomerSignInResult } from '../../../auth/auth.interfaces';
 import { MatDialog } from '@angular/material/dialog';
 import { ProfileModalComponent } from '../../modals/profile-modal/profile-modal.component';
 import { AddressesModalComponent } from '../../modals/adress-modal/addresses-modal/addresses-modal.component';
@@ -16,6 +14,12 @@ import {
   ActionAddress,
   AddressUpate,
 } from '../../../udate-services/update-addresses/update-addresses.interfaces';
+import { UserDataService } from '../../../data/services/user-data.service';
+import {
+  Customer,
+  CustomerSignInResult,
+  Address,
+} from '../../../data/interfaces/user-data.interfaces';
 
 @Component({
   selector: 'app-user-profile',
@@ -25,8 +29,8 @@ import {
   styleUrl: './user-profile.component.css',
 })
 export class UserProfileComponent {
-  public readonly authService = inject(AuthService);
-  public customer = this.authService.customerData;
+  public readonly userDataService = inject(UserDataService);
+  public customer = this.userDataService.customerData;
   public shippingCountry = [
     { value: 'US', viewValue: 'United States' },
     { value: 'IT', viewValue: 'Italy' },

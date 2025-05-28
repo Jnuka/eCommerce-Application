@@ -10,13 +10,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Customer } from '../../../auth/auth.interfaces';
-import {
-  spacesCheck,
-  emailValidator,
-  isEmailExist,
-  ageValidator,
-} from '../../../shared/validators';
+import { Customer } from '../../../data/interfaces/user-data.interfaces';
+import { spacesCheck, emailValidator, ageValidator } from '../../../shared/validators';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -52,7 +47,7 @@ export class ProfileModalComponent implements OnInit {
       lastName: [this.data?.lastName ?? '', [Validators.pattern('^[A-z]+$')]],
       email: [
         this.data?.email ?? '',
-        [Validators.required.bind(Validators), spacesCheck(), emailValidator(), isEmailExist()],
+        [Validators.required.bind(Validators), spacesCheck(), emailValidator()],
       ],
       dateOfBirth: [
         this.data?.dateOfBirth ?? '',

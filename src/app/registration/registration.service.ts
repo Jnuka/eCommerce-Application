@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { HttpErrorResponse } from './registration.interfaces';
 import { ToastService } from '../helpers/toast.service';
 import { AuthService } from '../auth/auth.service';
-import { CustomerSignInResult } from '../auth/auth.interfaces';
+import { CustomerSignInResult } from '../data/interfaces/user-data.interfaces';
 
 @Injectable({
   providedIn: 'root',
