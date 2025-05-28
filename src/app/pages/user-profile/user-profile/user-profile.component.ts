@@ -18,7 +18,6 @@ import { UserDataService } from '../../../data/services/user-data.service';
 import {
   Customer,
   CustomerSignInResult,
-  Address,
   CustomCustomerAddress,
 } from '../../../data/interfaces/user-data.interfaces';
 import { PasswordModalComponent } from '../../modals/password-modal/password-modal/password-modal.component';
@@ -51,29 +50,29 @@ export class UserProfileComponent {
     return dob ? new Date(dob).toLocaleDateString() : '';
   }
 
-  public get shippingAddress(): Address {
-    return this.currentCustomer?.addresses[0] ?? UserProfileComponent.emptyAddress();
-  }
+  // public get shippingAddress(): Address {
+  //   return this.currentCustomer?.addresses[0] ?? UserProfileComponent.emptyAddress();
+  // }
 
-  public get billingAddress(): Address {
-    return this.currentCustomer?.addresses[1] ?? UserProfileComponent.emptyAddress();
-  }
+  // public get billingAddress(): Address {
+  //   return this.currentCustomer?.addresses[1] ?? UserProfileComponent.emptyAddress();
+  // }
 
-  public get isDefaultShipping(): boolean {
-    return this.currentCustomer?.defaultShippingAddressId === this.shippingAddress?.id;
-  }
+  // public get isDefaultShipping(): boolean {
+  //   return this.currentCustomer?.defaultShippingAddressId === this.shippingAddress?.id;
+  // }
 
-  public get isDefaultBilling(): boolean {
-    return this.currentCustomer?.defaultBillingAddressId === this.billingAddress?.id;
-  }
+  // public get isDefaultBilling(): boolean {
+  //   return this.currentCustomer?.defaultBillingAddressId === this.billingAddress?.id;
+  // }
 
   public get customAddresses(): CustomCustomerAddress[] {
     return this.customer()?.customAddresses ?? [];
   }
 
-  private static emptyAddress(): Address {
-    return { id: '', streetName: '', postalCode: '', city: '', country: '' };
-  }
+  // private static emptyAddress(): Address {
+  //   return { id: '', streetName: '', postalCode: '', city: '', country: '' };
+  // }
   public openModal(address?: CustomCustomerAddress): void {
     switch (this.selectedTabIndex) {
       case 0:
@@ -193,6 +192,7 @@ export class UserProfileComponent {
             },
           };
         });
+        this.userDataService.refreshCustomerData();
       },
       error: error => {
         console.error('Failed to delete address', error); // eslint-disable-line no-console
@@ -398,6 +398,7 @@ export class UserProfileComponent {
             },
           };
         });
+        this.userDataService.refreshCustomerData();
       },
       error: error => {
         console.error('Failed to update address', error); // eslint-disable-line no-console

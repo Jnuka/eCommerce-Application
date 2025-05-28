@@ -65,11 +65,6 @@ export class AddressesModalComponent implements OnInit {
     this.addressEditForm = this.createAddressGroup(this.data.address);
   }
 
-  // public getFormControl(controlName: string): FormControl | null {
-  //   const control = this.adressEditForm.get(controlName);
-  //   return control instanceof FormControl ? control : null;
-  // }
-
   public save(): void {
     if (this.addressEditForm.valid) {
       this.dialogReference.close(this.addressEditForm.value);

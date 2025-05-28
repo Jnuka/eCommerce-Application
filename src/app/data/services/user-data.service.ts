@@ -99,4 +99,42 @@ export class UserDataService {
     }
     return null;
   }
+
+  public refreshCustomerData(): void {
+    const token = this.cookieService.get('token');
+    const email = this.cookieService.get('user_email');
+    const password = this.cookieService.get('user_password');
+
+    if (token && email && password) {
+      const headers = new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      });
+
+      const body = { email, password };
+
+      this.http
+        .post<CustomerSignInResult>(
+          `${environment.ctp_api_url}/${environment.ctp_project_key}/login`,
+          body,
+          { headers },
+        )
+        .pipe(
+          tap((customerResponse: CustomerSignInResult) => {
+            const customAddresses = UserDataService.mapCustomAddresses(customerResponse.customer);
+
+            const fullCustomer: CustomerSignInResult = {
+              ...customerResponse,
+              customAddresses,
+            };
+            this._customerData.set(fullCustomer);
+          }),
+        )
+        .subscribe({
+          error: error => {
+            console.error('[REFRESH ERROR]', error); // eslint-disable-line no-console
+          },
+        });
+    }
+  }
 }
