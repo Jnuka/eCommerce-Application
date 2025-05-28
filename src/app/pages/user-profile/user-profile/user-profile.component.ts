@@ -21,6 +21,7 @@ import {
   Address,
   CustomCustomerAddress,
 } from '../../../data/interfaces/user-data.interfaces';
+import { PasswordModalComponent } from '../../modals/password-modal/password-modal/password-modal.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -118,6 +119,20 @@ export class UserProfileComponent {
       default:
         break;
     }
+  }
+
+  public openPasswordModal(): void {
+    this.dialog
+      .open(PasswordModalComponent, {
+        data: { ...this.currentCustomer },
+        width: '600px',
+      })
+      .afterClosed()
+      .subscribe((result: Customer | undefined) => {
+        if (result) {
+          this.savePersonalInfo(result);
+        }
+      });
   }
 
   public deleteAddress(addressId: string): void {

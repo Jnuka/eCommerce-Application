@@ -59,7 +59,6 @@ export class ProfileModalComponent implements OnInit {
   public save(): void {
     if (this.editForm.valid) {
       const data = this.editForm.value;
-      // TODO: API method
       this.dialogReference.close(data);
     }
   }
