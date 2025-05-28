@@ -12,6 +12,17 @@
           *ngIf="customer() as customerResult"
           class="bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6"
         >
+          <div class="flex justify-end items-center w-full">
+            <button
+              *ngIf="!isEditMode"
+              (click)="openModal()"
+              mat-stroked-button
+              color="warn"
+              class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition rounded-md"
+            >
+              Edit
+            </button>
+          </div>
           <div
             class="grid grid-cols-1 sm:grid-cols-2 gap-6 border rounded-xl p-4 shadow-sm bg-gradient-to-r from-[#3F2F2A] from-45% via-[#7C573C] via-65% to-[#5F4431] to-90%"
           >
@@ -48,68 +59,93 @@
           *ngIf="customer() as customerResult"
           class="bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6"
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div class="flex flex-col gap-6">
             <div
-              class="border rounded-xl p-4 shadow-sm flex flex-col gap-2 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90% mt-6"
+              class="border rounded-xl p-4 shadow-sm flex flex-col gap-4 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
             >
-              <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
-                Shipping Address
-                <ng-container *ngIf="!isEditMode">
-                  <span
-                    *ngIf="isDefaultShipping"
-                    class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
-                    >default</span
-                  >
-                </ng-container>
-              </h3>
-
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Street</p>
-                <p class="text-base text-white text-[20px]">{{ shippingAddress.streetName }}</p>
+              <div class="flex justify-between items-center">
+                <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
+                  Shipping Address
+                  <ng-container *ngIf="!isEditMode">
+                    <span
+                      *ngIf="isDefaultShipping"
+                      class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
+                      >default</span
+                    >
+                  </ng-container>
+                </h3>
+                <button
+                  *ngIf="!isEditMode"
+                  mat-stroked-button
+                  color="warn"
+                  (click)="openModal()"
+                  class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md"
+                >
+                  Edit
+                </button>
               </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">City</p>
-                <p class="text-base text-white text-[20px]">{{ shippingAddress.city }}</p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                <p class="text-base text-white text-[20px]">{{ shippingAddress.postalCode }}</p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Country</p>
-                <p class="text-base text-white text-[20px]">{{ shippingAddress.country }}</p>
+              <div class="flex justify-between items-start gap-8 text-white flex-wrap">
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Street</p>
+                  <p class="text-base text-white text-[20px]">{{ shippingAddress.streetName }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">City</p>
+                  <p class="text-base text-white text-[20px]">{{ shippingAddress.city }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                  <p class="text-base text-white text-[20px]">{{ shippingAddress.postalCode }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Country</p>
+                  <p class="text-base text-white text-[20px]">{{ shippingAddress.country }}</p>
+                </div>
               </div>
             </div>
             <!-- Billing Address -->
             <div
-              class="border rounded-xl p-4 shadow-sm flex flex-col gap-2 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90% mt-6"
+              class="border rounded-xl p-4 shadow-sm flex flex-col gap-4 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
             >
-              <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
-                Billing Address
-                <ng-container *ngIf="!isEditMode">
-                  <span
-                    *ngIf="isDefaultBilling"
-                    class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
-                    >default</span
-                  >
-                </ng-container>
-              </h3>
+              <div class="flex justify-between items-center">
+                <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
+                  Billing Address
+                  <ng-container *ngIf="!isEditMode">
+                    <span
+                      *ngIf="isDefaultBilling"
+                      class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
+                      >default</span
+                    >
+                  </ng-container>
+                </h3>
+                <button
+                  *ngIf="!isEditMode"
+                  mat-stroked-button
+                  color="warn"
+                  (click)="openModal()"
+                  class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md"
+                >
+                  Edit
+                </button>
+              </div>
 
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Street</p>
-                <p class="text-base text-white text-[20px]">{{ billingAddress.streetName }}</p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">City</p>
-                <p class="text-base text-white text-[20px]">{{ billingAddress.city }}</p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                <p class="text-base text-white text-[20px]">{{ billingAddress.postalCode }}</p>
-              </div>
-              <div class="p-2">
-                <p class="text-sm text-[#DABB9E]">Country</p>
-                <p class="text-base text-white text-[20px]">{{ billingAddress.country }}</p>
+              <div class="flex justify-between items-start gap-8 text-white flex-wrap">
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Street</p>
+                  <p class="text-base text-white text-[20px]">{{ billingAddress.streetName }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">City</p>
+                  <p class="text-base text-white text-[20px]">{{ billingAddress.city }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                  <p class="text-base text-white text-[20px]">{{ billingAddress.postalCode }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Country</p>
+                  <p class="text-base text-white text-[20px]">{{ billingAddress.country }}</p>
+                </div>
               </div>
             </div>
           </div>
@@ -140,7 +176,7 @@
       >
         My Card
       </button>
-      <button
+      <!-- <button
         *ngIf="!isEditMode"
         mat-stroked-button
         color="warn"
@@ -148,7 +184,7 @@
         class="py-3 px-6 rounded-lg border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition"
       >
         Edit
-      </button>
+      </button> -->
     </div>
   </div>
 </div>

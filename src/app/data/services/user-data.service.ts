@@ -3,7 +3,11 @@ import { inject, Injectable, signal } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { CustomerSignInResult } from '../interfaces/user-data.interfaces';
+import {
+  CustomCustomerAddress,
+  Customer,
+  CustomerSignInResult,
+} from '../interfaces/user-data.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +39,13 @@ export class UserDataService {
       )
       .pipe(
         tap((customerResponse: CustomerSignInResult) => {
-          this._customerData.set(customerResponse);
+          const customAddresses = this.mapCustomAddresses(customerResponse.customer);
+          const fullCustomer = {
+            ...customerResponse,
+            customAddresses,
+          };
+          console.log('[LOGIN] Final _customerData:', fullCustomer);
+          this._customerData.set(fullCustomer);
         }),
       );
   }
@@ -65,10 +75,28 @@ export class UserDataService {
         )
         .pipe(
           tap((customerResponse: CustomerSignInResult) => {
-            this._customerData.set(customerResponse);
+            const customAddresses = this.mapCustomAddresses(customerResponse.customer);
+            const fullCustomer = {
+              ...customerResponse,
+              customAddresses,
+            };
+            console.log('[AUTO LOGIN] Final _customerData:', fullCustomer);
+            this._customerData.set(fullCustomer);
           }),
         );
     }
     return null;
+  }
+
+  private mapCustomAddresses(customer: Customer): CustomCustomerAddress[] {
+    return customer.addresses.map(
+      (address): CustomCustomerAddress => ({
+        ...address,
+        isShipping: customer.shippingAddressIds.includes(address.id),
+        isBilling: customer.billingAddressIds.includes(address.id),
+        isDefaultShipping: customer.defaultShippingAddressId === address.id,
+        isDefaultBilling: customer.defaultBillingAddressId === address.id,
+      }),
+    );
   }
 }

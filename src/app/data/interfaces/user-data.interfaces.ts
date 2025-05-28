@@ -23,4 +23,17 @@ export interface Address {
 
 export interface CustomerSignInResult {
   customer: Customer;
+  customAddresses?: CustomCustomerAddress[];
+}
+
+export interface CustomCustomerAddress {
+  id: string;
+  streetName: string;
+  postalCode: string;
+  city: string;
+  country: string;
+  isShipping: boolean;
+  isBilling: boolean;
+  isDefaultShipping: boolean;
+  isDefaultBilling: boolean;
 }
