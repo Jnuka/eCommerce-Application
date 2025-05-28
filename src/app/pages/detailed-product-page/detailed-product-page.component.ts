@@ -1,13 +1,18 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ProductResponse } from '../../products/products.interfaces';
+import { ProductResponse, ProductVariant } from '../../products/products.interfaces';
 import { ProductsService } from '../../products/products.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgForOf, NgIf } from '@angular/common';
-import { MatButtonToggle, MatButtonToggleGroup } from '@angular/material/button-toggle';
+import {
+  MatButtonToggle,
+  MatButtonToggleChange,
+  MatButtonToggleGroup,
+} from '@angular/material/button-toggle';
 import { SliderInterface } from '../../common-ui/interfaces/slider.interface';
 import { ImageSliderComponent } from '../../common-ui/image-slider/image-slider.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalWindowComponent } from '../../common-ui/modal-window/modal-window.component';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -25,18 +30,16 @@ export class DetailedProductPageComponent implements OnInit {
   public discount: string | undefined;
   public attributes: { name: string; degree: string }[] | undefined;
 
+  public countAttributes = 1;
+  public masterVariant: ProductVariant | undefined;
+  public variants: ProductVariant[] | undefined;
+  public whichCategory = '';
+
   public productService = inject(ProductsService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
-  private isHighWeight = false;
-
   constructor(private activatedRoute: ActivatedRoute) {}
-
-  public changeInToggleGroup(): void {
-    this.isHighWeight = !this.isHighWeight;
-    this.getParameters();
-  }
 
   public ngOnInit(): void {
     this.pageNum = this.activatedRoute.snapshot.queryParamMap.get('productId');
@@ -45,103 +48,168 @@ export class DetailedProductPageComponent implements OnInit {
     }
   }
 
+  public changeInToggleGroup(event: MatButtonToggleChange): void {
+    /* eslint-disable */
+    const toggleButtonValue = event.value;
+    this.toggleSwitch(toggleButtonValue);
+    /* eslint-enable */
+  }
+
   public renderProduct(id: string): void {
-    this.productService.getProductById(id).subscribe(product => {
-      this.products = product;
-      this.description = product.masterData.current.description['en-US'];
-      this.description = this.shortDescription();
-      this.description += '...';
-      this.getParameters();
-    });
+    this.productService
+      .getProductById(id)
+      .pipe(
+        map(product => {
+          this.countAttributes = product.masterData.current.masterVariant.attributes.length;
+          this.masterVariant = product.masterData.current.masterVariant;
+          this.variants = product.masterData.current.variants;
+          this.products = product;
+          this.getParameters();
+        }),
+      )
+      .subscribe();
+  }
+
+  public toggleSwitch(toggleButtonValue?: string): void {
+    if (this.masterVariant && this.variants && this.products) {
+      /* eslint-disable */
+      if (
+        toggleButtonValue === String(this.masterVariant.attributes[this.countAttributes - 1].value)
+      ) {
+        this.getAttributes(this.masterVariant);
+        if (this.countAttributes > 1) {
+          this.getAttributesForCoffee(this.masterVariant);
+        } else {
+          this.getAttributesForAccessories(this.masterVariant);
+        }
+      } else {
+        for (const variant of this.variants) {
+          if (toggleButtonValue === String(variant.attributes[this.countAttributes - 1].value)) {
+            this.getAttributes(variant);
+            if (this.countAttributes > 1) {
+              this.getAttributesForCoffee(variant);
+            } else {
+              this.getAttributesForAccessories(variant);
+            }
+          }
+        }
+      }
+      /* eslint-enable */
+    }
   }
 
   public getParameters(): void {
-    if (this.products) {
-      // Атрибуты продуктов
-      this.attributes = [{ name: '', degree: '' }];
-      this.attributes.shift();
-      for (let i = 0; i < 4; i++) {
-        if (i === 3)
-          this.attributes.push({
-            ['name']: `${this.products.masterData.current.masterVariant.attributes[i].name}`,
-            /* eslint-disable */
-            ['degree']: `${this.products.masterData.current.masterVariant.attributes[i].value}`,
-            /* eslint-enable */
-          });
-        else
-          this.attributes.push({
-            ['name']: `${this.products.masterData.current.masterVariant.attributes[i].name}`,
-            ['degree']: `${this.products.masterData.current.masterVariant.attributes[i].value.label}`,
-          });
-      }
-      /* eslint-disable */
-      this.products.masterData.current.masterVariant.attributes[0].value;
-      /* eslint-enable */
-
-      if (this.isHighWeight) {
-        // Картинка
-        this.srcImage = [];
-        for (const img of this.products.masterData.current.variants[0].images) {
-          this.srcImage.push({
-            url: `${img.url}`,
-            alt: `${img.label}`,
-          });
+    if (this.masterVariant && this.variants && this.products) {
+      this.description = this.products.masterData.current.description['en-US'];
+      this.description = this.shortDescription();
+      this.description += '...';
+      // Определние категории
+      if (
+        this.masterVariant.attributes.length === 1 ||
+        this.masterVariant.attributes.length === 0
+      ) {
+        if (this.products.masterData.current.name['en-US'] === 'French press') {
+          this.whichCategory = 'french';
+        } else if (this.products.masterData.current.name['en-US'] === 'Filters for aeropress') {
+          this.whichCategory = 'aeropress';
+        } else if (this.products.masterData.current.name['en-US'] === 'Coffee grinder') {
+          this.whichCategory = 'grinder';
         }
-        // Цена продукта
-        this.totalPrice = new Intl.NumberFormat('en', {
-          style: 'currency',
-          currency: 'USD',
-        }).format(this.products.masterData.current.variants[0].prices[0].value.centAmount / 100);
-        // Скидка на продукт, если есть
-        if (this.products.masterData.current.masterVariant.prices[0].discounted) {
-          this.discount = new Intl.NumberFormat('en', {
-            style: 'currency',
-            currency: 'USD',
-          }).format(
-            this.products.masterData.current.variants[0].prices[0].discounted.value.centAmount /
-              100,
-          );
-        }
-        // Атрибут для веса
-        this.attributes.push({
-          ['name']: `${this.products.masterData.current.variants[0].attributes[4].name}`,
-          /* eslint-disable */
-          ['degree']: `${this.products.masterData.current.variants[0].attributes[4].value}`,
-          /* eslint-enable */
-        });
       } else {
-        // Картинка
-        this.srcImage = [];
-        for (const img of this.products.masterData.current.masterVariant.images) {
-          this.srcImage.push({
-            url: `${img.url}`,
-            alt: `${img.label}`,
-          });
-        }
-        // Цена продукта
-        this.totalPrice = new Intl.NumberFormat('en', {
+        this.whichCategory = 'coffee';
+      }
+      // Картинки
+      this.srcImage = [];
+      for (const img of this.masterVariant.images) {
+        this.srcImage.push({
+          url: `${img.url}`,
+          alt: `${img.label}`,
+        });
+      }
+      // Цена продукта
+      this.totalPrice = new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(this.masterVariant.prices[0].value.centAmount / 100);
+      // Скидка на продукт, если есть
+      if (this.masterVariant.prices[0].discounted) {
+        this.discount = new Intl.NumberFormat('en', {
           style: 'currency',
           currency: 'USD',
-        }).format(this.products.masterData.current.masterVariant.prices[0].value.centAmount / 100);
-        // Скидка на продукт, если есть
-        if (this.products.masterData.current.masterVariant.prices[0].discounted) {
-          this.discount = new Intl.NumberFormat('en', {
-            style: 'currency',
-            currency: 'USD',
-          }).format(
-            this.products.masterData.current.masterVariant.prices[0].discounted.value.centAmount /
-              100,
-          );
+        }).format(this.masterVariant.prices[0].discounted.value.centAmount / 100);
+      }
+
+      if (this.countAttributes > 1) {
+        // console.log('masters', this.masterVariant.attributes);
+        // Атрибуты продуктов
+        this.attributes = [{ name: '', degree: '' }];
+        this.attributes.shift();
+        for (let i = 0; i < 5; i++) {
+          if (i === 3 || i === 4)
+            this.attributes.push({
+              ['name']: `${this.masterVariant.attributes[i].name}`,
+              /* eslint-disable */
+              ['degree']: `${this.masterVariant.attributes[i].value}`,
+              /* eslint-enable */
+            });
+          else
+            this.attributes.push({
+              ['name']: `${this.masterVariant.attributes[i].name}`,
+              ['degree']: `${this.masterVariant.attributes[i].value.label}`,
+            });
         }
-        // Атрибут для веса
-        this.attributes.push({
-          ['name']: `${this.products.masterData.current.masterVariant.attributes[4].name}`,
-          /* eslint-disable */
-          ['degree']: `${this.products.masterData.current.masterVariant.attributes[4].value}`,
-          /* eslint-enable */
-        });
+        /* eslint-disable */
+        this.masterVariant.attributes[this.countAttributes - 1].value;
+        /* eslint-enable */
+      } else if (this.countAttributes === 1) {
+        this.getAttributesForAccessories(this.masterVariant);
       }
     }
+  }
+
+  public getAttributes(variants: ProductVariant): void {
+    // Картинка
+    this.srcImage = [];
+    for (const img of variants.images) {
+      this.srcImage.push({
+        url: `${img.url}`,
+        alt: `${img.label}`,
+      });
+    }
+    // Цена продукта
+    this.totalPrice = new Intl.NumberFormat('en', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(variants.prices[0].value.centAmount / 100);
+    // Скидка на продукт, если есть
+    if (variants.prices[0].discounted) {
+      this.discount = new Intl.NumberFormat('en', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(variants.prices[0].discounted.value.centAmount / 100);
+    }
+  }
+
+  public getAttributesForAccessories(variants: ProductVariant): void {
+    // Атрибуты
+    this.attributes = [{ name: '', degree: '' }];
+    this.attributes.shift();
+    /* eslint-disable */
+    this.attributes.push({
+      ['name']: `${variants.attributes[0].name}`,
+      ['degree']: `${variants.attributes[0].value}`,
+    });
+    /* eslint-enable */
+  }
+
+  public getAttributesForCoffee(variants: ProductVariant): void {
+    // Атрибут для веса
+    /* eslint-disable */
+    if (this.attributes) {
+      this.attributes.filter(value => value.name === 'weight')[0].degree =
+        `${variants.attributes[4].value}`;
+    }
+    /* eslint-enable */
   }
 
   public shortDescription(): string {

@@ -13,10 +13,24 @@
           <app-image-slider [srcImage]="srcImage"></app-image-slider>
         </div>
         <div class="flex gap-5 justify-center">
-          <mat-button-toggle-group (change)="changeInToggleGroup()">
-            <mat-button-toggle checked value="250g">250g</mat-button-toggle>
-            <mat-button-toggle value="1000g">1000g</mat-button-toggle>
-          </mat-button-toggle-group>
+          @if (whichCategory === 'coffee') {
+            <mat-button-toggle-group (change)="changeInToggleGroup($event)">
+              <mat-button-toggle checked value="250" id="250">250g</mat-button-toggle>
+              <mat-button-toggle value="1000" id="1000">1000g</mat-button-toggle>
+            </mat-button-toggle-group>
+          } @else if (whichCategory === 'grinder') {
+            <mat-button-toggle-group (change)="changeInToggleGroup($event)">
+              <mat-button-toggle checked value="Grey" id="Grey">Grey</mat-button-toggle>
+              <mat-button-toggle value="Black" id="Black">Black</mat-button-toggle>
+              <mat-button-toggle value="Brown" id="Brown">Brown</mat-button-toggle>
+            </mat-button-toggle-group>
+          } @else if (whichCategory === 'french') {
+            <mat-button-toggle-group (change)="changeInToggleGroup($event)">
+              <mat-button-toggle checked value="Black" id="Black">Black</mat-button-toggle>
+              <mat-button-toggle value="Red" id="Red">Red</mat-button-toggle>
+              <mat-button-toggle value="Blue" id="Blue">Blue</mat-button-toggle>
+            </mat-button-toggle-group>
+          } @else if (whichCategory === 'aeropress') {}
         </div>
       </div>
       <div class="flex flex-col">
