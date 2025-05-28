@@ -61,68 +61,32 @@
         >
           <div class="flex flex-col gap-6">
             <div
+              *ngFor="let address of customAddresses"
               class="border rounded-xl p-4 shadow-sm flex flex-col gap-4 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
             >
               <div class="flex justify-between items-center">
                 <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
-                  Shipping Address
+                  {{
+                    address.isShipping
+                      ? 'Shipping Address'
+                      : address.isBilling
+                        ? 'Billing Address'
+                        : 'Address'
+                  }}
                   <ng-container *ngIf="!isEditMode">
                     <span
-                      *ngIf="isDefaultShipping"
+                      *ngIf="address.isDefaultShipping || address.isDefaultBilling"
                       class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
-                      >default</span
                     >
+                      default
+                    </span>
                   </ng-container>
                 </h3>
                 <button
                   *ngIf="!isEditMode"
                   mat-stroked-button
                   color="warn"
-                  (click)="openModal()"
-                  class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md"
-                >
-                  Edit
-                </button>
-              </div>
-              <div class="flex justify-between items-start gap-8 text-white flex-wrap">
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Street</p>
-                  <p class="text-base text-white text-[20px]">{{ shippingAddress.streetName }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">City</p>
-                  <p class="text-base text-white text-[20px]">{{ shippingAddress.city }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                  <p class="text-base text-white text-[20px]">{{ shippingAddress.postalCode }}</p>
-                </div>
-                <div class="p-2">
-                  <p class="text-sm text-[#DABB9E]">Country</p>
-                  <p class="text-base text-white text-[20px]">{{ shippingAddress.country }}</p>
-                </div>
-              </div>
-            </div>
-            <!-- Billing Address -->
-            <div
-              class="border rounded-xl p-4 shadow-sm flex flex-col gap-4 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
-            >
-              <div class="flex justify-between items-center">
-                <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
-                  Billing Address
-                  <ng-container *ngIf="!isEditMode">
-                    <span
-                      *ngIf="isDefaultBilling"
-                      class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
-                      >default</span
-                    >
-                  </ng-container>
-                </h3>
-                <button
-                  *ngIf="!isEditMode"
-                  mat-stroked-button
-                  color="warn"
-                  (click)="openModal()"
+                  (click)="openModal(address)"
                   class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md"
                 >
                   Edit
@@ -132,23 +96,34 @@
               <div class="flex justify-between items-start gap-8 text-white flex-wrap">
                 <div class="p-2">
                   <p class="text-sm text-[#DABB9E]">Street</p>
-                  <p class="text-base text-white text-[20px]">{{ billingAddress.streetName }}</p>
+                  <p class="text-base text-white text-[20px]">{{ address.streetName }}</p>
                 </div>
                 <div class="p-2">
                   <p class="text-sm text-[#DABB9E]">City</p>
-                  <p class="text-base text-white text-[20px]">{{ billingAddress.city }}</p>
+                  <p class="text-base text-white text-[20px]">{{ address.city }}</p>
                 </div>
                 <div class="p-2">
                   <p class="text-sm text-[#DABB9E]">Postal Code</p>
-                  <p class="text-base text-white text-[20px]">{{ billingAddress.postalCode }}</p>
+                  <p class="text-base text-white text-[20px]">{{ address.postalCode }}</p>
                 </div>
                 <div class="p-2">
                   <p class="text-sm text-[#DABB9E]">Country</p>
-                  <p class="text-base text-white text-[20px]">{{ billingAddress.country }}</p>
+                  <p class="text-base text-white text-[20px]">{{ address.country }}</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+        <div class="flex justify-center">
+          <button
+            *ngIf="!isEditMode"
+            mat-raised-button
+            color="primary"
+            (click)="openModal()"
+            class="mt-[10px] bg-[#3F2F2A] hover:bg-[#7e4727] text-white py-2 px-4 rounded-lg transition"
+          >
+            Add Address
+          </button>
         </div>
       </mat-tab>
       <mat-tab label="Secure information">
@@ -176,15 +151,6 @@
       >
         My Card
       </button>
-      <!-- <button
-        *ngIf="!isEditMode"
-        mat-stroked-button
-        color="warn"
-        (click)="openModal()"
-        class="py-3 px-6 rounded-lg border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition"
-      >
-        Edit
-      </button> -->
     </div>
   </div>
 </div>

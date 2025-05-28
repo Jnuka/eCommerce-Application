@@ -10,15 +10,13 @@ import {
   UpdateCustomer,
 } from '../../../udate-services/udate-user-info/update-user-info.interfaces';
 import { UpdateAddressesService } from '../../../udate-services/update-addresses/update-addresses.service';
-import {
-  ActionAddress,
-  AddressUpate,
-} from '../../../udate-services/update-addresses/update-addresses.interfaces';
+import { ActionAddress } from '../../../udate-services/update-addresses/update-addresses.interfaces';
 import { UserDataService } from '../../../data/services/user-data.service';
 import {
   Customer,
   CustomerSignInResult,
   Address,
+  CustomCustomerAddress,
 } from '../../../data/interfaces/user-data.interfaces';
 
 @Component({
@@ -31,16 +29,6 @@ import {
 export class UserProfileComponent {
   public readonly userDataService = inject(UserDataService);
   public customer = this.userDataService.customerData;
-  public shippingCountry = [
-    { value: 'US', viewValue: 'United States' },
-    { value: 'IT', viewValue: 'Italy' },
-    { value: 'ES', viewValue: 'Spain' },
-  ];
-  public billingCountry = [
-    { value: 'US', viewValue: 'United States' },
-    { value: 'IT', viewValue: 'Italy' },
-    { value: 'ES', viewValue: 'Spain' },
-  ];
 
   public isEditMode = false;
   public editableCustomer: Customer | null = null;
@@ -75,15 +63,19 @@ export class UserProfileComponent {
     return this.currentCustomer?.defaultBillingAddressId === this.billingAddress?.id;
   }
 
+  public get customAddresses(): CustomCustomerAddress[] {
+    return this.customer()?.customAddresses ?? [];
+  }
+
   private static emptyAddress(): Address {
     return { id: '', streetName: '', postalCode: '', city: '', country: '' };
   }
-  public openModal(): void {
+  public openModal(address?: CustomCustomerAddress): void {
     switch (this.selectedTabIndex) {
       case 0:
         this.dialog
           .open(ProfileModalComponent, {
-            data: this.currentCustomer,
+            data: { ...this.currentCustomer },
             width: '600px',
           })
           .afterClosed()
@@ -98,26 +90,28 @@ export class UserProfileComponent {
         this.dialog
           .open(AddressesModalComponent, {
             data: {
-              ...this.currentCustomer,
-              isDefaultShipping: this.isDefaultShipping,
-              isDefaultBilling: this.isDefaultBilling,
+              address: address ?? {
+                id: '',
+                streetName: '',
+                postalCode: '',
+                city: '',
+                country: '',
+                isShipping: false,
+                isBilling: false,
+                isDefaultShipping: false,
+                isDefaultBilling: false,
+              },
             },
-            width: '800px',
+            width: '600px',
             maxWidth: 'unset',
           })
           .afterClosed()
-          .subscribe(
-            (result: {
-              shippingAddress: Address & { setDefault: boolean };
-              billingAddress: Address & { setDefault: boolean };
-            }) => {
-              if (result) {
-                this.saveAddresses(result);
-              }
-            },
-          );
+          .subscribe((result: CustomCustomerAddress | undefined) => {
+            if (result) {
+              this.saveCustomAddresses(result);
+            }
+          });
         break;
-
       default:
         break;
     }
@@ -166,92 +160,118 @@ export class UserProfileComponent {
     });
   }
 
-  private saveAddresses(data: {
-    shippingAddress: Address & { setDefault: boolean };
-    billingAddress: Address & { setDefault: boolean };
-  }): void {
+  private saveCustomAddresses(address: CustomCustomerAddress): void {
     const currentCustomer = this.currentCustomer;
     if (!currentCustomer) return;
 
+    const isNew = !address.id;
+
     const actions: ActionAddress[] = [];
 
-    const shippingAddress: AddressUpate = {
-      streetName: data.shippingAddress.streetName,
-      postalCode: data.shippingAddress.postalCode,
-      city: data.shippingAddress.city,
-      country: data.shippingAddress.country,
-    };
-
-    const billingAddress: AddressUpate = {
-      streetName: data.billingAddress.streetName,
-      postalCode: data.billingAddress.postalCode,
-      city: data.billingAddress.city,
-      country: data.billingAddress.country,
-    };
-
-    if (currentCustomer.addresses[0]?.id) {
+    if (isNew) {
+      actions.push({
+        action: 'addAddress',
+        address: {
+          streetName: address.streetName,
+          postalCode: address.postalCode.toString(),
+          city: address.city,
+          country: address.country,
+        },
+      });
+    } else {
       actions.push({
         action: 'changeAddress',
-        addressId: currentCustomer.addresses[0].id,
-        address: shippingAddress,
+        addressId: address.id,
+        address: {
+          streetName: address.streetName,
+          postalCode: address.postalCode,
+          city: address.city,
+          country: address.country,
+        },
       });
-    }
-    if (currentCustomer.addresses[1]?.id) {
-      actions.push({
-        action: 'changeAddress',
-        addressId: currentCustomer.addresses[1].id,
-        address: billingAddress,
-      });
-    }
-    if (data.shippingAddress.setDefault && currentCustomer.addresses[0]?.id) {
-      actions.push({
-        action: 'setDefaultShippingAddress',
-        addressId: currentCustomer.addresses[0].id,
-      });
-    }
 
-    if (data.billingAddress.setDefault && currentCustomer.addresses[1]?.id) {
-      actions.push({
-        action: 'setDefaultBillingAddress',
-        addressId: currentCustomer.addresses[1].id,
-      });
+      if (address.isShipping) {
+        actions.push({
+          action: 'addShippingAddressId',
+          addressId: address.id,
+        });
+      }
+
+      if (address.isBilling) {
+        actions.push({
+          action: 'addBillingAddressId',
+          addressId: address.id,
+        });
+      }
     }
 
     const updateBody = {
       version: currentCustomer.version,
       actions,
     };
+
     this.updateAddressesService.update(currentCustomer.id, updateBody).subscribe({
       next: result => {
         this.customer.update(current => {
           if (!current) return current;
+
+          let updatedAddresses;
+
+          if (isNew) {
+            const newAddress = {
+              ...address,
+              id: `new-${Date.now()}`,
+            };
+            updatedAddresses = [...current.customer.addresses, newAddress];
+
+            const addressIndex = updatedAddresses.length - 1;
+            const realAddress = current.customer.addresses[addressIndex];
+
+            const followUpActions: ActionAddress[] = [];
+            if (address.isShipping) {
+              followUpActions.push({
+                action: 'addShippingAddressId',
+                addressId: realAddress.id,
+              });
+            }
+            if (address.isBilling) {
+              followUpActions.push({
+                action: 'addBillingAddressId',
+                addressId: realAddress.id,
+              });
+            }
+
+            if (followUpActions.length) {
+              const followUpBody = {
+                version: result.version,
+                actions: followUpActions,
+              };
+              this.updateAddressesService.update(current.customer.id, followUpBody).subscribe();
+            }
+          } else {
+            updatedAddresses = current.customer.addresses.map(a =>
+              a.id === address.id ? address : a,
+            );
+          }
+
           return {
             ...current,
             customer: {
               ...current.customer,
-              addresses: [
-                {
-                  ...current.customer.addresses[0],
-                  ...shippingAddress,
-                },
-                {
-                  ...current.customer.addresses[1],
-                  ...billingAddress,
-                },
-              ],
+              addresses: updatedAddresses,
               version: result.version,
-              defaultShippingAddressId: data.shippingAddress.setDefault
-                ? current.customer.addresses[0].id
+              defaultShippingAddressId: address.isDefaultShipping
+                ? address.id
                 : current.customer.defaultShippingAddressId,
-              defaultBillingAddressId: data.billingAddress.setDefault
-                ? current.customer.addresses[1].id
+              defaultBillingAddressId: address.isDefaultBilling
+                ? address.id
                 : current.customer.defaultBillingAddressId,
             },
           };
         });
       },
       error: error => {
-        console.error('Failed to update addresses', error); // eslint-disable-line no-console
+        console.error('Failed to update address', error); // eslint-disable-line no-console
       },
     });
   }

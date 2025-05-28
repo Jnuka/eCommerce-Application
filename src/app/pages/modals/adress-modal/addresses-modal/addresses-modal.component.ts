@@ -5,7 +5,8 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
-  FormControl,
+  FormArray,
+  AbstractControl,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,9 +18,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatNativeDateModule, provideNativeDateAdapter } from '@angular/material/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
-import { Address, Customer } from '../../../../data/interfaces/user-data.interfaces';
+import { CustomCustomerAddress } from '../../../../data/interfaces/user-data.interfaces';
 import { cityValidator } from '../../../../shared/validators';
-import { ProfileModalComponent } from '../../profile-modal/profile-modal.component';
 
 @Component({
   selector: 'app-addresses-modal',
@@ -40,14 +40,9 @@ import { ProfileModalComponent } from '../../profile-modal/profile-modal.compone
   styleUrl: './addresses-modal.component.css',
 })
 export class AddressesModalComponent implements OnInit {
-  public adressEditForm!: FormGroup;
+  public addressEditForm!: FormGroup;
 
-  public shippingCountry = [
-    { value: 'US', viewValue: 'United States' },
-    { value: 'IT', viewValue: 'Italy' },
-    { value: 'ES', viewValue: 'Spain' },
-  ];
-  public billingCountry = [
+  public countries = [
     { value: 'US', viewValue: 'United States' },
     { value: 'IT', viewValue: 'Italy' },
     { value: 'ES', viewValue: 'Spain' },
@@ -55,36 +50,29 @@ export class AddressesModalComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private dialogReference: MatDialogRef<ProfileModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: Customer,
+    private dialogReference: MatDialogRef<AddressesModalComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { address: CustomCustomerAddress },
   ) {}
 
+  public get addressesControls(): AbstractControl[] {
+    const control = this.addressEditForm.get('addresses');
+    if (control instanceof FormArray) {
+      return control.controls;
+    }
+    return [];
+  }
   public ngOnInit(): void {
-    const shipping = this.data?.addresses[0];
-    const billing = this.data?.addresses[1];
-
-    this.adressEditForm = this.fb.group({
-      shippingAddress: this.createAddressGroup(
-        shipping,
-        this.data?.defaultShippingAddressId === shipping?.id,
-      ),
-      billingAddress: this.createAddressGroup(
-        billing,
-        this.data?.defaultBillingAddressId === billing?.id,
-      ),
-    });
+    this.addressEditForm = this.createAddressGroup(this.data.address);
   }
 
-  public getFormControl(controlName: string): FormControl | null {
-    const control = this.adressEditForm.get(controlName);
-    return control instanceof FormControl ? control : null;
-  }
+  // public getFormControl(controlName: string): FormControl | null {
+  //   const control = this.adressEditForm.get(controlName);
+  //   return control instanceof FormControl ? control : null;
+  // }
 
   public save(): void {
-    if (this.adressEditForm.valid) {
-      const data = this.adressEditForm.value;
-      // TODO: API method
-      this.dialogReference.close(data);
+    if (this.addressEditForm.valid) {
+      this.dialogReference.close(this.addressEditForm.value);
     }
   }
 
@@ -92,13 +80,23 @@ export class AddressesModalComponent implements OnInit {
     this.dialogReference.close();
   }
 
-  private createAddressGroup(address: Address, isDefault: boolean): FormGroup {
+  private createAddressGroup(address: CustomCustomerAddress): FormGroup {
     return this.fb.group({
-      streetName: [address.streetName, Validators.pattern('(?=.*[A-Za-z0-9]).+')],
-      postalCode: [address.postalCode, Validators.pattern('[0-9]{5}')],
-      city: [address.city, cityValidator()],
+      id: [address.id],
+      streetName: [
+        address.streetName,
+        [Validators.pattern('(?=.*[A-Za-z0-9]).+'), Validators.required.bind(Validators)],
+      ],
+      postalCode: [
+        address.postalCode,
+        [Validators.pattern('^[0-9]{5}$'), Validators.required.bind(Validators)],
+      ],
+      city: [address.city, [cityValidator(), Validators.required.bind(Validators)]],
       country: [address.country, Validators.required.bind(Validators)],
-      setDefault: [isDefault],
+      isShipping: [address.isShipping],
+      isBilling: [address.isBilling],
+      isDefaultShipping: [address.isDefaultShipping],
+      isDefaultBilling: [address.isDefaultBilling],
     });
   }
 }

@@ -19,6 +19,18 @@ export class UserDataService {
   private http = inject(HttpClient);
   private cookieService = inject(CookieService);
 
+  public static mapCustomAddresses(customer: Customer): CustomCustomerAddress[] {
+    return customer.addresses.map(
+      (address): CustomCustomerAddress => ({
+        ...address,
+        isShipping: customer.shippingAddressIds.includes(address.id),
+        isBilling: customer.billingAddressIds.includes(address.id),
+        isDefaultShipping: customer.defaultShippingAddressId === address.id,
+        isDefaultBilling: customer.defaultBillingAddressId === address.id,
+      }),
+    );
+  }
+
   public loginCustomer(email: string, password: string): Observable<CustomerSignInResult> {
     const token = this.cookieService.get('token');
     const headers = new HttpHeaders({
@@ -39,12 +51,12 @@ export class UserDataService {
       )
       .pipe(
         tap((customerResponse: CustomerSignInResult) => {
-          const customAddresses = this.mapCustomAddresses(customerResponse.customer);
+          const customAddresses = UserDataService.mapCustomAddresses(customerResponse.customer);
           const fullCustomer = {
             ...customerResponse,
             customAddresses,
           };
-          console.log('[LOGIN] Final _customerData:', fullCustomer);
+          console.log('[LOGIN] Final _customerData:', fullCustomer); // eslint-disable-line no-console
           this._customerData.set(fullCustomer);
         }),
       );
@@ -75,28 +87,16 @@ export class UserDataService {
         )
         .pipe(
           tap((customerResponse: CustomerSignInResult) => {
-            const customAddresses = this.mapCustomAddresses(customerResponse.customer);
+            const customAddresses = UserDataService.mapCustomAddresses(customerResponse.customer);
             const fullCustomer = {
               ...customerResponse,
               customAddresses,
             };
-            console.log('[AUTO LOGIN] Final _customerData:', fullCustomer);
+            console.log('[AUTO LOGIN] Final _customerData:', fullCustomer); // eslint-disable-line no-console
             this._customerData.set(fullCustomer);
           }),
         );
     }
     return null;
-  }
-
-  private mapCustomAddresses(customer: Customer): CustomCustomerAddress[] {
-    return customer.addresses.map(
-      (address): CustomCustomerAddress => ({
-        ...address,
-        isShipping: customer.shippingAddressIds.includes(address.id),
-        isBilling: customer.billingAddressIds.includes(address.id),
-        isDefaultShipping: customer.defaultShippingAddressId === address.id,
-        isDefaultBilling: customer.defaultBillingAddressId === address.id,
-      }),
-    );
   }
 }
