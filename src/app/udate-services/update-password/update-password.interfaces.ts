@@ -27,3 +27,20 @@ export interface Address {
   city: string;
   country: string;
 }
+
+export interface HttpErrorResponse {
+  error: CangePasswordErrorResponse;
+}
+
+export interface CangePasswordErrorResponse {
+  statusCode: number;
+  message: string;
+  errors: Errors[];
+  error: string;
+  error_description: string;
+}
+
+interface Errors {
+  code: string;
+  message: string;
+}
