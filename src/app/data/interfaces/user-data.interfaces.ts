@@ -36,4 +36,5 @@ export interface CustomCustomerAddress {
   isBilling: boolean;
   isDefaultShipping: boolean;
   isDefaultBilling: boolean;
+  isDefault?: boolean;
 }

@@ -20,15 +20,19 @@ export class UserDataService {
   private cookieService = inject(CookieService);
 
   public static mapCustomAddresses(customer: Customer): CustomCustomerAddress[] {
-    return customer.addresses.map(
-      (address): CustomCustomerAddress => ({
+    return customer.addresses.map((address): CustomCustomerAddress => {
+      const isDefaultShipping = customer.defaultShippingAddressId === address.id;
+      const isDefaultBilling = customer.defaultBillingAddressId === address.id;
+
+      return {
         ...address,
         isShipping: customer.shippingAddressIds.includes(address.id),
         isBilling: customer.billingAddressIds.includes(address.id),
-        isDefaultShipping: customer.defaultShippingAddressId === address.id,
-        isDefaultBilling: customer.defaultBillingAddressId === address.id,
-      }),
-    );
+        isDefaultShipping,
+        isDefaultBilling,
+        isDefault: isDefaultShipping || isDefaultBilling,
+      };
+    });
   }
 
   public loginCustomer(email: string, password: string): Observable<CustomerSignInResult> {

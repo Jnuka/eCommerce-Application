@@ -289,18 +289,21 @@ export class UserProfileComponent {
         });
       }
 
-      if (address.isDefaultShipping && currentCustomer.defaultShippingAddressId !== address.id) {
-        initialActions.push({
-          action: 'setDefaultShippingAddress',
-          addressId: address.id,
-        });
-      }
+      // 🔽 Установка default адреса на основе isDefault
+      if (address.isDefault) {
+        if (address.isShipping && currentCustomer.defaultShippingAddressId !== address.id) {
+          initialActions.push({
+            action: 'setDefaultShippingAddress',
+            addressId: address.id,
+          });
+        }
 
-      if (address.isDefaultBilling && currentCustomer.defaultBillingAddressId !== address.id) {
-        initialActions.push({
-          action: 'setDefaultBillingAddress',
-          addressId: address.id,
-        });
+        if (address.isBilling && currentCustomer.defaultBillingAddressId !== address.id) {
+          initialActions.push({
+            action: 'setDefaultBillingAddress',
+            addressId: address.id,
+          });
+        }
       }
     }
 
@@ -343,18 +346,19 @@ export class UserProfileComponent {
               });
             }
 
-            if (address.isDefaultShipping) {
-              followUpActions.push({
-                action: 'setDefaultShippingAddress',
-                addressId: addedAddress.id,
-              });
-            }
-
-            if (address.isDefaultBilling) {
-              followUpActions.push({
-                action: 'setDefaultBillingAddress',
-                addressId: addedAddress.id,
-              });
+            if (address.isDefault) {
+              if (address.isShipping) {
+                followUpActions.push({
+                  action: 'setDefaultShippingAddress',
+                  addressId: addedAddress.id,
+                });
+              }
+              if (address.isBilling) {
+                followUpActions.push({
+                  action: 'setDefaultBillingAddress',
+                  addressId: addedAddress.id,
+                });
+              }
             }
 
             if (followUpActions.length > 0) {
@@ -377,28 +381,30 @@ export class UserProfileComponent {
               ...current.customer,
               addresses: updatedAddresses,
               version: result.version,
-              defaultShippingAddressId: address.isDefaultShipping
-                ? isNew
-                  ? (updatedAddresses.find(
-                      a =>
-                        a.streetName === address.streetName &&
-                        a.city === address.city &&
-                        a.postalCode === address.postalCode.toString() &&
-                        a.country === address.country,
-                    )?.id ?? current.customer.defaultShippingAddressId)
-                  : address.id
-                : current.customer.defaultShippingAddressId,
-              defaultBillingAddressId: address.isDefaultBilling
-                ? isNew
-                  ? (updatedAddresses.find(
-                      a =>
-                        a.streetName === address.streetName &&
-                        a.city === address.city &&
-                        a.postalCode === address.postalCode.toString() &&
-                        a.country === address.country,
-                    )?.id ?? current.customer.defaultBillingAddressId)
-                  : address.id
-                : current.customer.defaultBillingAddressId,
+              defaultShippingAddressId:
+                address.isDefault && address.isShipping
+                  ? isNew
+                    ? (updatedAddresses.find(
+                        a =>
+                          a.streetName === address.streetName &&
+                          a.city === address.city &&
+                          a.postalCode === address.postalCode.toString() &&
+                          a.country === address.country,
+                      )?.id ?? current.customer.defaultShippingAddressId)
+                    : address.id
+                  : current.customer.defaultShippingAddressId,
+              defaultBillingAddressId:
+                address.isDefault && address.isBilling
+                  ? isNew
+                    ? (updatedAddresses.find(
+                        a =>
+                          a.streetName === address.streetName &&
+                          a.city === address.city &&
+                          a.postalCode === address.postalCode.toString() &&
+                          a.country === address.country,
+                      )?.id ?? current.customer.defaultBillingAddressId)
+                    : address.id
+                  : current.customer.defaultBillingAddressId,
             },
           };
         });

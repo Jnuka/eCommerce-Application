@@ -92,6 +92,7 @@ export class AddressesModalComponent implements OnInit {
       isBilling: [address.isBilling],
       isDefaultShipping: [address.isDefaultShipping],
       isDefaultBilling: [address.isDefaultBilling],
+      isDefault: [address.isDefault],
     });
   }
 }
