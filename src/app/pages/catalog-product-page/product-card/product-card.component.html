@@ -1,0 +1,33 @@
+<div class="bg-white shadow-md border rounded-xl p-6 flex flex-col gap-6 relative">
+  <div class="mx-auto">
+    @if (product().masterVariant.images[0]) {
+      <img
+        [src]="product().masterVariant.images[0].url"
+        alt="{{ product().masterVariant.images[0].label }}"
+        class="h-[250px] object-contain"
+      />
+    }
+  </div>
+  <div class="h-38 flex flex-col justify-between items-center">
+    <h2 class="text-md font-bold">{{ product().name['en-US'] }}</h2>
+    <span class="text-md">{{ product().description['en-US'].slice(0, 70) }}</span>
+    @if (discountPrice !== undefined) {
+      <div class="text-[25px]">
+        <p>
+          Total <span class="line-through">{{ price }}</span>
+          <span class="text-[red] font-bold"> {{ discountPrice }}</span>
+        </p>
+      </div>
+    } @else {
+      <p class="text-[25px]">Total {{ price }}</p>
+    }
+
+    <button
+      (click)="goDetailedProduct(`${product().id}`)"
+      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+      label="About"
+    >
+      About
+    </button>
+  </div>
+</div>

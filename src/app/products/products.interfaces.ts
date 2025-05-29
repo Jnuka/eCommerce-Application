@@ -7,6 +7,25 @@ export interface ProductResponse {
   lastModifiedAt: Date;
 }
 
+export interface ProductProjectionResponse {
+  id: string;
+  version: number;
+  productType: ProductTypeReference;
+  name: LocalizedString;
+  description: LocalizedString;
+  categories: CategoryReference[];
+  metaDescription: LocalizedString;
+  masterVariant: ProductVariant;
+}
+
+export interface ProductListResponse {
+  limit: number;
+  offset: number;
+  count: number;
+  total: number;
+  results: ProductProjectionResponse[];
+}
+
 export interface ProductCatalogData {
   published: boolean;
   current: ProductData;

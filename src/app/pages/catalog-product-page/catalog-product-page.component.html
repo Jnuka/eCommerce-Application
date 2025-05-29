@@ -1,35 +1,11 @@
-<div class="m-auto p-20 py-0 h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
-  <div class="max-w-[500px] flex flex-col gap-[10px] items-center justify-center text-center">
+<div class="m-auto p-20 py-0 min-h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
+  <div class="flex flex-col gap-[10px] items-center justify-center text-center">
     <h1 class="title-h1 leading-[80px] text-[70px]">Catalog</h1>
-    <button
-      (click)="goDetailedProduct('f7898223-65d9-4fa9-8657-1f9c114d6fc7')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog1
-    </button>
-    <button
-      (click)="goDetailedProduct('786bf3c3-ea8d-4580-bf3c-e9fc1cb033bb')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog2
-    </button>
-    <button
-      (click)="goDetailedProduct('6dad9e53-b8d3-4496-8528-dd46f6dae0bc')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog3
-    </button>
-    <button
-      (click)="goDetailedProduct('38e3ca27-7acd-4069-a2a4-24f62b3cb155')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog4
-    </button>
-    <button
-      (click)="goDetailedProduct('12c17562-830b-4d62-9a86-c317c5916428')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog5
-    </button>
+
+    <div class="p-5 grid grid-cols-3 gap-4">
+      @for (product of products(); track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
   </div>
 </div>
