@@ -1,0 +1,83 @@
+<div class="m-auto p-20 py-0 h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
+  <div class="max-w-[780px] flex flex-col gap-[30px] items-center justify-center text-center">
+    <div class="grid grid-cols-[310px_450px] items-center gap-5">
+      <div class="grid grid-rows-[400px_30px] items-center gap-5">
+        <div class="w-[310px] h-[400px] relative">
+          <button
+            (click)="openDialog()"
+            (keydown)="openDialog()"
+            class="w-[30px] h-[30px] absolute z-[2] cursor-pointer p-[3px] right-[5px] top-[5px]"
+          >
+            <img src="/svg/loupe.svg" alt="loupe" />
+          </button>
+          <app-image-slider [srcImage]="srcImage"></app-image-slider>
+        </div>
+        <div class="flex gap-5 justify-center">
+          @if (whichCategory === 'coffee') {
+            <mat-button-toggle-group (change)="changeInToggleGroup($event)">
+              <mat-button-toggle checked value="250" id="250">250g</mat-button-toggle>
+              <mat-button-toggle value="1000" id="1000">1000g</mat-button-toggle>
+            </mat-button-toggle-group>
+          } @else if (whichCategory === 'grinder') {
+            <mat-button-toggle-group (change)="changeInToggleGroup($event)">
+              <mat-button-toggle checked value="Grey" id="Grey">Grey</mat-button-toggle>
+              <mat-button-toggle value="Black" id="Black">Black</mat-button-toggle>
+              <mat-button-toggle value="Brown" id="Brown">Brown</mat-button-toggle>
+            </mat-button-toggle-group>
+          } @else if (whichCategory === 'french') {
+            <mat-button-toggle-group (change)="changeInToggleGroup($event)">
+              <mat-button-toggle checked value="Black" id="Black">Black</mat-button-toggle>
+              <mat-button-toggle value="Red" id="Red">Red</mat-button-toggle>
+              <mat-button-toggle value="Blue" id="Blue">Blue</mat-button-toggle>
+            </mat-button-toggle-group>
+          } @else if (whichCategory === 'aeropress') {}
+        </div>
+      </div>
+      <div class="flex flex-col">
+        @if (products) {
+          <h1 class="title-h1 text-[40px] text-center">
+            {{ products.masterData.current.name['en-US'] }}
+          </h1>
+          <p class="text-start">{{ description }}</p>
+          <button
+            (click)="moreDescription()"
+            class="more-btn text-[#f8e4be] text-[13px] p-[8px] rounded-[5px] w-[160px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+          >
+            More Information
+          </button>
+          @if (discount !== undefined) {
+            <div class="text-[25px]">
+              <p>
+                Total <span class="line-through">{{ totalPrice }}</span>
+                <span class="text-[red] font-bold"> {{ discount }}</span>
+              </p>
+            </div>
+          } @else {
+            <p class="text-[25px]">Total {{ totalPrice }}</p>
+          }
+          <div class="flex flex-col items-start">
+            <div *ngIf="attributes?.length" class="flex flex-col items-start">
+              <p *ngFor="let role of attributes" class="capitalize">
+                <span class="text-[#6E594BFF]">{{ role.name }}</span
+                >: {{ role.degree }}
+              </p>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+    <div class="flex gap-[20px]">
+      <button
+        class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+      >
+        Add to cart
+      </button>
+      <button
+        (click)="goCatalog()"
+        class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+      >
+        Back
+      </button>
+    </div>
+  </div>
+</div>
