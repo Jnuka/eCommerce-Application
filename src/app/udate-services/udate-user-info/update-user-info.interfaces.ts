@@ -33,3 +33,10 @@ export interface Address {
   city: string;
   country: string;
 }
+
+export interface EditFormValue {
+  firstName: string;
+  lastName: string;
+  email: string;
+  dateOfBirth: string;
+}

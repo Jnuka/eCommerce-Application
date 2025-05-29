@@ -1,6 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ReactiveFormsModule,
+  FormControl,
+} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -13,6 +19,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Customer } from '../../../data/interfaces/user-data.interfaces';
 import { spacesCheck, emailValidator, ageValidator } from '../../../shared/validators';
 import { CommonModule } from '@angular/common';
+import { EditFormValue } from '../../../udate-services/udate-user-info/update-user-info.interfaces';
 
 @Component({
   selector: 'app-profile-modal',
@@ -33,7 +40,12 @@ import { CommonModule } from '@angular/common';
   styleUrl: './profile-modal.component.css',
 })
 export class ProfileModalComponent implements OnInit {
-  public editForm!: FormGroup;
+  public editForm!: FormGroup<{
+    firstName: FormControl<string>;
+    lastName: FormControl<string>;
+    email: FormControl<string>;
+    dateOfBirth: FormControl<string>;
+  }>;
 
   constructor(
     private fb: FormBuilder,
@@ -42,7 +54,7 @@ export class ProfileModalComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.editForm = this.fb.group({
+    this.editForm = this.fb.nonNullable.group({
       firstName: [this.data?.firstName ?? '', [Validators.pattern('^[A-z]+$')]],
       lastName: [this.data?.lastName ?? '', [Validators.pattern('^[A-z]+$')]],
       email: [
@@ -58,7 +70,7 @@ export class ProfileModalComponent implements OnInit {
 
   public save(): void {
     if (this.editForm.valid) {
-      const data = this.editForm.value;
+      const data: EditFormValue = this.editForm.getRawValue();
       this.dialogReference.close(data);
     }
   }

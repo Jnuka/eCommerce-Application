@@ -50,29 +50,10 @@ export class UserProfileComponent {
     return dob ? new Date(dob).toLocaleDateString() : '';
   }
 
-  // public get shippingAddress(): Address {
-  //   return this.currentCustomer?.addresses[0] ?? UserProfileComponent.emptyAddress();
-  // }
-
-  // public get billingAddress(): Address {
-  //   return this.currentCustomer?.addresses[1] ?? UserProfileComponent.emptyAddress();
-  // }
-
-  // public get isDefaultShipping(): boolean {
-  //   return this.currentCustomer?.defaultShippingAddressId === this.shippingAddress?.id;
-  // }
-
-  // public get isDefaultBilling(): boolean {
-  //   return this.currentCustomer?.defaultBillingAddressId === this.billingAddress?.id;
-  // }
-
   public get customAddresses(): CustomCustomerAddress[] {
     return this.customer()?.customAddresses ?? [];
   }
 
-  // private static emptyAddress(): Address {
-  //   return { id: '', streetName: '', postalCode: '', city: '', country: '' };
-  // }
   public openModal(address?: CustomCustomerAddress): void {
     switch (this.selectedTabIndex) {
       case 0:
@@ -289,7 +270,6 @@ export class UserProfileComponent {
         });
       }
 
-      // 🔽 Установка default адреса на основе isDefault
       if (address.isDefault) {
         if (address.isShipping && currentCustomer.defaultShippingAddressId !== address.id) {
           initialActions.push({

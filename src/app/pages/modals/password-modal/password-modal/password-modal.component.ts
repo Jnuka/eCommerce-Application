@@ -1,5 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  Validators,
+  ReactiveFormsModule,
+  FormControl,
+} from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { spacesCheck, passwordValidator } from '../../../../shared/validators';
 import { ProfileModalComponent } from '../../profile-modal/profile-modal.component';
@@ -10,6 +16,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { Customer } from '../../../../data/interfaces/user-data.interfaces';
 import { UpdatePasswordService } from '../../../../udate-services/update-password/update-password.service';
+import { CustomerChangePassword } from '../../../../udate-services/update-password/update-password.interfaces';
 
 @Component({
   selector: 'app-password-modal',
@@ -25,8 +32,10 @@ import { UpdatePasswordService } from '../../../../udate-services/update-passwor
   styleUrl: './password-modal.component.css',
 })
 export class PasswordModalComponent implements OnInit {
-  public passwordForm!: FormGroup;
-
+  public passwordForm!: FormGroup<{
+    currentPassword: FormControl<string>;
+    newPassword: FormControl<string>;
+  }>;
   constructor(
     private fb: FormBuilder,
     private dialogReference: MatDialogRef<ProfileModalComponent>,
@@ -35,7 +44,7 @@ export class PasswordModalComponent implements OnInit {
   ) {}
 
   public ngOnInit(): void {
-    this.passwordForm = this.fb.group({
+    this.passwordForm = this.fb.nonNullable.group({
       currentPassword: ['', Validators.required.bind(Validators)],
       newPassword: ['', [Validators.required.bind(Validators), spacesCheck(), passwordValidator()]],
     });
@@ -44,9 +53,9 @@ export class PasswordModalComponent implements OnInit {
   public save(): void {
     if (this.passwordForm.invalid) return;
 
-    const { currentPassword, newPassword } = this.passwordForm.value;
+    const { currentPassword, newPassword } = this.passwordForm.getRawValue();
 
-    const payload = {
+    const payload: CustomerChangePassword = {
       id: this.data.id,
       version: this.data.version,
       currentPassword,
