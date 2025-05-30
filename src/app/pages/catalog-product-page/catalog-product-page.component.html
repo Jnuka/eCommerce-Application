@@ -1,8 +1,61 @@
-<div class="m-auto p-20 py-0 min-h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
+<div class="m-auto p-10 py-0 min-h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
   <div class="flex flex-col gap-[10px] items-center justify-center text-center">
-    <h1 class="title-h1 leading-[80px] text-[70px]">Catalog</h1>
+    <h1 class="title-h1 leading-[45px] text-[40px]">Catalog > Coffee</h1>
 
-    <div class="p-5 grid grid-cols-3 gap-4">
+    <div class="w-full p-5 controls">
+      <div [formGroup]="Attributes" class="w-full p-5 grid grid-cols-7 gap-5">
+        @if (types[0]) {
+          @for (key of types[0].attributes.slice(0, 3); track key) {
+            <p class="capitalize flex flex-col items-start">
+              <span class="text-[#6E594BFF] ml-[10px]">{{ key.name }}:</span>
+              <span>
+                <ul class="flex flex-col items-start">
+                  @for (value of key.type.values; track value) {
+                    <li>
+                      <mat-checkbox
+                        formControlName="{{ key.name }}.key:&quot;{{ value.key }}&quot;"
+                        >{{ value.label }}</mat-checkbox
+                      >
+                    </li>
+                  }
+                </ul>
+              </span>
+            </p>
+          }
+        }
+
+        <div [formGroup]="priceRange" class="flex flex-wrap w-[156px] h-[70px]">
+          <span class="text-[#6E594BFF]">Price range:</span>
+          <label for="sliderStart" class="example-value-label w-[50%] h-[20px] text-left"
+            >${{ sliderStart.value }}</label
+          >
+          <label for="sliderEnd" class="example-value-label w-[50%] h-[20px]"
+            >${{ sliderEnd.value }}</label
+          >
+          <mat-slider min="6.30" max="11.00" step="0.10">
+            <input value="6.30" formControlName="sliderStart" matSliderStartThumb #sliderStart />
+            <input value="11.00" formControlName="sliderEnd" matSliderEndThumb #sliderEnd />
+          </mat-slider>
+        </div>
+
+        <div class="h-[80px] flex flex-col justify-between">
+          <button
+            (click)="checkFilters()"
+            class="text-[#f8e4be] p-0.5 rounded-[5px] w-[120px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+          >
+            Apply filters
+          </button>
+          <button
+            (click)="resetFilters()"
+            class="text-[#f8e4be] p-0.5 rounded-[5px] w-[120px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+          >
+            Reset filters
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-5 grid grid-cols-3 gap-3">
       @for (product of products(); track product.id) {
         <app-product-card [product]="product" />
       }

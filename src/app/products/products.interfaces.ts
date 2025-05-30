@@ -18,12 +18,28 @@ export interface ProductProjectionResponse {
   masterVariant: ProductVariant;
 }
 
+export interface TypeResponse {
+  id: string;
+  version: number;
+  name: LocalizedString;
+  description: LocalizedString;
+  attributes: Attribute[];
+}
+
 export interface ProductListResponse {
   limit: number;
   offset: number;
   count: number;
   total: number;
   results: ProductProjectionResponse[];
+}
+
+export interface TypeListResponse {
+  limit: number;
+  offset: number;
+  count: number;
+  total: number;
+  results: TypeResponse[];
 }
 
 export interface ProductCatalogData {
@@ -95,6 +111,9 @@ export interface TypedMoney {
 export interface Attribute {
   name: string;
   value: AttributePlainEnumValue;
+  type: {
+    values: AttributePlainEnumValue[];
+  };
 }
 
 export interface AttributePlainEnumValue {

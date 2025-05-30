@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { ProductListResponse, ProductResponse } from './products.interfaces';
+import { ProductListResponse, ProductResponse, TypeListResponse } from './products.interfaces';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
@@ -24,13 +24,24 @@ export class ProductsService {
     );
   }
 
-  public getAllProducts(): Observable<ProductListResponse> {
+  public getProducts(filter: string): Observable<ProductListResponse> {
     this.cookieToken = this.cookieService.get('token');
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${this.cookieToken}`,
     });
     return this.http.get<ProductListResponse>(
-      `${environment.ctp_api_url}/${environment.ctp_project_key}/product-projections`,
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/product-projections/search?${filter}`,
+      { headers },
+    );
+  }
+
+  public getTypes(): Observable<TypeListResponse> {
+    this.cookieToken = this.cookieService.get('token');
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.cookieToken}`,
+    });
+    return this.http.get<TypeListResponse>(
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/product-types`,
       { headers },
     );
   }
