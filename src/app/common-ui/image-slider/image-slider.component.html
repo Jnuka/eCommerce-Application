@@ -1,7 +1,21 @@
-<div class="slider">
-  <div>
-    <button (click)="goToPrev()" class="prev-arrow">🢘</button>
-    <button (click)="goToNext()" class="next-arrow">🢚</button>
-  </div>
-  <div class="slide" [ngStyle]="{ 'background-image': getCurrentSlideUrl() }"></div>
+<div class="slider max-h-[100%] relative h-full">
+  <div
+    class="slide bg-cover bg-center w-full h-full shadow-[5px_3px_3px_rgba(0,0,0,0.3)] rounded-[5px]"
+    id="{{ currentIndex }}"
+    [ngStyle]="{ 'background-image': getCurrentSlideUrl() }"
+  ></div>
+</div>
+<div class="absolute bottom-[-15px] w-full h-[35px]">
+  <button
+    (click)="goToPrev()"
+    class="prev-arrow hover:text-[#9a786c] left-2.5 absolute translate-x-0 -translate-y-2/4 text-6xl leading-[35px] text-[#6E594BFF] z-[1] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] bottom-0"
+  >
+    🢘
+  </button>
+  <button
+    (click)="goToNext()"
+    class="next-arrow hover:text-[#9a786c] right-2.5 absolute translate-x-0 -translate-y-2/4 text-6xl leading-[35px] text-[#6E594BFF] z-[1] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] bottom-0"
+  >
+    🢚
+  </button>
 </div>

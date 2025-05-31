@@ -14,4 +14,15 @@ import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose } from '@angular/mate
 export class ModalWindowComponent {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   public srcImage: SliderInterface[] = inject(MAT_DIALOG_DATA);
+  public newSourceImage: SliderInterface[] = [];
+  constructor() {
+    const currentIndex = document.querySelector('.slide')?.id;
+    if (currentIndex !== undefined) {
+      this.newSourceImage = [
+        this.srcImage[Number(currentIndex)],
+        ...this.srcImage.slice(Number(currentIndex) + 1),
+        ...this.srcImage.slice(0, Number(currentIndex)),
+      ];
+    }
+  }
 }
