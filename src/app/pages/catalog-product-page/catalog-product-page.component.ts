@@ -6,6 +6,8 @@ import { FormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-catalog-product-page',
@@ -17,6 +19,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     FormsModule,
     MatSliderModule,
     ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -24,6 +28,7 @@ export class CatalogProductPageComponent implements OnInit {
   public products = signal<ProductProjectionResponse[]>([]);
   public types: TypeResponse[] = [];
   public filter = '';
+  public sorter = '';
 
   public productService = inject(ProductsService);
   public typesID = {
@@ -54,6 +59,14 @@ export class CatalogProductPageComponent implements OnInit {
     sliderEnd: new FormControl(11.0),
   });
 
+  public sort = new FormControl();
+
+  public sorters = [
+    { value: 'price desc', viewValue: 'Price: high to low' },
+    { value: 'price asc', viewValue: 'Price: low to high' },
+    { value: 'name.en-US asc', viewValue: 'Name: A-Z' },
+  ];
+
   public ngOnInit(): void {
     this.renderControls();
     this.checkFilters();
@@ -67,6 +80,15 @@ export class CatalogProductPageComponent implements OnInit {
     this.priceRange.get('sliderEnd')?.setValue(11.0);
 
     this.productService.getProducts(this.filter).subscribe(response => {
+      this.products.set(response.results);
+    });
+  }
+
+  public sortProducts(): void {
+    if (this.sort.value) {
+      this.sorter = `&sort=${this.sort.value}`;
+    }
+    this.productService.getProducts(`${this.filter + this.sorter}`).subscribe(response => {
       this.products.set(response.results);
     });
   }
@@ -95,7 +117,11 @@ export class CatalogProductPageComponent implements OnInit {
       this.filter += `&filter=variants.price.centAmount:range (${startPrice * 100} to ${endPrice * 100})`;
     }
 
-    this.productService.getProducts(this.filter).subscribe(response => {
+    if (this.sort.value) {
+      this.sorter = `&sort=${this.sort.value}`;
+    }
+
+    this.productService.getProducts(`${this.filter + this.sorter}`).subscribe(response => {
       this.products.set(response.results);
     });
   }

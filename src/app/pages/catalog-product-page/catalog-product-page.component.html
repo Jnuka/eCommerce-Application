@@ -52,6 +52,16 @@
             Reset filters
           </button>
         </div>
+        <div>
+          <h4>Sort by</h4>
+          <mat-form-field>
+            <mat-select [formControl]="sort" (selectionChange)="sortProducts()">
+              @for (sorter of sorters; track sorter) {
+                <mat-option [value]="sorter.value">{{ sorter.viewValue }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+        </div>
       </div>
     </div>
 
