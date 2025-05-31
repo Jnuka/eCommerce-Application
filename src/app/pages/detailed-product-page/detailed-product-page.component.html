@@ -1,5 +1,30 @@
 <div class="m-auto p-20 py-0 h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
-  <div class="max-w-[780px] flex flex-col gap-[30px] items-center justify-center text-center">
+  <div class="max-w-[780px] flex flex-col gap-[30px] justify-center">
+    <div style="display: flex; justify-content: left">
+      <nav style="font-size: 20px">
+        <button
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:h-0.5 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+          (click)="goHome()"
+        >
+          Home
+        </button>
+        /
+        <button
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:h-0.5 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+          (click)="goCatalog()"
+        >
+          Catalog
+        </button>
+        /
+        @if (products) {
+          <button
+            class="relative before:content-[''] text-[#6E594BFF] before:absolute before:bottom-[-5px] before:w-full before:h-0.5 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
+          >
+            {{ products.masterData.current.name['en-US'] }}
+          </button>
+        }
+      </nav>
+    </div>
     <div class="grid grid-cols-[310px_450px] items-center gap-5">
       <div class="grid grid-rows-[400px_30px] items-center gap-5">
         <div class="w-[310px] h-[400px] relative">
@@ -31,7 +56,7 @@
           } @else if (whichCategory === 'aeropress') {}
         </div>
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col text-center">
         @if (products) {
           <h1 class="title-h1 text-[40px] text-center">
             {{ products.masterData.current.name['en-US'] }}
@@ -64,7 +89,7 @@
         }
       </div>
     </div>
-    <div class="flex gap-[20px]">
+    <div class="flex gap-[20px] justify-center">
       <button
         class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
       >
