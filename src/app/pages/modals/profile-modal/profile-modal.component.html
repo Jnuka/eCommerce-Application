@@ -1,91 +1,97 @@
-<h2 mat-dialog-title>Editing a profile</h2>
+<div class="bg-white">
+  <h2 mat-dialog-title>Editing a profile</h2>
 
-<form
-  [formGroup]="editForm"
-  (ngSubmit)="save()"
-  mat-dialog-content
-  class="flex flex-col gap-4 pt-2"
->
-  <div class="flex flex-col">
-    <div class="grid grid-cols-[repeat(2,1fr)] gap-8 max-md:flex max-md:flex-col">
-      <mat-form-field appearance="fill">
-        <mat-label>First Name</mat-label>
-        <input matInput formControlName="firstName" type="text" required />
-        <mat-error *ngIf="editForm.get('firstName')?.hasError('pattern')"
-          >Name must contain only latin letters at least one character.</mat-error
-        >
-        <mat-error *ngIf="editForm.get('firstName')?.hasError('required')"
-          >This field is required</mat-error
-        >
-      </mat-form-field>
+  <form
+    [formGroup]="editForm"
+    (ngSubmit)="save()"
+    mat-dialog-content
+    class="flex flex-col gap-4 pt-2"
+  >
+    <div class="flex flex-col">
+      <div class="grid grid-cols-[repeat(2,1fr)] gap-8 max-md:flex max-md:flex-col">
+        <mat-form-field appearance="fill">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstName" type="text" required />
+          <mat-error *ngIf="editForm.get('firstName')?.hasError('pattern')"
+            >Name must contain only latin letters at least one character.</mat-error
+          >
+          <mat-error *ngIf="editForm.get('firstName')?.hasError('required')"
+            >This field is required</mat-error
+          >
+        </mat-form-field>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Last Name</mat-label>
-        <input matInput formControlName="lastName" type="text" required />
-        <mat-error *ngIf="editForm.get('lastName')?.hasError('pattern')"
-          >Last name must contain only latin letters at least one character.</mat-error
-        >
-        <mat-error *ngIf="editForm.get('lastName')?.hasError('required')"
-          >This field is required</mat-error
-        >
-      </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastName" type="text" required />
+          <mat-error *ngIf="editForm.get('lastName')?.hasError('pattern')"
+            >Last name must contain only latin letters at least one character.</mat-error
+          >
+          <mat-error *ngIf="editForm.get('lastName')?.hasError('required')"
+            >This field is required</mat-error
+          >
+        </mat-form-field>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Email</mat-label>
-        <input
-          matInput
-          formControlName="email"
-          type="email"
-          placeholder="user@example.com"
-          required
-          id="emailEdit"
-        />
-        <mat-error *ngIf="editForm.get('email')?.hasError('required')"
-          >This field is required</mat-error
-        >
-        <mat-error *ngIf="editForm.get('email')?.errors?.['email']"
-          >Please, enter correct email.</mat-error
-        >
-        <mat-error *ngIf="editForm.get('email')?.errors?.['containSpaces']"
-          >Please, delete spaces.</mat-error
-        >
-        <mat-error *ngIf="editForm.get('email')?.errors?.['domain']"
-          >Email address must contain a domain name (e.g., example.com).</mat-error
-        >
-        <mat-error *ngIf="editForm.get('email')?.errors?.['dog']"
-          >Email address must contain an '&#64;' symbol.
-        </mat-error>
-        <mat-error *ngIf="editForm.get('email')?.errors?.['registration']"
-          >User with this email already exists.</mat-error
-        >
-      </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input
+            matInput
+            formControlName="email"
+            type="email"
+            placeholder="user@example.com"
+            required
+            id="emailEdit"
+          />
+          <mat-error *ngIf="editForm.get('email')?.hasError('required')"
+            >This field is required</mat-error
+          >
+          <mat-error *ngIf="editForm.get('email')?.errors?.['email']"
+            >Please, enter correct email.</mat-error
+          >
+          <mat-error *ngIf="editForm.get('email')?.errors?.['containSpaces']"
+            >Please, delete spaces.</mat-error
+          >
+          <mat-error *ngIf="editForm.get('email')?.errors?.['domain']"
+            >Email address must contain a domain name (e.g., example.com).</mat-error
+          >
+          <mat-error *ngIf="editForm.get('email')?.errors?.['dog']"
+            >Email address must contain an '&#64;' symbol.
+          </mat-error>
+          <mat-error *ngIf="editForm.get('email')?.errors?.['registration']"
+            >User with this email already exists.</mat-error
+          >
+        </mat-form-field>
 
-      <mat-form-field appearance="fill">
-        <mat-label>Date of Birth</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" required />
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
-        <mat-error *ngIf="editForm.get('dateOfBirth')?.hasError('required')">Enter date.</mat-error>
-        <mat-error *ngIf="editForm.value.dateOfBirth">You must be 13 years old or older.</mat-error>
-      </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label>Date of Birth</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="dateOfBirth" required />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="editForm.get('dateOfBirth')?.hasError('required')"
+            >Enter date.</mat-error
+          >
+          <mat-error *ngIf="editForm.value.dateOfBirth"
+            >You must be 13 years old or older.</mat-error
+          >
+        </mat-form-field>
+      </div>
     </div>
+  </form>
+
+  <div class="flex justify-end gap-x-4 mt-4 mr-4 mb-4">
+    <button
+      type="button"
+      class="w-30 bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer px-5 py-2 rounded-[3px]"
+      (click)="close()"
+    >
+      Cancel
+    </button>
+
+    <button
+      class="w-30 bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer px-5 py-2 rounded-[3px] disabled:border-gray-200 disabled:bg-[#504742] disabled:shadow-none disabled:pointer-events-none"
+      [disabled]="!editForm.valid || !editForm.dirty"
+      (click)="save()"
+    >
+      Save
+    </button>
   </div>
-</form>
-
-<div class="flex justify-end gap-x-4 mt-4 mr-4 mb-4">
-  <button
-    type="button"
-    class="w-30 bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer px-5 py-2 rounded-[3px]"
-    (click)="close()"
-  >
-    Cancel
-  </button>
-
-  <button
-    class="w-30 bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer px-5 py-2 rounded-[3px] disabled:border-gray-200 disabled:bg-[#504742] disabled:shadow-none disabled:pointer-events-none"
-    [disabled]="editForm.invalid"
-    (click)="save()"
-  >
-    Save
-  </button>
 </div>

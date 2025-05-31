@@ -1,83 +1,85 @@
-<h2 mat-dialog-title>Edit Address</h2>
-<div class="flex flex-col items-center">
-  <form
-    class="max-w-[800px] mx-auto flex flex-col gap-[20px] mb-[30px] max-md:px-4"
-    [formGroup]="addressEditForm"
-    (ngSubmit)="save()"
-  >
-    <div class="address-form grid grid-cols-1 gap-[20px] mt-[20px] w-full max-w-[500px] mx-auto">
-      <mat-form-field>
-        <mat-label>Street</mat-label>
-        <input matInput formControlName="streetName" type="text" required />
-        <mat-error *ngIf="addressEditForm.get('streetName')?.hasError('pattern')">
-          Must contain at least one character.
-        </mat-error>
-        <mat-error *ngIf="addressEditForm.get('streetName')?.hasError('required')">
-          This field is required.
-        </mat-error>
-      </mat-form-field>
+<div class="bg-white">
+  <h2 mat-dialog-title>Edit Address</h2>
+  <div class="flex flex-col items-center">
+    <form
+      class="max-w-[800px] mx-auto flex flex-col gap-[20px] mb-[30px] max-md:px-4"
+      [formGroup]="addressEditForm"
+      (ngSubmit)="save()"
+    >
+      <div class="address-form grid grid-cols-1 gap-[20px] mt-[20px] w-full max-w-[500px] mx-auto">
+        <mat-form-field>
+          <mat-label>Street</mat-label>
+          <input matInput formControlName="streetName" type="text" required />
+          <mat-error *ngIf="addressEditForm.get('streetName')?.hasError('pattern')">
+            Must contain at least one character.
+          </mat-error>
+          <mat-error *ngIf="addressEditForm.get('streetName')?.hasError('required')">
+            This field is required.
+          </mat-error>
+        </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>City</mat-label>
-        <input matInput formControlName="city" type="text" required />
-        <mat-error *ngIf="addressEditForm.get('city')?.hasError('cityValidator')">
-          Must contain valid characters.
-        </mat-error>
-        <mat-error *ngIf="addressEditForm.get('city')?.hasError('required')">
-          This field is required.
-        </mat-error>
-      </mat-form-field>
+        <mat-form-field>
+          <mat-label>City</mat-label>
+          <input matInput formControlName="city" type="text" required />
+          <mat-error *ngIf="addressEditForm.get('city')?.hasError('cityValidator')">
+            Must contain valid characters.
+          </mat-error>
+          <mat-error *ngIf="addressEditForm.get('city')?.hasError('required')">
+            This field is required.
+          </mat-error>
+        </mat-form-field>
 
-      <mat-form-field>
-        <mat-label>Postal Code</mat-label>
-        <input
-          matInput
-          maxlength="5"
-          placeholder="12345"
-          formControlName="postalCode"
-          type="number"
-          required
-        />
-        <mat-error *ngIf="addressEditForm.get('postalCode')?.hasError('pattern')">
-          Enter correct postal code (5 digits).
-        </mat-error>
-        <mat-error *ngIf="addressEditForm.get('postalCode')?.hasError('required')">
-          This field is required.
-        </mat-error>
-      </mat-form-field>
+        <mat-form-field>
+          <mat-label>Postal Code</mat-label>
+          <input
+            matInput
+            maxlength="5"
+            placeholder="12345"
+            formControlName="postalCode"
+            type="number"
+            required
+          />
+          <mat-error *ngIf="addressEditForm.get('postalCode')?.hasError('pattern')">
+            Enter correct postal code (5 digits).
+          </mat-error>
+          <mat-error *ngIf="addressEditForm.get('postalCode')?.hasError('required')">
+            This field is required.
+          </mat-error>
+        </mat-form-field>
 
-      <mat-form-field>
-        <mat-select placeholder="Country*" formControlName="country" required>
-          <mat-option *ngFor="let country of countries" [value]="country.value">
-            {{ country.viewValue }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="addressEditForm.get('country')?.hasError('required')">
-          Select country.
-        </mat-error>
-      </mat-form-field>
+        <mat-form-field>
+          <mat-select placeholder="Country*" formControlName="country" required>
+            <mat-option *ngFor="let country of countries" [value]="country.value">
+              {{ country.viewValue }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="addressEditForm.get('country')?.hasError('required')">
+            Select country.
+          </mat-error>
+        </mat-form-field>
 
-      <mat-checkbox formControlName="isShipping">Shipping Address</mat-checkbox>
-      <mat-checkbox formControlName="isBilling">Billing Address</mat-checkbox>
-      <mat-checkbox formControlName="isDefault">Default Address</mat-checkbox>
-    </div>
+        <mat-checkbox formControlName="isShipping">Shipping Address</mat-checkbox>
+        <mat-checkbox formControlName="isBilling">Billing Address</mat-checkbox>
+        <mat-checkbox formControlName="isDefault">Default Address</mat-checkbox>
+      </div>
 
-    <div class="flex justify-end gap-x-4 mt-4 mr-4 mb-4 max-w-[500px] mx-auto">
-      <button
-        type="button"
-        class="w-30 bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer px-5 py-2 rounded-[3px]"
-        (click)="close()"
-      >
-        Cancel
-      </button>
+      <div class="flex justify-end gap-x-4 mt-4 mr-4 mb-4 max-w-[500px] mx-auto">
+        <button
+          type="button"
+          class="w-30 bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer px-5 py-2 rounded-[3px]"
+          (click)="close()"
+        >
+          Cancel
+        </button>
 
-      <button
-        class="w-30 bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer px-5 py-2 rounded-[3px] disabled:border-gray-200 disabled:bg-[#504742] disabled:shadow-none disabled:pointer-events-none"
-        [disabled]="addressEditForm.invalid"
-        (click)="save()"
-      >
-        Save
-      </button>
-    </div>
-  </form>
+        <button
+          class="w-30 bg-[#6B3C21] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] text-white cursor-pointer px-5 py-2 rounded-[3px] disabled:border-gray-200 disabled:bg-[#504742] disabled:shadow-none disabled:pointer-events-none"
+          [disabled]="addressEditForm.invalid || !addressEditForm.dirty"
+          (click)="save()"
+        >
+          Save
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

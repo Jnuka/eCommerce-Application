@@ -61,6 +61,7 @@ export class UserProfileComponent {
           .open(ProfileModalComponent, {
             data: { ...this.currentCustomer },
             width: '600px',
+            hasBackdrop: true,
           })
           .afterClosed()
           .subscribe((result: Customer | undefined) => {
@@ -88,6 +89,7 @@ export class UserProfileComponent {
             },
             width: '600px',
             maxWidth: 'unset',
+            hasBackdrop: true,
           })
           .afterClosed()
           .subscribe((result: CustomCustomerAddress | undefined) => {
@@ -106,6 +108,7 @@ export class UserProfileComponent {
       .open(PasswordModalComponent, {
         data: { ...this.currentCustomer },
         width: '600px',
+        hasBackdrop: true,
       })
       .afterClosed()
       .subscribe((result: Customer | undefined) => {

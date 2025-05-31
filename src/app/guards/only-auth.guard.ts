@@ -10,5 +10,5 @@ export const authOnlyGuard: CanActivateFn = () => {
   if (isAuth) {
     return true;
   }
-  return router.parseUrl(router.url);
+  return router.createUrlTree(['login']);
 };

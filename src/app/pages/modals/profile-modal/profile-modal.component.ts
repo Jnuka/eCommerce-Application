@@ -55,8 +55,14 @@ export class ProfileModalComponent implements OnInit {
 
   public ngOnInit(): void {
     this.editForm = this.fb.nonNullable.group({
-      firstName: [this.data?.firstName ?? '', [Validators.pattern('^[A-z]+$')]],
-      lastName: [this.data?.lastName ?? '', [Validators.pattern('^[A-z]+$')]],
+      firstName: [
+        this.data?.firstName ?? '',
+        [Validators.required.bind(Validators), Validators.pattern('^[A-z]+$')],
+      ],
+      lastName: [
+        this.data?.lastName ?? '',
+        [Validators.required.bind(Validators), Validators.pattern('^[A-z]+$')],
+      ],
       email: [
         this.data?.email ?? '',
         [Validators.required.bind(Validators), spacesCheck(), emailValidator()],
