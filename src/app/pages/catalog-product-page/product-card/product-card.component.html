@@ -18,7 +18,7 @@
   </div>
   <div class="h-38 flex flex-col justify-between items-center">
     <h2 class="text-md font-bold">{{ product().name['en-US'] }}</h2>
-    <span class="text-md text-[#6E594BFF]">{{ product().description['en-US'].slice(0, 100) }}</span>
+    <span class="text-md text-[#6E594BFF]">{{ product().metaDescription['en-US'] }}</span>
     @if (discountPrice !== undefined) {
       <div class="text-[20px]">
         <p>
