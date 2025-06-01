@@ -1,10 +1,13 @@
-<div class="bg-white shadow-md border rounded-xl p-1 flex flex-col gap-3 relative">
-  <div class="mx-auto flex items-center">
+<div
+  class="bg-[#ffff] border-1 border-solid border-[#C1B6AD] rounded-xl p-5 flex flex-col gap-3 min-h-full relative max-[500px]:p-2"
+  style="align-items: flex-end"
+>
+  <div class="mx-auto flex items-center gap-[5px]">
     @if (product().masterVariant.images[0]) {
       <img
         [src]="product().masterVariant.images[0].url"
         alt="{{ product().masterVariant.images[0].label }}"
-        class="h-[170px] w-[150px] object-contain"
+        class="h-[170px] w-[150px] object-contain rounded-[8px]"
       />
     }
     <div class="flex flex-col items-start ml-[3px]">
@@ -16,7 +19,7 @@
       </div>
     </div>
   </div>
-  <div class="h-38 flex flex-col justify-between items-center">
+  <div class="flex flex-col justify-between items-center gap-[5px]">
     <h2 class="text-md font-bold">{{ product().name['en-US'] }}</h2>
     <span class="text-md text-[#6E594BFF]">{{ product().metaDescription['en-US'] }}</span>
     @if (discountPrice !== undefined) {

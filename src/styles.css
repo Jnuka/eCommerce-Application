@@ -51,6 +51,10 @@
     z-index: 2;
     padding: 20px;
   }
+
+  .mat-mdc-slider {
+    min-width: 150px;
+  }
 }
 
 .mat-form-field-invalid .mat-mdc-form-field-infix,
