@@ -230,6 +230,10 @@ export class DetailedProductPageComponent implements OnInit {
     await this.router.navigate(['catalog']);
   }
 
+  public async goHome(): Promise<void> {
+    await this.router.navigate(['']);
+  }
+
   public openDialog(): void {
     this.dialog.open(ModalWindowComponent, {
       data: this.srcImage,
