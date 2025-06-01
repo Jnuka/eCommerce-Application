@@ -2,12 +2,20 @@ import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@ang
 import { ProductProjectionResponse, TypeResponse } from '../../products/products.interfaces';
 import { ProductsService } from '../../products/products.service';
 import { ProductCardComponent } from './product-card/product-card.component';
-import { FormBuilder, FormControl, FormGroup, FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSliderModule } from '@angular/material/slider';
-import { ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-catalog-product-page',
@@ -21,6 +29,9 @@ import { MatSelectModule } from '@angular/material/select';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatSelectModule,
+    MatIconModule,
+    MatButtonModule,
+    MatInputModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -29,6 +40,8 @@ export class CatalogProductPageComponent implements OnInit {
   public types: TypeResponse[] = [];
   public filter = '';
   public sorter = '';
+  public search = '';
+  public fullTextSearch = '';
 
   public productService = inject(ProductsService);
   public typesID = {
@@ -124,6 +137,29 @@ export class CatalogProductPageComponent implements OnInit {
     this.productService.getProducts(`${this.filter + this.sorter}`).subscribe(response => {
       this.products.set(response.results);
     });
+
+    if (this.search) this.onSearch();
+  }
+
+  public resetSearch(): void {
+    this.search = '';
+    this.fullTextSearch = '';
+    this.checkFilters();
+  }
+
+  public onSearch(): void {
+    if (this.search) {
+      this.fullTextSearch = `fuzzi=true&fuzziLevel=0&searchKeywords.en-US=${this.search}`;
+      this.productService.getProductsBySearch(`${this.fullTextSearch}`).subscribe(response => {
+        const filterNames = response['searchKeywords.en-US'].map(x => x.text);
+        const result = this.products().filter(product =>
+          filterNames.includes(product.name['en-US']),
+        );
+        this.products.set(result);
+      });
+    } else {
+      this.checkFilters();
+    }
   }
 
   public renderControls(): void {

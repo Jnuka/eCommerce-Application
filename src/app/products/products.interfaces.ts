@@ -16,6 +16,9 @@ export interface ProductProjectionResponse {
   categories: CategoryReference[];
   metaDescription: LocalizedString;
   masterVariant: ProductVariant;
+  searchKeywords: {
+    'en-US': SearchKeywords[];
+  };
 }
 
 export interface TypeResponse {
@@ -129,4 +132,8 @@ export interface DiscountedPrice {
 export interface ProductDiscountReference {
   id: string;
   typeId: string;
+}
+
+export interface SearchResponse {
+  'searchKeywords.en-US': SearchKeywords[];
 }
