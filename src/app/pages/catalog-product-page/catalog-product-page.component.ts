@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   CategoryResponse,
   TypeResponse,
@@ -21,6 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { throwError } from 'rxjs';
 
 @Component({
   selector: 'app-catalog-product-page',
@@ -55,6 +56,9 @@ export class CatalogProductPageComponent implements OnInit {
   public sorter = '';
   public search = '';
   public fullTextSearch = '';
+  public page: string | null = '';
+  public typeParams: string | null = '';
+  public filterParams: string | null = '';
 
   public readonly _formBuilder = inject(FormBuilder);
 
@@ -71,8 +75,8 @@ export class CatalogProductPageComponent implements OnInit {
   });
 
   public priceRange = new FormGroup({
-    sliderStart: new FormControl(0),
-    sliderEnd: new FormControl(100.0),
+    sliderStart: new FormControl(1),
+    sliderEnd: new FormControl(50.0),
   });
 
   public sort = new FormControl();
@@ -84,23 +88,75 @@ export class CatalogProductPageComponent implements OnInit {
   ];
 
   private router = inject(Router);
+  constructor(private activatedRoute: ActivatedRoute) {}
 
   public ngOnInit(): void {
-    this.getCategoriesInfo();
+    this.page = this.activatedRoute.snapshot.queryParamMap.get('categories');
+    this.typeParams = this.activatedRoute.snapshot.queryParamMap.get('type');
+    this.filterParams = this.activatedRoute.snapshot.queryParamMap.get('filter');
+    // console.log('page', this.page);
+    // console.log('typeParams', this.typeParams);
+    // console.log('filterParams', this.filterParams);
+    if (this.page !== null) {
+      if (this.typeParams !== null) {
+        this.getCategoriesInfo(this.page, this.typeParams);
+      } else {
+        this.getCategoriesInfo(this.page);
+      }
+    } else {
+      this.getCategoriesInfo();
+    }
   }
 
-  public goCatalog(): void {
+  public async goCatalog(): Promise<void> {
     this.currentPage = 'Catalog';
     this.currentType = '';
     this.currentCategory = '';
     this.currentTypeID = '';
     this.currentCategoryID = '';
-    //await this.router.navigate(['catalog']);
+    await this.router.navigate(['catalog'], {
+      queryParams: {},
+    });
+    // this.showProductsFromCategory('Catalog', '');
   }
 
-  public async goHome(): Promise<void> {
-    await this.router.navigate(['']);
+  public goHome(): void {
+    void this.router.navigate([''], {
+      queryParams: {},
+    });
   }
+
+  public getCategories(category: string): void {
+    void this.router
+      .navigate(['catalog'], {
+        queryParams: { categories: category },
+      })
+      .then(r => throwError(() => r));
+  }
+
+  public getTypeCategories(category: string, type: string): void {
+    void this.router
+      .navigate(['catalog'], {
+        queryParams: { categories: category, type: type },
+      })
+      .then(r => throwError(() => r));
+  }
+
+  // public getFilters(category: string, filter: string, type?: string): void {
+  //   if (type !== undefined) {
+  //     void this.router
+  //       .navigate(['catalog'], {
+  //         queryParams: { categories: category, type: type, filter: filter },
+  //       })
+  //       .then(r => throwError(() => r));
+  //   } else {
+  //     void this.router
+  //       .navigate(['catalog'], {
+  //         queryParams: { categories: category, filter: filter },
+  //       })
+  //       .then(r => throwError(() => r));
+  //   }
+  // }
 
   public showProductsFromType(type: string, id: string): void {
     this.currentPage = type;
@@ -108,6 +164,7 @@ export class CatalogProductPageComponent implements OnInit {
     this.currentCategory = '';
     this.currentTypeID = id;
     this.checkFilters();
+    this.getCategories(this.currentPage);
   }
 
   public showProductsFromCategory(category: string, id: string): void {
@@ -115,6 +172,7 @@ export class CatalogProductPageComponent implements OnInit {
     if (category.slice(0, 6) === 'Coffee') {
       this.currentType = 'Coffee';
       this.currentTypeID = this.types[0].id;
+      this.getTypeCategories(this.currentType, category);
     } else {
       this.currentType = 'Accessories';
       this.currentTypeID = this.types[1].id;
@@ -124,14 +182,45 @@ export class CatalogProductPageComponent implements OnInit {
     this.checkFilters();
   }
 
-  public getCategoriesInfo(): void {
+  public getCategoriesInfo(page?: string, type?: string): void {
     this.productService.getTypes().subscribe(response => {
       this.types = response.results;
     });
-
     this.productService.getCategories().subscribe(response => {
       this.categories = response.results;
     });
+    if (page) {
+      if (type) {
+        this.productService.getTypes().subscribe(response => {
+          this.types = response.results;
+        });
+        this.productService.getCategories().subscribe(response => {
+          this.categories = response.results;
+          if (type === 'Coffee for espresso') {
+            this.showProductsFromCategory(type, this.categories[0].id);
+          } else {
+            this.showProductsFromCategory(type, this.categories[1].id);
+          }
+        });
+      } else {
+        this.currentType = page;
+        this.productService.getTypes().subscribe(response => {
+          this.types = response.results;
+          if (page === 'Coffee') {
+            this.showProductsFromType(page, this.types[0].id);
+          } else if (page === 'Accessories') {
+            this.showProductsFromType(page, this.types[1].id);
+          }
+        });
+      }
+    } else {
+      this.productService.getTypes().subscribe(response => {
+        this.types = response.results;
+      });
+      this.productService.getCategories().subscribe(response => {
+        this.categories = response.results;
+      });
+    }
   }
 
   public checkCategory(): void {
@@ -142,18 +231,14 @@ export class CatalogProductPageComponent implements OnInit {
     }
   }
 
-  public async goDetailedProduct(id: string): Promise<void> {
-    await this.router.navigate(['product'], {
-      queryParams: { productId: id },
-    });
-  }
-
   public resetFilters(): void {
     this.checkCategory();
 
     this.Attributes.reset();
-    this.priceRange.get('sliderStart')?.setValue(6.3);
-    this.priceRange.get('sliderEnd')?.setValue(11.0);
+    // this.Attributes.get(['acidity.key:"low"'])?.setValue(true);
+    // this.Attributes.get(['acidity.key:"medium"'])?.setValue(true);
+    this.priceRange.get('sliderStart')?.setValue(1.0);
+    this.priceRange.get('sliderEnd')?.setValue(50.0);
 
     this.productService.getProducts(this.filter).subscribe(response => {
       this.products.set(response.results);
@@ -171,7 +256,6 @@ export class CatalogProductPageComponent implements OnInit {
 
   public checkFilters(): void {
     this.checkCategory();
-
     const entries = Object.entries(this.Attributes.value);
 
     let lastTrueKey = '';
@@ -196,7 +280,23 @@ export class CatalogProductPageComponent implements OnInit {
     if (this.sort.value) {
       this.sorter = `&sort=${this.sort.value}`;
     }
-
+    // const filterSave = this.filter + this.sorter;
+    // this.getFilters(this.currentPage, filterSave);
+    //
+    // const filterSaveSeparate = (this.filter + this.sorter).split('&');
+    // console.log(filterSaveSeparate);
+    //
+    // for (let i = 1; i < filterSaveSeparate.length; i++) {
+    //   if (filterSaveSeparate[i].includes('acidity.key')) {
+    //     if (filterSaveSeparate[i].split(':')[1].includes("low")) {
+    //       this.Attributes.get(['acidity.key:"low"'])?.setValue(true);
+    //     } else if (filterSaveSeparate[i].split(':')[1].includes("medium")) {
+    //       this.Attributes.get(['acidity.key:"medium"'])?.setValue(true);
+    //     } else if (filterSaveSeparate[i].split(':')[1].includes("high")) {
+    //       this.Attributes.get(['acidity.key:"high"'])?.setValue(true);
+    //     }
+    //   }
+    // }
     this.productService.getProducts(`${this.filter + this.sorter}`).subscribe(response => {
       this.products.set(response.results);
     });
