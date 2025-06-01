@@ -1,3 +1,27 @@
+export interface TypeResponse {
+  id: string;
+  version: number;
+  name: string;
+  description: LocalizedString;
+  attributes: Attribute[];
+}
+
+export interface CategoryResponse {
+  id: string;
+  version: number;
+  name: LocalizedString;
+  description: LocalizedString;
+  attributes: Attribute[];
+}
+
+export interface ListResponse {
+  limit: number;
+  offset: number;
+  count: number;
+  total: number;
+  results: [];
+}
+
 export interface ProductResponse {
   id: string;
   version: number;

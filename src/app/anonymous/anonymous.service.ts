@@ -50,7 +50,7 @@ export class AnonymousService {
       'Authorization': `Basic ${authHeader}`,
     });
 
-    const scopes = ['view_published_products', 'manage_orders']
+    const scopes = ['view_published_products', 'manage_orders', 'view_categories']
       .map(scope => `${scope}:${environment.ctp_project_key}`)
       .join(' ');
 

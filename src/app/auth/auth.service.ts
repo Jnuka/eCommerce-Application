@@ -58,7 +58,13 @@ export class AuthService {
           .set('password', payload.password)
           .set(
             'scope',
-            ['manage_orders', 'view_published_products', 'view_products', 'manage_customers']
+            [
+              'manage_orders',
+              'view_published_products',
+              'view_products',
+              'manage_customers',
+              'view_categories',
+            ]
               .map(scope => `${scope}:${environment.ctp_project_key}`)
               .join(' '),
           );
