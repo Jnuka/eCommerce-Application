@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {
   CategoryResponse,
@@ -38,13 +38,13 @@ import { MatInputModule } from '@angular/material/input';
     MatButtonModule,
     MatInputModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogProductPageComponent implements OnInit {
   public currentPage = 'Catalog';
   public currentType = '';
   public currentCategory = '';
-  public currentID = '';
+  public currentTypeID = '';
+  public currentCategoryID = '';
 
   public productService = inject(ProductsService);
   public types: TypeResponse[] = [];
@@ -71,8 +71,8 @@ export class CatalogProductPageComponent implements OnInit {
   });
 
   public priceRange = new FormGroup({
-    sliderStart: new FormControl(6.3),
-    sliderEnd: new FormControl(11.0),
+    sliderStart: new FormControl(0),
+    sliderEnd: new FormControl(100.0),
   });
 
   public sort = new FormControl();
@@ -87,14 +87,14 @@ export class CatalogProductPageComponent implements OnInit {
 
   public ngOnInit(): void {
     this.getCategoriesInfo();
-    this.currentPage = 'Catalog';
   }
 
   public goCatalog(): void {
     this.currentPage = 'Catalog';
     this.currentType = '';
     this.currentCategory = '';
-    this.currentID = '';
+    this.currentTypeID = '';
+    this.currentCategoryID = '';
     //await this.router.navigate(['catalog']);
   }
 
@@ -106,7 +106,7 @@ export class CatalogProductPageComponent implements OnInit {
     this.currentPage = type;
     this.currentType = type;
     this.currentCategory = '';
-    this.currentID = id;
+    this.currentTypeID = id;
     this.checkFilters();
   }
 
@@ -114,11 +114,13 @@ export class CatalogProductPageComponent implements OnInit {
     this.currentPage = category;
     if (category.slice(0, 6) === 'Coffee') {
       this.currentType = 'Coffee';
+      this.currentTypeID = this.types[0].id;
     } else {
       this.currentType = 'Accessories';
+      this.currentTypeID = this.types[1].id;
     }
     this.currentCategory = category;
-    this.currentID = id;
+    this.currentCategoryID = id;
     this.checkFilters();
   }
 
@@ -134,9 +136,9 @@ export class CatalogProductPageComponent implements OnInit {
 
   public checkCategory(): void {
     if (this.currentCategory) {
-      this.filter = `filter=categories.id:"${this.currentID}"`;
+      this.filter = `filter=categories.id:"${this.currentCategoryID}"`;
     } else {
-      this.filter = `filter=productType.id:"${this.currentID}"`;
+      this.filter = `filter=productType.id:"${this.currentTypeID}"`;
     }
   }
 
