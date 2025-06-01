@@ -22,6 +22,28 @@ export interface ListResponse {
   results: [];
 }
 
+export interface ProductListResponse {
+  limit: number;
+  offset: number;
+  count: number;
+  total: number;
+  results: ProductProjectionResponse[];
+}
+
+export interface ProductProjectionResponse {
+  id: string;
+  version: number;
+  productType: ProductTypeReference;
+  name: LocalizedString;
+  description: LocalizedString;
+  categories: CategoryReference[];
+  metaDescription: LocalizedString;
+  masterVariant: ProductVariant;
+  searchKeywords: {
+    'en-US': SearchKeywords[];
+  };
+}
+
 export interface ProductResponse {
   id: string;
   version: number;
@@ -100,6 +122,9 @@ export interface TypedMoney {
 export interface Attribute {
   name: string;
   value: AttributePlainEnumValue;
+  type: {
+    values: AttributePlainEnumValue[];
+  };
 }
 
 export interface AttributePlainEnumValue {
@@ -115,4 +140,8 @@ export interface DiscountedPrice {
 export interface ProductDiscountReference {
   id: string;
   typeId: string;
+}
+
+export interface SearchResponse {
+  'searchKeywords.en-US': SearchKeywords[];
 }
