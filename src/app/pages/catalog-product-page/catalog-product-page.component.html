@@ -1,35 +1,225 @@
-<div class="m-auto p-20 py-0 h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
-  <div class="max-w-[500px] flex flex-col gap-[10px] items-center justify-center text-center">
-    <h1 class="title-h1 leading-[80px] text-[70px]">Catalog</h1>
-    <button
-      (click)="goDetailedProduct('f7898223-65d9-4fa9-8657-1f9c114d6fc7')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+@if (currentPage === 'Catalog') {
+  <div
+    class="bg-linear-to-r from-[#3F2F2AFF] from-45% via-[#7C573CFF] via-65% to-[#5F4431FF] to-90%"
+  >
+    <div
+      class="bg-top-right bg-no-repeat z-[-1] w-full h-screen"
+      style="background-image: url('/png/main-fon.png')"
     >
-      Catalog1
-    </button>
-    <button
-      (click)="goDetailedProduct('786bf3c3-ea8d-4580-bf3c-e9fc1cb033bb')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog2
-    </button>
-    <button
-      (click)="goDetailedProduct('6dad9e53-b8d3-4496-8528-dd46f6dae0bc')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog3
-    </button>
-    <button
-      (click)="goDetailedProduct('38e3ca27-7acd-4069-a2a4-24f62b3cb155')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog4
-    </button>
-    <button
-      (click)="goDetailedProduct('12c17562-830b-4d62-9a86-c317c5916428')"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-    >
-      Catalog5
-    </button>
+      <div
+        class="bg-top-right bg-no-repeat z-[-2]"
+        style="background-image: url('/png/main-coffees.png')"
+      >
+        <div
+          class="m-auto px-50 flex pt-[50px] mb-[20px] h-screen max-[1032px]:px-[30px] max-md:p-3 max-xl:backdrop-blur-[4px]"
+        >
+          <div class="flex flex-col gap-[10px]">
+            <nav class="text-[20px] text-[#6E594BFF]">
+              <button
+                class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#9A7D69FF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+                (click)="goHome()"
+              >
+                Home
+              </button>
+              /
+              <button
+                class="relative before:content-[''] text-[#cca78d] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
+                (click)="goCatalog()"
+                [disabled]="currentPage === 'Catalog'"
+              >
+                Catalog
+              </button>
+            </nav>
+            <h1 class="title-h1 leading-[60px] text-[#DABB9E] text-[40px] max-[1032px]:text-[50px]">
+              {{ currentPage }}
+            </h1>
+
+            @if (currentPage === 'Catalog') {
+              <div class="flex flex-col gap-5">
+                @for (type of types; track type) {
+                  <div
+                    class="flex gap-[30px] text-[#222] p-8 border bg-[#ffff] border-solid border-[#C1B6AD] rounded-[8px]"
+                  >
+                    <img
+                      [src]="`/webp/${type.name}.webp`"
+                      alt="{{ type.name }}"
+                      class="h-[100px] w-[100px] object-contain"
+                    />
+                    <div class="flex flex-col text-left">
+                      <button
+                        class="text-[25px] text-left mb-[15px] cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+                        (click)="showProductsFromType(`${type.name}`,`${type.id}`)"
+                      >
+                        {{ type.name }}
+                      </button>
+                      @if (type.name === 'Coffee') {
+                        @for (category of categories; track category) {
+                          <button
+                            class="text-left mb-[10px] cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+                            (click)="showProductsFromCategory(`${category.name['en-US']}`, `${category.id}`)"
+                          >
+                            {{ category.name['en-US'] }}
+                          </button>
+                        }
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+} @else {
+  <div
+    class="m-auto px-10 flex pt-[50px] mb-[20px] max-md:p-3 max-md:pt-[50px] max-[980px]:text-center max-xl:backdrop-blur-[4px]"
+  >
+    <div class="flex flex-col gap-[10px]">
+      <nav class="text-[20px]">
+        <button
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+          (click)="goHome()"
+        >
+          Home
+        </button>
+        /
+        <button
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%] disabled:pointer-events-none"
+          (click)="goCatalog()"
+          [disabled]="currentPage === 'Catalog'"
+        >
+          Catalog
+        </button>
+        @if (currentType) {
+          /
+          <button
+            class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%] disabled:pointer-events-none"
+            (click)="showProductsFromType(currentType, currentTypeID)"
+            [disabled]="currentPage === currentType"
+          >
+            {{ currentType }}
+          </button>
+        }
+        @if (currentCategory) {
+          /
+          <button
+            class="relative before:content-[''] text-[#6E594BFF] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
+          >
+            {{ currentCategory }}
+          </button>
+        }
+      </nav>
+      <h1 class="title-h1 leading-[60px] text-[40px] max-[980px]:mb-[20px]">{{ currentPage }}</h1>
+
+      @if (currentPage !== 'Catalog') {
+        <div class="w-full controls">
+          <div
+            class="w-full flex justify-between gap-10 flex-wrap align-center max-[1090px]:grid max-[1090px]:grid-cols-[repeat(2,1fr)] max-[1090px]:justify-items-center max-[980px]:grid-cols-[repeat(1,1fr)]"
+            style="align-items: center"
+          >
+            @if (currentType === 'Coffee' && types[0]) {
+              <div [formGroup]="Attributes" class="flex gap-[20px]">
+                @for (key of types[0].attributes.slice(0, 3); track key) {
+                  <p class="capitalize flex flex-col items-start">
+                    <span class="text-[#6E594BFF] ml-[10px]">{{ key.name }}:</span>
+                    <span>
+                      <ul class="flex flex-col items-start">
+                        @for (value of key.type.values; track value) {
+                          <li>
+                            <mat-checkbox
+                              formControlName="{{ key.name }}.key:&quot;{{ value.key }}&quot;"
+                            >
+                              {{ value.label }}
+                            </mat-checkbox>
+                          </li>
+                        }
+                      </ul>
+                    </span>
+                  </p>
+                }
+              </div>
+            }
+
+            <div [formGroup]="priceRange" class="flex flex-wrap w-[170px] h-[93px]">
+              <span class="w-[100%] text-left text-[#6E594BFF]">Price range:</span>
+              <label for="sliderStart" class="example-value-label w-[50%] h-[20px] text-left"
+                >${{ sliderStart.value }}</label
+              >
+              <label for="sliderEnd" class="example-value-label w-[50%] h-[20px] text-right"
+                >${{ sliderEnd.value }}</label
+              >
+              <mat-slider [min]="minPrice" [max]="maxPrice" step="0.1" class="min-w-[10px]">
+                <input
+                  id="sliderStart"
+                  formControlName="sliderStart"
+                  matSliderStartThumb
+                  #sliderStart
+                />
+                <input id="sliderEnd" formControlName="sliderEnd" matSliderEndThumb #sliderEnd />
+              </mat-slider>
+            </div>
+
+            <div class="h-[80px] flex flex-col justify-between">
+              <button
+                (click)="checkFilters()"
+                class="text-[#f8e4be] p-0.5 rounded-[5px] w-[120px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+              >
+                Apply filters
+              </button>
+              <button
+                (click)="resetFilters()"
+                class="text-[#f8e4be] p-0.5 rounded-[5px] w-[120px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+              >
+                Reset filters
+              </button>
+            </div>
+            <div>
+              <div>
+                <h4>Sort by</h4>
+                <mat-form-field class="h-[75px]">
+                  <mat-select [formControl]="sort" (selectionChange)="sortProducts()">
+                    @for (sorter of sorters; track sorter) {
+                      <mat-option [value]="sorter.value">{{ sorter.viewValue }}</mat-option>
+                    }
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <mat-form-field class="h-[75px]">
+                <mat-label>Search</mat-label>
+                <input matInput type="text" [(ngModel)]="search" (input)="onSearch()" />
+                @if (search) {
+                  <button matSuffix matIconButton aria-label="Clear" (click)="resetSearch()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="grid grid-cols-3 gap-5 max-xl:grid-cols-2 max-[980px]:flex max-[980px]:flex-wrap"
+        >
+          @for (product of products(); track product.id) {
+            <app-product-card
+              (click)="goDetailedProduct(`${product.id}`)"
+              class="max-[980px]:w-full max-[400px]:min-h-[400px] hover:scale-104 hover:shadow-lg hover:shadow-gray-800 cursor-pointer"
+              [product]="product"
+            />
+          }
+
+          @if (products().length < 1) {
+            <div
+              class="col-start-2 col-end-4 text-center flex flex-col gap-[20px] p-20px items-center"
+            >
+              No products found matching the specified parameters.
+              <img [src]="`/jpeg/mem.jpg`" alt="meme" class="h-[207px] w-[170px] object-contain" />
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}
