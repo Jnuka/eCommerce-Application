@@ -137,12 +137,29 @@
       >
         Add to cart
       </button>
-      <button
-        (click)="goCatalog()"
-        class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-      >
-        Back
-      </button>
+      @if (products) {
+        @if (whichCategory === 'coffee') {
+          @if (
+            products.masterData.current.categories[0].id === 'a2e2f3db-fe81-4aea-9793-115623f76a3d'
+          ) {
+            <button
+              (click)="goType('Coffee for filter')"
+              class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+            >
+              Back
+            </button>
+          } @else if (
+            products.masterData.current.categories[0].id === '20888f8c-b44a-4166-befe-7a63a75d2ed3'
+          ) {
+            <button
+              (click)="goType('Coffee for espresso')"
+              class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+            >
+              Back
+            </button>
+          }
+        }
+      }
     </div>
   </div>
 </div>
