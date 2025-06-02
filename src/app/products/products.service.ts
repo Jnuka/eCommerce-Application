@@ -8,31 +8,45 @@ import {
 } from './products.interfaces';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
-import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductsService {
   public http = inject(HttpClient);
-  private cookieService = inject(CookieService);
-  private cookieToken: string | null = null;
+  private accessToken = `fUkqKHeCG3oCjV3p-8hq4e9cP-xLwzfZ`;
+  // private cookieService = inject(CtpApiService);
+  // private tokenAccess: string | null = '';
 
   public getTypes(): Observable<ListResponse> {
-    this.cookieToken = this.cookieService.get('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.cookieToken}`,
+      'Authorization': `Bearer ${this.accessToken}`,
     });
     return this.http.get<ListResponse>(
       `${environment.ctp_api_url}/${environment.ctp_project_key}/product-types`,
       { headers },
     );
   }
+  // public getTypes(): Observable<ListResponse> {
+  //   return this.cookieService.getAccessToken()
+  //     .pipe(
+  //       switchMap((value, index) => {
+  //           this.tokenAccess = value;
+  //           const headers = new HttpHeaders({
+  //             'Authorization': `Bearer ${value}`,
+  //           });
+  //           return this.http.get<ListResponse>(
+  //             `${environment.ctp_api_url}/${environment.ctp_project_key}/product-types`,
+  //             { headers },
+  //           );
+  //         }
+  //       )
+  //     );
+  // }
 
   public getCategories(): Observable<ListResponse> {
-    this.cookieToken = this.cookieService.get('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.cookieToken}`,
+      'Authorization': `Bearer ${this.accessToken}`,
     });
     return this.http.get<ListResponse>(
       `${environment.ctp_api_url}/${environment.ctp_project_key}/categories`,
@@ -41,9 +55,8 @@ export class ProductsService {
   }
 
   public getProducts(filter: string): Observable<ProductListResponse> {
-    this.cookieToken = this.cookieService.get('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.cookieToken}`,
+      'Authorization': `Bearer ${this.accessToken}`,
     });
     return this.http.get<ProductListResponse>(
       `${environment.ctp_api_url}/${environment.ctp_project_key}/product-projections/search?${filter}`,
@@ -52,9 +65,8 @@ export class ProductsService {
   }
 
   public getProductsBySearch(filter: string): Observable<SearchResponse> {
-    this.cookieToken = this.cookieService.get('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.cookieToken}`,
+      'Authorization': `Bearer ${this.accessToken}`,
     });
     return this.http.get<SearchResponse>(
       `${environment.ctp_api_url}/${environment.ctp_project_key}/product-projections/suggest?${filter}`,
@@ -63,9 +75,8 @@ export class ProductsService {
   }
 
   public getProductById(productId: string): Observable<ProductResponse> {
-    this.cookieToken = this.cookieService.get('token');
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${this.cookieToken}`,
+      'Authorization': `Bearer ${this.accessToken}`,
     });
     return this.http.get<ProductResponse>(
       `${environment.ctp_api_url}/${environment.ctp_project_key}/products/${productId}`,
