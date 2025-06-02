@@ -78,7 +78,7 @@ export class CatalogProductPageComponent implements OnInit {
 
   public priceRange = new FormGroup({
     sliderStart: new FormControl(1),
-    sliderEnd: new FormControl(this.maxPrice),
+    sliderEnd: new FormControl(50),
   });
 
   public sort = new FormControl();
@@ -161,13 +161,13 @@ export class CatalogProductPageComponent implements OnInit {
   // }
 
   public showProductsFromType(type: string, id: string): void {
-    this.resetFilters();
-    this.resetSearch();
     this.currentPage = type;
     this.currentType = type;
     this.currentCategory = '';
     this.currentTypeID = id;
     this.setPriceRange();
+    this.resetFilters();
+    this.resetSearch();
     this.checkFilters();
     this.getCategories(this.currentPage);
   }
@@ -339,5 +339,11 @@ export class CatalogProductPageComponent implements OnInit {
     } else {
       this.checkFilters();
     }
+  }
+
+  public async goDetailedProduct(id: string): Promise<void> {
+    await this.router.navigate(['product'], {
+      queryParams: { productId: id },
+    });
   }
 }
