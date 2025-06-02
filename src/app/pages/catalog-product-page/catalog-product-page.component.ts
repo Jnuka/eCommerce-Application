@@ -50,6 +50,8 @@ export class CatalogProductPageComponent implements OnInit {
   public productService = inject(ProductsService);
   public types: TypeResponse[] = [];
   public categories: CategoryResponse[] = [];
+  public minPrice = 1;
+  public maxPrice = 50;
 
   public products = signal<ProductProjectionResponse[]>([]);
   public filter = '';
@@ -76,7 +78,7 @@ export class CatalogProductPageComponent implements OnInit {
 
   public priceRange = new FormGroup({
     sliderStart: new FormControl(1),
-    sliderEnd: new FormControl(50.0),
+    sliderEnd: new FormControl(this.maxPrice),
   });
 
   public sort = new FormControl();
@@ -159,12 +161,23 @@ export class CatalogProductPageComponent implements OnInit {
   // }
 
   public showProductsFromType(type: string, id: string): void {
+    this.resetFilters();
+    this.resetSearch();
     this.currentPage = type;
     this.currentType = type;
     this.currentCategory = '';
     this.currentTypeID = id;
+    this.setPriceRange();
     this.checkFilters();
     this.getCategories(this.currentPage);
+  }
+
+  public setPriceRange(): void {
+    if (this.currentType === 'Coffee') {
+      this.maxPrice = 11;
+    } else {
+      this.maxPrice = 50;
+    }
   }
 
   public showProductsFromCategory(category: string, id: string): void {
@@ -177,6 +190,9 @@ export class CatalogProductPageComponent implements OnInit {
       this.currentType = 'Accessories';
       this.currentTypeID = this.types[1].id;
     }
+    this.setPriceRange();
+    this.resetFilters();
+    this.resetSearch();
     this.currentCategory = category;
     this.currentCategoryID = id;
     this.checkFilters();
@@ -237,8 +253,8 @@ export class CatalogProductPageComponent implements OnInit {
     this.Attributes.reset();
     // this.Attributes.get(['acidity.key:"low"'])?.setValue(true);
     // this.Attributes.get(['acidity.key:"medium"'])?.setValue(true);
-    this.priceRange.get('sliderStart')?.setValue(1.0);
-    this.priceRange.get('sliderEnd')?.setValue(50.0);
+    this.priceRange.get('sliderStart')?.setValue(this.minPrice);
+    this.priceRange.get('sliderEnd')?.setValue(this.maxPrice);
 
     this.productService.getProducts(this.filter).subscribe(response => {
       this.products.set(response.results);
