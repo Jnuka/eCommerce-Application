@@ -21,7 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { map, throwError } from 'rxjs';
+import { map } from 'rxjs';
 
 @Component({
   selector: 'app-catalog-product-page',
@@ -131,11 +131,9 @@ export class CatalogProductPageComponent implements OnInit {
   }
 
   public getCategories(category: string): void {
-    void this.router
-      .navigate(['catalog'], {
-        queryParams: { categories: category },
-      })
-      .then(r => throwError(() => r));
+    void this.router.navigate(['catalog'], {
+      queryParams: { categories: category },
+    });
   }
 
   public getTypeCategories(category: string, type: string): void {
@@ -154,6 +152,7 @@ export class CatalogProductPageComponent implements OnInit {
     this.resetFilters();
     this.resetSearch();
     this.getCategories(this.currentPage);
+    this.renderProducts();
   }
 
   public setPriceRange(): void {
