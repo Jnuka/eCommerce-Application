@@ -168,13 +168,13 @@ export class CatalogProductPageComponent implements OnInit {
 
   public showProductsFromType(type: string, id: string): void {
     this.currentPage = type;
-    this.getCategories(this.currentPage);
     this.currentType = type;
     this.currentCategory = '';
     this.currentTypeID = id;
     this.setPriceRange();
     this.resetFilters();
     this.resetSearch();
+    this.getCategories(this.currentPage);
   }
 
   public setPriceRange(): void {
