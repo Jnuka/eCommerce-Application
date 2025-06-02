@@ -1,15 +1,18 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { CommonModule } from '@angular/common';
+import { UserDataService } from '../../data/services/user-data.service';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
-  private router = inject(Router);
+  public customer = inject(UserDataService).customerData;
+  public router = inject(Router);
   private authService = inject(AuthService);
 
   public isAuthAcc(): boolean {
@@ -31,5 +34,11 @@ export class HeaderComponent {
   }
   public async goAbout(): Promise<void> {
     await this.router.navigate(['about']);
+  }
+  public async goProfile(): Promise<void> {
+    await this.router.navigate(['profile']);
+  }
+  public goCatalog(): void {
+    void this.router.navigate(['catalog']);
   }
 }

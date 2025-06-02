@@ -1,0 +1,186 @@
+<div class="flex justify-center mt-[35px] px-4 max-w-full overflow-x-hidden">
+  <div class="w-full max-w-[800px] flex flex-col items-center gap-7 px-2 sm:px-4">
+    <h1
+      class="text-3xl font-semibold title-h1 tracking-[3px] leading-[90px] text-center text-[#524139ff]"
+    >
+      My Account
+    </h1>
+
+    <mat-tab-group class="w-full" [(selectedIndex)]="selectedTabIndex">
+      <mat-tab label="Personal Information">
+        <div
+          *ngIf="customer() as customerResult"
+          class="bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6"
+        >
+          <div class="flex justify-end items-center w-full">
+            <button
+              (click)="openModal()"
+              mat-stroked-button
+              color="warn"
+              class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] hover:bg-[#E0A872] transition rounded-md cursor-pointer"
+            >
+              Edit
+            </button>
+          </div>
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-6 border rounded-xl p-4 shadow-sm bg-gradient-to-r from-[#3F2F2A] from-45% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+          >
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">First Name</p>
+              <ng-container>
+                <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.firstName }}</p>
+              </ng-container>
+            </div>
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Last Name</p>
+              <ng-container>
+                <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.lastName }}</p>
+              </ng-container>
+            </div>
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Email</p>
+              <ng-container>
+                <p class="text-base text-[#ffffff] text-[20px]">{{ currentCustomer?.email }}</p>
+              </ng-container>
+            </div>
+            <div>
+              <p class="text-sm text-[#DABB9E] text-[15px] max-w-[410px]">Date of Birth</p>
+              <ng-container>
+                <p class="text-base text-[#ffffff] text-[20px]">{{ formattedDateOfBirth }}</p>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+
+      <mat-tab label="Addresses">
+        <div
+          *ngIf="customer() as customerResult"
+          class="bg-white shadow-lg rounded-2xl p-4 sm:p-8 flex flex-col gap-6"
+        >
+          <div class="flex flex-col gap-6">
+            <div
+              *ngFor="let address of customAddresses"
+              class="border rounded-xl p-4 shadow-sm flex flex-col gap-4 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+            >
+              <div
+                class="flex flex-col min-[690px]:flex-row min-[690px]:justify-between min-[690px]:items-center gap-3"
+              >
+                <div class="flex flex-col sm:flex-row sm:flex-nowrap sm:items-baseline gap-y-1">
+                  <h3 class="text-lg font-semibold text-[#ffffff] shrink-0">
+                    {{
+                      address.isShipping && address.isBilling
+                        ? 'Shipping & Billing Address'
+                        : address.isShipping
+                          ? 'Shipping Address'
+                          : address.isBilling
+                            ? 'Billing Address'
+                            : 'Address'
+                    }}
+                    <ng-container>
+                      <span
+                        *ngIf="address.isDefaultShipping || address.isDefaultBilling"
+                        class="text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full whitespace-nowrap sm:ml-2"
+                      >
+                        {{
+                          address.isDefaultShipping && address.isDefaultBilling
+                            ? 'default Shipping & Billing'
+                            : address.isDefaultShipping
+                              ? 'default Shipping'
+                              : address.isDefaultBilling
+                                ? 'default Billing'
+                                : ''
+                        }}
+                      </span>
+                    </ng-container>
+                  </h3>
+                </div>
+                <div class="flex gap-2 flex-wrap">
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    (click)="openModal(address)"
+                    class="text-xs py-1 px-2 sm:px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md cursor-pointer"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    mat-stroked-button
+                    color="accent"
+                    (click)="deleteAddress(address.id)"
+                    class="text-xs py-1 px-2 sm:px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md cursor-pointer"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+
+              <div class="grid gap-4 text-white grid-cols-2-xs grid-cols-1-xs sm:grid-cols-4">
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Street</p>
+                  <p class="text-base text-white text-[20px]">{{ address.streetName }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">City</p>
+                  <p class="text-base text-white text-[20px]">{{ address.city }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Postal Code</p>
+                  <p class="text-base text-white text-[20px]">{{ address.postalCode }}</p>
+                </div>
+                <div class="p-2">
+                  <p class="text-sm text-[#DABB9E]">Country</p>
+                  <p class="text-base text-white text-[20px]">{{ address.country }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-center">
+          <button
+            mat-raised-button
+            color="primary"
+            (click)="openModal()"
+            class="mt-[10px] bg-[#3F2F2A] hover:bg-[#7e4727] text-white py-2 px-4 rounded-lg transition cursor-pointer"
+          >
+            Add Address
+          </button>
+        </div>
+      </mat-tab>
+      <mat-tab label="Secure information">
+        <div *ngIf="customer() as customerResult" class="bg-white shadow-lg rounded-2xl p-8">
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 gap-6 border rounded-xl p-4 shadow-sm bg-gradient-to-r from-[#3F2F2A] from-45% via-[#7C573C] via-65% to-[#5F4431] to-90%"
+          >
+            <div class="flex justify-between items-start w-full col-span-full mb-4">
+              <p class="text-sm text-[#DABB9E] text-[15px]">Password</p>
+              <button
+                mat-stroked-button
+                color="warn cursor-pointer"
+                (click)="openPasswordModal()"
+                class="text-xs py-1 px-3 border border-[#6B3C21] text-[#6B3C21] bg-[#DABB9E] hover:bg-[#E0A872] transition rounded-md"
+              >
+                Change
+              </button>
+            </div>
+            <div class="col-span-full">
+              <p class="text-base text-[#ffffff] text-[20px]">
+                {{ customerResult.customer.password }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+    <div class="flex flex-wrap justify-center gap-6 mt-0">
+      <button
+        mat-raised-button
+        color="primary"
+        class="bg-[#3F2F2A] hover:bg-[#7e4727] text-white py-3 px-6 rounded-lg transition cursor-pointer mb-10"
+      >
+        My Card
+      </button>
+    </div>
+  </div>
+</div>

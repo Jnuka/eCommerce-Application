@@ -1,0 +1,12 @@
+@layer utilities {
+  @media (max-width: 640px) {
+    .grid-cols-2-xs {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 400px) {
+    .grid-cols-1-xs {
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+}
