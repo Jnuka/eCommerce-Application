@@ -12,7 +12,7 @@ import { UserDataService } from '../../data/services/user-data.service';
 })
 export class HeaderComponent {
   public customer = inject(UserDataService).customerData;
-  private router = inject(Router);
+  public router = inject(Router);
   private authService = inject(AuthService);
 
   public isAuthAcc(): boolean {
@@ -38,7 +38,7 @@ export class HeaderComponent {
   public async goProfile(): Promise<void> {
     await this.router.navigate(['profile']);
   }
-  public async goCatalog(): Promise<void> {
-    await this.router.navigate(['catalog']);
+  public goCatalog(): void {
+    void this.router.navigate(['catalog']);
   }
 }
