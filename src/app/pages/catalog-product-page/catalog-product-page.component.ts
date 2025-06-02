@@ -96,6 +96,12 @@ export class CatalogProductPageComponent implements OnInit {
     this.page = this.activatedRoute.snapshot.queryParamMap.get('categories');
     this.typeParams = this.activatedRoute.snapshot.queryParamMap.get('type');
     this.filterParams = this.activatedRoute.snapshot.queryParamMap.get('filter');
+    this.productService.getTypes().subscribe(response => {
+      this.types = response.results;
+    });
+    this.productService.getCategories().subscribe(response => {
+      this.categories = response.results;
+    });
     // console.log('page', this.page);
     // console.log('typeParams', this.typeParams);
     // console.log('filterParams', this.filterParams);
@@ -162,14 +168,13 @@ export class CatalogProductPageComponent implements OnInit {
 
   public showProductsFromType(type: string, id: string): void {
     this.currentPage = type;
+    this.getCategories(this.currentPage);
     this.currentType = type;
     this.currentCategory = '';
     this.currentTypeID = id;
     this.setPriceRange();
     this.resetFilters();
     this.resetSearch();
-    this.checkFilters();
-    this.getCategories(this.currentPage);
   }
 
   public setPriceRange(): void {
@@ -190,52 +195,29 @@ export class CatalogProductPageComponent implements OnInit {
       this.currentType = 'Accessories';
       this.currentTypeID = this.types[1].id;
     }
+    this.currentCategory = category;
+    this.currentCategoryID = id;
     this.setPriceRange();
     this.resetFilters();
     this.resetSearch();
-    this.currentCategory = category;
-    this.currentCategoryID = id;
-    this.checkFilters();
   }
 
   public getCategoriesInfo(page?: string, type?: string): void {
-    this.productService.getTypes().subscribe(response => {
-      this.types = response.results;
-    });
-    this.productService.getCategories().subscribe(response => {
-      this.categories = response.results;
-    });
     if (page) {
       if (type) {
-        this.productService.getTypes().subscribe(response => {
-          this.types = response.results;
-        });
-        this.productService.getCategories().subscribe(response => {
-          this.categories = response.results;
-          if (type === 'Coffee for espresso') {
-            this.showProductsFromCategory(type, this.categories[0].id);
-          } else {
-            this.showProductsFromCategory(type, this.categories[1].id);
-          }
-        });
+        if (type === 'Coffee for espresso') {
+          this.showProductsFromCategory(type, this.categories[0].id);
+        } else {
+          this.showProductsFromCategory(type, this.categories[1].id);
+        }
       } else {
         this.currentType = page;
-        this.productService.getTypes().subscribe(response => {
-          this.types = response.results;
-          if (page === 'Coffee') {
-            this.showProductsFromType(page, this.types[0].id);
-          } else if (page === 'Accessories') {
-            this.showProductsFromType(page, this.types[1].id);
-          }
-        });
+        if (page === 'Coffee') {
+          this.showProductsFromType(page, this.types[0].id);
+        } else if (page === 'Accessories') {
+          this.showProductsFromType(page, this.types[1].id);
+        }
       }
-    } else {
-      this.productService.getTypes().subscribe(response => {
-        this.types = response.results;
-      });
-      this.productService.getCategories().subscribe(response => {
-        this.categories = response.results;
-      });
     }
   }
 
@@ -255,19 +237,13 @@ export class CatalogProductPageComponent implements OnInit {
     // this.Attributes.get(['acidity.key:"medium"'])?.setValue(true);
     this.priceRange.get('sliderStart')?.setValue(this.minPrice);
     this.priceRange.get('sliderEnd')?.setValue(this.maxPrice);
-
-    this.productService.getProducts(this.filter).subscribe(response => {
-      this.products.set(response.results);
-    });
   }
 
   public sortProducts(): void {
     if (this.sort.value) {
       this.sorter = `&sort=${this.sort.value}`;
     }
-    this.productService.getProducts(`${this.filter + this.sorter}`).subscribe(response => {
-      this.products.set(response.results);
-    });
+    this.renderProducts();
   }
 
   public checkFilters(): void {
@@ -313,11 +289,15 @@ export class CatalogProductPageComponent implements OnInit {
     //     }
     //   }
     // }
+    this.renderProducts();
+
+    if (this.search) this.onSearch();
+  }
+
+  public renderProducts(): void {
     this.productService.getProducts(`${this.filter + this.sorter}`).subscribe(response => {
       this.products.set(response.results);
     });
-
-    if (this.search) this.onSearch();
   }
 
   public resetSearch(): void {
