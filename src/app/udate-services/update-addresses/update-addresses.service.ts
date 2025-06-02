@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable, switchMap, tap, catchError, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -6,6 +6,7 @@ import { CtpApiService } from '../../data/services/ctp-api.service';
 import { ToastService } from '../../helpers/toast.service';
 import { UpdateCustomerResult } from '../udate-user-info/update-user-info.interfaces';
 import { UpdateAddresses, UpdateAddressesrResult } from './update-addresses.interfaces';
+import { HttpErrorResponse } from '../update-password/update-password.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -40,6 +41,8 @@ export class UpdateAddressesService {
         this.toastService.success('Successful update');
       }),
       catchError((error: HttpErrorResponse) => {
+        const description = error?.error?.message;
+        this.toastService.error(description);
         return throwError(() => error);
       }),
     );

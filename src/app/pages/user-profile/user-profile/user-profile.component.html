@@ -63,27 +63,39 @@
               *ngFor="let address of customAddresses"
               class="border rounded-xl p-4 shadow-sm flex flex-col gap-4 bg-gradient-to-r from-[#3F2F2A] from-25% via-[#7C573C] via-65% to-[#5F4431] to-90%"
             >
-              <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-                <h3 class="text-lg font-semibold mb-2 text-[#ffffff]">
-                  {{
-                    address.isShipping && address.isBilling
-                      ? 'Shipping & Billing Address'
-                      : address.isShipping
-                        ? 'Shipping Address'
-                        : address.isBilling
-                          ? 'Billing Address'
-                          : 'Address'
-                  }}
-                  <ng-container>
-                    <span
-                      *ngIf="address.isDefaultShipping || address.isDefaultBilling"
-                      class="ml-2 text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full"
-                    >
-                      default
-                    </span>
-                  </ng-container>
-                </h3>
-                <div class="flex gap-2 flex-wrap sm:flex-nowrap">
+              <div
+                class="flex flex-col min-[690px]:flex-row min-[690px]:justify-between min-[690px]:items-center gap-3"
+              >
+                <div class="flex flex-col sm:flex-row sm:flex-nowrap sm:items-baseline gap-y-1">
+                  <h3 class="text-lg font-semibold text-[#ffffff] shrink-0">
+                    {{
+                      address.isShipping && address.isBilling
+                        ? 'Shipping & Billing Address'
+                        : address.isShipping
+                          ? 'Shipping Address'
+                          : address.isBilling
+                            ? 'Billing Address'
+                            : 'Address'
+                    }}
+                    <ng-container>
+                      <span
+                        *ngIf="address.isDefaultShipping || address.isDefaultBilling"
+                        class="text-xs bg-[#DABB9E] text-black px-2 py-1 rounded-full whitespace-nowrap sm:ml-2"
+                      >
+                        {{
+                          address.isDefaultShipping && address.isDefaultBilling
+                            ? 'default Shipping & Billing'
+                            : address.isDefaultShipping
+                              ? 'default Shipping'
+                              : address.isDefaultBilling
+                                ? 'default Billing'
+                                : ''
+                        }}
+                      </span>
+                    </ng-container>
+                  </h3>
+                </div>
+                <div class="flex gap-2 flex-wrap">
                   <button
                     mat-stroked-button
                     color="warn"

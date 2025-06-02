@@ -38,4 +38,7 @@ export class HeaderComponent {
   public async goProfile(): Promise<void> {
     await this.router.navigate(['profile']);
   }
+  public async goCatalog(): Promise<void> {
+    await this.router.navigate(['catalog']);
+  }
 }

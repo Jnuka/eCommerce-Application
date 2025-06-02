@@ -2,9 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { UpdateCustomer, UpdateCustomerResult } from './update-user-info.interfaces';
 import { catchError, Observable, switchMap, tap, throwError } from 'rxjs';
 import { CtpApiService } from '../../data/services/ctp-api.service';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../helpers/toast.service';
+import { HttpErrorResponse } from '../update-password/update-password.interfaces';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +40,8 @@ export class UpdateUserInfoService {
         this.toastService.success('Successful update');
       }),
       catchError((error: HttpErrorResponse) => {
+        const description = error?.error?.message;
+        this.toastService.error(description);
         return throwError(() => error);
       }),
     );
