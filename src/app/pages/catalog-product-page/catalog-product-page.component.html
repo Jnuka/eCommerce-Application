@@ -203,7 +203,12 @@
                 <mat-label>Search</mat-label>
                 <input matInput type="text" [(ngModel)]="search" (input)="onSearch()" />
                 @if (search) {
-                  <button matSuffix matIconButton aria-label="Clear" (click)="resetSearch()">
+                  <button
+                    matSuffix
+                    matIconButton
+                    aria-label="Clear"
+                    (click)="resetSearch(); checkFilters()"
+                  >
                     <mat-icon>close</mat-icon>
                   </button>
                 }

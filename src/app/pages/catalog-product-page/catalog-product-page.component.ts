@@ -21,7 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { throwError } from 'rxjs';
+import { map, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-catalog-product-page',
@@ -102,9 +102,6 @@ export class CatalogProductPageComponent implements OnInit {
     this.productService.getCategories().subscribe(response => {
       this.categories = response.results;
     });
-    // console.log('page', this.page);
-    // console.log('typeParams', this.typeParams);
-    // console.log('filterParams', this.filterParams);
     if (this.page !== null) {
       if (this.typeParams !== null) {
         this.getCategoriesInfo(this.page, this.typeParams);
@@ -125,7 +122,6 @@ export class CatalogProductPageComponent implements OnInit {
     await this.router.navigate(['catalog'], {
       queryParams: {},
     });
-    // this.showProductsFromCategory('Catalog', '');
   }
 
   public goHome(): void {
@@ -143,34 +139,17 @@ export class CatalogProductPageComponent implements OnInit {
   }
 
   public getTypeCategories(category: string, type: string): void {
-    void this.router
-      .navigate(['catalog'], {
-        queryParams: { categories: category, type: type },
-      })
-      .then(r => throwError(() => r));
+    void this.router.navigate(['catalog'], {
+      queryParams: { categories: category, type: type },
+    });
   }
-
-  // public getFilters(category: string, filter: string, type?: string): void {
-  //   if (type !== undefined) {
-  //     void this.router
-  //       .navigate(['catalog'], {
-  //         queryParams: { categories: category, type: type, filter: filter },
-  //       })
-  //       .then(r => throwError(() => r));
-  //   } else {
-  //     void this.router
-  //       .navigate(['catalog'], {
-  //         queryParams: { categories: category, filter: filter },
-  //       })
-  //       .then(r => throwError(() => r));
-  //   }
-  // }
 
   public showProductsFromType(type: string, id: string): void {
     this.currentPage = type;
     this.currentType = type;
     this.currentCategory = '';
     this.currentTypeID = id;
+    this.sort.reset();
     this.setPriceRange();
     this.resetFilters();
     this.resetSearch();
@@ -187,36 +166,78 @@ export class CatalogProductPageComponent implements OnInit {
 
   public showProductsFromCategory(category: string, id: string): void {
     this.currentPage = category;
-    if (category.slice(0, 6) === 'Coffee') {
-      this.currentType = 'Coffee';
-      this.currentTypeID = this.types[0].id;
-      this.getTypeCategories(this.currentType, category);
+    if (this.types.length === 0) {
+      this.productService
+        .getTypes()
+        .pipe(
+          map(value => {
+            this.types = value.results;
+            if (category.slice(0, 6) === 'Coffee') {
+              this.currentType = 'Coffee';
+              this.currentTypeID = this.types[0].id;
+              this.getTypeCategories(this.currentType, category);
+            } else {
+              this.currentType = 'Accessories';
+              this.currentTypeID = this.types[1].id;
+            }
+            this.sort.reset();
+            this.setPriceRange();
+            this.resetFilters();
+            this.resetSearch();
+            this.currentCategory = category;
+            this.currentCategoryID = id;
+            this.checkFilters();
+          }),
+        )
+        .subscribe();
     } else {
-      this.currentType = 'Accessories';
-      this.currentTypeID = this.types[1].id;
+      if (category.slice(0, 6) === 'Coffee') {
+        this.currentType = 'Coffee';
+        this.currentTypeID = this.types[0].id;
+        this.getTypeCategories(this.currentType, category);
+      } else {
+        this.currentType = 'Accessories';
+        this.currentTypeID = this.types[1].id;
+      }
+      this.sort.reset();
+      this.setPriceRange();
+      this.resetFilters();
+      this.resetSearch();
+      this.currentCategory = category;
+      this.currentCategoryID = id;
+      this.checkFilters();
     }
-    this.currentCategory = category;
-    this.currentCategoryID = id;
-    this.setPriceRange();
-    this.resetFilters();
-    this.resetSearch();
   }
 
   public getCategoriesInfo(page?: string, type?: string): void {
     if (page) {
       if (type) {
-        if (type === 'Coffee for espresso') {
-          this.showProductsFromCategory(type, this.categories[0].id);
+        if (this.categories.length === 0) {
+          this.productService.getCategories().subscribe(response => {
+            this.categories = response.results;
+            if (type === 'Coffee for espresso') {
+              this.showProductsFromCategory(type, this.categories[0].id);
+            } else {
+              this.showProductsFromCategory(type, this.categories[1].id);
+            }
+          });
         } else {
-          this.showProductsFromCategory(type, this.categories[1].id);
+          if (type === 'Coffee for espresso') {
+            this.showProductsFromCategory(type, this.categories[0].id);
+          } else {
+            this.showProductsFromCategory(type, this.categories[1].id);
+          }
         }
       } else {
         this.currentType = page;
-        if (page === 'Coffee') {
-          this.showProductsFromType(page, this.types[0].id);
-        } else if (page === 'Accessories') {
-          this.showProductsFromType(page, this.types[1].id);
-        }
+        this.productService.getTypes().subscribe(response => {
+          this.types = response.results;
+          if (page === 'Coffee') {
+            this.showProductsFromType(page, this.types[0].id);
+          } else if (page === 'Accessories') {
+            this.showProductsFromType(page, this.types[1].id);
+          }
+        });
       }
     }
   }
@@ -233,8 +254,6 @@ export class CatalogProductPageComponent implements OnInit {
     this.checkCategory();
 
     this.Attributes.reset();
-    // this.Attributes.get(['acidity.key:"low"'])?.setValue(true);
-    // this.Attributes.get(['acidity.key:"medium"'])?.setValue(true);
     this.priceRange.get('sliderStart')?.setValue(this.minPrice);
     this.priceRange.get('sliderEnd')?.setValue(this.maxPrice);
   }
@@ -272,23 +291,6 @@ export class CatalogProductPageComponent implements OnInit {
     if (this.sort.value) {
       this.sorter = `&sort=${this.sort.value}`;
     }
-    // const filterSave = this.filter + this.sorter;
-    // this.getFilters(this.currentPage, filterSave);
-    //
-    // const filterSaveSeparate = (this.filter + this.sorter).split('&');
-    // console.log(filterSaveSeparate);
-    //
-    // for (let i = 1; i < filterSaveSeparate.length; i++) {
-    //   if (filterSaveSeparate[i].includes('acidity.key')) {
-    //     if (filterSaveSeparate[i].split(':')[1].includes("low")) {
-    //       this.Attributes.get(['acidity.key:"low"'])?.setValue(true);
-    //     } else if (filterSaveSeparate[i].split(':')[1].includes("medium")) {
-    //       this.Attributes.get(['acidity.key:"medium"'])?.setValue(true);
-    //     } else if (filterSaveSeparate[i].split(':')[1].includes("high")) {
-    //       this.Attributes.get(['acidity.key:"high"'])?.setValue(true);
-    //     }
-    //   }
-    // }
     this.renderProducts();
 
     if (this.search) this.onSearch();
@@ -303,7 +305,6 @@ export class CatalogProductPageComponent implements OnInit {
   public resetSearch(): void {
     this.search = '';
     this.fullTextSearch = '';
-    this.checkFilters();
   }
 
   public onSearch(): void {
