@@ -11,7 +11,8 @@
       <div class="hidden min-[581px]:flex absolute left-1/2 -translate-x-1/2">
         <button
           (click)="goCatalog()"
-          class="text-white text-[25px] cursor-pointer p-3 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[#DFC39DFF] hover:underline"
+          [disabled]="this.router.url.includes('/catalog')"
+          class="text-white text-[25px] cursor-pointer p-3 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[#DFC39DFF] hover:underline disabled:pointer-events-none"
         >
           <span class="title-h1">Catalog</span>
         </button>
@@ -19,7 +20,8 @@
       <div class="flex justify-end items-center gap-2">
         <button
           (click)="goCatalog()"
-          class="block min-[581px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+          [disabled]="this.router.url.includes('/catalog')"
+          class="block min-[581px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:pointer-events-none"
           title="Catalog"
         >
           <img class="w-5" src="/svg/catalog.svg" alt="catalog" />
@@ -51,7 +53,8 @@
       <div class="hidden min-[581px]:flex absolute left-1/2 -translate-x-1/2">
         <button
           (click)="goCatalog()"
-          class="text-white text-[25px] cursor-pointer p-3 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[#DFC39DFF] hover:underline"
+          [disabled]="this.router.url.includes('/catalog')"
+          class="text-white text-[25px] cursor-pointer p-3 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[#DFC39DFF] hover:underline disabled:pointer-events-none"
         >
           <span class="title-h1">Catalog</span>
         </button>
@@ -59,7 +62,8 @@
       <div class="flex justify-end items-center gap-2">
         <button
           (click)="goCatalog()"
-          class="block min-[581px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+          [disabled]="this.router.url.includes('/catalog')"
+          class="block min-[581px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:pointer-events-none"
           title="Catalog"
         >
           <img class="w-5" src="/svg/catalog.svg" alt="catalog" />
