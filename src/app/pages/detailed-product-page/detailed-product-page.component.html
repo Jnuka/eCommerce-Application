@@ -1,38 +1,80 @@
-<div class="m-auto p-20 py-0 h-[calc(100vh-72px)] flex justify-center max-md:p-8 max-md:py-0">
+<div class="flex justify-center max-md:p-8 max-md:py-0 m-auto p-20 py-0 mt-[50px] mb-[50px]">
   <div class="max-w-[780px] flex flex-col gap-[30px] justify-center">
     <div style="display: flex; justify-content: left">
-      <nav style="font-size: 20px">
+      <nav class="text-xl max-sm:text-[17px]">
         <button
-          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:h-0.5 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
           (click)="goHome()"
         >
           Home
         </button>
         /
         <button
-          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:h-0.5 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
           (click)="goCatalog()"
         >
           Catalog
         </button>
         /
-        @if (products) {
+        @if (whichCategory === 'coffee') {
           <button
-            class="relative before:content-[''] text-[#6E594BFF] before:absolute before:bottom-[-5px] before:w-full before:h-0.5 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
+            class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+            (click)="goCategory('Coffee')"
+          >
+            Coffee
+          </button>
+        } @else {
+          <button
+            class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+            (click)="goCategory('Accessories')"
+          >
+            Accessories
+          </button>
+        }
+        /
+        @if (products) {
+          @if (whichCategory === 'coffee') {
+            @if (
+              products.masterData.current.categories[0].id ===
+              'a2e2f3db-fe81-4aea-9793-115623f76a3d'
+            ) {
+              <button
+                class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+                (click)="goType('Coffee for filter')"
+              >
+                Coffee for filter
+              </button>
+            } @else if (
+              products.masterData.current.categories[0].id ===
+              '20888f8c-b44a-4166-befe-7a63a75d2ed3'
+            ) {
+              <button
+                class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+                (click)="goType('Coffee for espresso')"
+              >
+                Coffee for espresso
+              </button>
+            }
+            /
+          }
+          <button
+            class="relative before:content-[''] text-[#6E594BFF] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
           >
             {{ products.masterData.current.name['en-US'] }}
           </button>
         }
       </nav>
     </div>
-    <div class="grid grid-cols-[310px_450px] items-center gap-5">
+    <div class="grid grid-cols-[310px_450px] items-center gap-5 max-lg:flex max-lg:flex-col">
       <div class="grid grid-rows-[400px_30px] items-center gap-5">
         <div class="w-[310px] h-[400px] relative">
           <button
             (click)="openDialog()"
             (keydown)="openDialog()"
             class="w-[310px] h-[400px] absolute z-[2] cursor-pointer p-[3px] right-[0] top-[0]"
-          ></button>
+          >
+            &#x200b;
+          </button>
           <app-image-slider [srcImage]="srcImage"></app-image-slider>
         </div>
         <div class="flex gap-5 justify-center">
@@ -56,7 +98,7 @@
           } @else if (whichCategory === 'aeropress') {}
         </div>
       </div>
-      <div class="flex flex-col text-center">
+      <div class="flex flex-col text-center max-lg:max-w-[400px]">
         @if (products) {
           <h1 class="title-h1 text-[40px] text-center">
             {{ products.masterData.current.name['en-US'] }}

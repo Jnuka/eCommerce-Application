@@ -230,6 +230,17 @@ export class DetailedProductPageComponent implements OnInit {
     await this.router.navigate(['catalog']);
   }
 
+  public goCategory(category: string): void {
+    void this.router.navigate(['catalog'], {
+      queryParams: { categories: category },
+    });
+  }
+  public goType(type: string): void {
+    void this.router.navigate(['catalog'], {
+      queryParams: { categories: 'Coffee', type: type },
+    });
+  }
+
   public async goHome(): Promise<void> {
     await this.router.navigate(['']);
   }
