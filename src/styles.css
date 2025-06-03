@@ -76,9 +76,9 @@
 html {
   --mdc-slider-active-track-height: 6px;
   --mdc-slider-handle-shape: 50%;
-  --mdc-slider-handle-color: #6E594BFF;
-  --mdc-slider-focus-handle-color: #6B3C21;
+  --mdc-slider-handle-color: #6e594bff;
+  --mdc-slider-focus-handle-color: #6b3c21;
   --mdc-slider-hover-handle-color: #795f53;
-  --mdc-slider-active-track-color: #6E594BFF;
+  --mdc-slider-active-track-color: #6e594bff;
   --mdc-slider-inactive-track-color: black;
 }

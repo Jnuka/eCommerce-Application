@@ -20,6 +20,29 @@ describe('RegistrationService', () => {
   const testCustomer: Customer = {
     id: 'test-id',
     email: 'test@example.com',
+    firstName: 'MAsha',
+    lastName: 'Hello',
+    dateOfBirth: '2002-11-23',
+    password: 'aywge',
+    addresses: [
+      {
+        id: 'sdf',
+        country: 'US',
+        streetName: 'Main Street',
+        city: 'New York',
+        postalCode: '12345',
+      },
+      {
+        id: 'dff',
+        country: 'US',
+        streetName: 'Second Street',
+        city: 'New York',
+        postalCode: '54321',
+      },
+    ],
+    shippingAddressIds: ['sdfsdf'],
+    billingAddressIds: ['fsdfd'],
+    version: 1,
   };
 
   const mockResult: CustomerSignInResult = {
