@@ -12,8 +12,8 @@ import { HttpErrorResponse } from '../update-password/update-password.interfaces
   providedIn: 'root',
 })
 export class UpdateAddressesService {
+  public ctpApiService = inject(CtpApiService);
   private http = inject(HttpClient);
-  private ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
 
   public update(
