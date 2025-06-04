@@ -54,6 +54,7 @@ export class CatalogProductPageComponent implements OnInit {
   public maxPrice = 50;
 
   public products = signal<ProductProjectionResponse[]>([]);
+  public allProducts = signal<ProductProjectionResponse[]>([]);
   public filter = '';
   public sorter = '';
   public search = '';
@@ -298,6 +299,7 @@ export class CatalogProductPageComponent implements OnInit {
   public renderProducts(): void {
     this.productService.getProducts(`${this.filter + this.sorter}`).subscribe(response => {
       this.products.set(response.results);
+      this.allProducts.set(response.results);
     });
   }
 
@@ -311,9 +313,9 @@ export class CatalogProductPageComponent implements OnInit {
       this.fullTextSearch = `fuzzi=true&fuzziLevel=0&searchKeywords.en-US=${this.search}`;
       this.productService.getProductsBySearch(`${this.fullTextSearch}`).subscribe(response => {
         const filterNames = response['searchKeywords.en-US'].map(x => x.text);
-        const result = this.products().filter(product =>
-          filterNames.includes(product.name['en-US']),
-        );
+        const result = this.allProducts().filter(product => {
+          return filterNames.includes(product.name['en-US']);
+        });
         this.products.set(result);
       });
     } else {
