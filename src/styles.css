@@ -55,6 +55,10 @@
   .mat-mdc-slider {
     min-width: 150px;
   }
+
+  .mat-icon {
+    cursor: pointer;
+  }
 }
 
 .mat-form-field-invalid .mat-mdc-form-field-infix,

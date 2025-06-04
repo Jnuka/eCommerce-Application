@@ -241,6 +241,12 @@ export class DetailedProductPageComponent implements OnInit {
     });
   }
 
+  public goAccessories(): void {
+    void this.router.navigate(['catalog'], {
+      queryParams: { categories: 'Accessories' },
+    });
+  }
+
   public async goHome(): Promise<void> {
     await this.router.navigate(['']);
   }
