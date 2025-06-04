@@ -184,7 +184,7 @@ export class UserProfileComponent {
     });
   }
 
-  private savePersonalInfo(data: Customer): void {
+  public savePersonalInfo(data: Customer): void {
     const currentCustomer = this.currentCustomer;
     if (!currentCustomer) return;
 

@@ -7,7 +7,7 @@ export interface CustomerDraft {
   title?: string;
   anonymousCart?: CartResourceIdentifier;
   anonymousId?: string;
-  dateOfBirth: string; // ISO date: 'YYYY-MM-DD'
+  dateOfBirth: string;
   vatId?: string;
   addresses?: BaseAddress[];
   defaultShippingAddress?: number;

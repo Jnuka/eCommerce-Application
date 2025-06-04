@@ -77,7 +77,37 @@ describe('LoginPageComponent', () => {
     });
 
     it('should call authService.login on valid form', () => {
-      authService.login.and.returnValue(of({ customer: { id: '', email: '' } }));
+      authService.login.and.returnValue(
+        of({
+          customer: {
+            id: '',
+            email: '',
+            firstName: '',
+            lastName: '',
+            dateOfBirth: '',
+            password: '',
+            addresses: [
+              {
+                id: '',
+                country: '',
+                streetName: '',
+                city: '',
+                postalCode: '',
+              },
+              {
+                id: '',
+                country: '',
+                streetName: '',
+                city: '',
+                postalCode: '',
+              },
+            ],
+            shippingAddressIds: [''],
+            billingAddressIds: [''],
+            version: 1,
+          },
+        }),
+      );
       component.onSubmit();
       /* eslint-disable */
       expect(authService.login).toHaveBeenCalledWith({
@@ -88,7 +118,37 @@ describe('LoginPageComponent', () => {
     });
 
     it('should after successful login navigate to main page', fakeAsync(() => {
-      authService.login.and.returnValue(of({ customer: { id: '', email: '' } }));
+      authService.login.and.returnValue(
+        of({
+          customer: {
+            id: '',
+            email: '',
+            firstName: '',
+            lastName: '',
+            dateOfBirth: '',
+            password: '',
+            addresses: [
+              {
+                id: '',
+                country: '',
+                streetName: '',
+                city: '',
+                postalCode: '',
+              },
+              {
+                id: '',
+                country: '',
+                streetName: '',
+                city: '',
+                postalCode: '',
+              },
+            ],
+            shippingAddressIds: [''],
+            billingAddressIds: [''],
+            version: 1,
+          },
+        }),
+      );
       component.onSubmit();
       expect(routerMock.navigate).toHaveBeenCalledWith(['']);
     }));

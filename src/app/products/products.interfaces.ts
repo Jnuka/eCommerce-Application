@@ -122,9 +122,6 @@ export interface TypedMoney {
 export interface Attribute {
   name: string;
   value: AttributePlainEnumValue;
-  type: {
-    values: AttributePlainEnumValue[];
-  };
 }
 
 export interface AttributePlainEnumValue {
