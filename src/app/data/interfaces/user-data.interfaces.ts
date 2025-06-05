@@ -24,6 +24,7 @@ export interface Address {
 export interface CustomerSignInResult {
   customer: Customer;
   customAddresses?: CustomCustomerAddress[];
+  cart?: Cart;
 }
 
 export interface CustomCustomerAddress {
@@ -37,4 +38,18 @@ export interface CustomCustomerAddress {
   isDefaultShipping: boolean;
   isDefaultBilling: boolean;
   isDefault?: boolean;
+}
+
+interface Cart {
+  id: string;
+  version: number;
+  customerId?: string;
+  anonymousId?: string;
+  lineItems: LineItem[];
+}
+
+interface LineItem {
+  id: string;
+  productId: string;
+  name: string;
 }

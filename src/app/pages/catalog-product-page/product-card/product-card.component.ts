@@ -1,7 +1,8 @@
-import { Component, inject, input, OnInit } from '@angular/core';
+import { Component, computed, inject, input, OnInit } from '@angular/core';
 import { ProductProjectionResponse, ProductVariant } from '../../../products/products.interfaces';
 import { Router } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
+import { UserDataService } from '../../../data/services/user-data.service';
 
 @Component({
   selector: 'app-product-card',
@@ -16,7 +17,13 @@ export class ProductCardComponent implements OnInit {
   public attributes: { name: string; degree: string }[] | undefined;
   public countAttributes = 1;
 
+  public readonly isInCart = computed(() => {
+    const ids = this.userDataService.productIdsFromCart();
+    return ids.includes(this.product().id);
+  });
+
   private router = inject(Router);
+  private userDataService = inject(UserDataService);
 
   public ngOnInit(): void {
     this.getPrice();

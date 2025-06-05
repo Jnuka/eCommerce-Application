@@ -1,5 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
@@ -15,6 +15,11 @@ import {
 export class UserDataService {
   public readonly _customerData = signal<CustomerSignInResult | null>(null);
   public readonly customerData = this._customerData;
+
+  public readonly productIdsFromCart = computed(() => {
+    const customerData = this._customerData();
+    return customerData?.cart?.lineItems.map(item => item.productId) || [];
+  });
 
   private http = inject(HttpClient);
   private cookieService = inject(CookieService);
