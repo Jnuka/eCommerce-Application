@@ -63,6 +63,9 @@ export class CatalogProductPageComponent implements OnInit {
   public typeParams: string | null = '';
   public filterParams: string | null = '';
 
+  public currentPageIndex = 1;
+  public itemsPerPage = 6;
+
   public readonly _formBuilder = inject(FormBuilder);
 
   public Attributes = this._formBuilder.group({
@@ -92,6 +95,24 @@ export class CatalogProductPageComponent implements OnInit {
 
   private router = inject(Router);
   constructor(private activatedRoute: ActivatedRoute) {}
+
+  public get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages() }, (_, i) => i + 1);
+  }
+
+  public get paginatedProducts(): ProductProjectionResponse[] {
+    const start = (this.currentPageIndex - 1) * this.itemsPerPage;
+    return this.products().slice(start, start + this.itemsPerPage);
+  }
+
+  public totalPages(): number {
+    return Math.ceil(this.products().length / this.itemsPerPage);
+  }
+
+  public changePage(page: number): void {
+    this.currentPageIndex = page;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   public ngOnInit(): void {
     this.page = this.activatedRoute.snapshot.queryParamMap.get('categories');
@@ -256,6 +277,7 @@ export class CatalogProductPageComponent implements OnInit {
     this.Attributes.reset();
     this.priceRange.get('sliderStart')?.setValue(this.minPrice);
     this.priceRange.get('sliderEnd')?.setValue(this.maxPrice);
+    this.currentPageIndex = 1;
   }
 
   public sortProducts(): void {
@@ -294,6 +316,7 @@ export class CatalogProductPageComponent implements OnInit {
     this.renderProducts();
 
     if (this.search) this.onSearch();
+    this.currentPageIndex = 1;
   }
 
   public renderProducts(): void {
@@ -321,6 +344,7 @@ export class CatalogProductPageComponent implements OnInit {
     } else {
       this.checkFilters();
     }
+    this.currentPageIndex = 1;
   }
 
   public async goDetailedProduct(id: string): Promise<void> {

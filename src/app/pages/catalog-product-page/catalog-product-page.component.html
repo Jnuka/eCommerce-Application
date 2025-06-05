@@ -219,17 +219,29 @@
             </div>
           </div>
         </div>
-
-        <div
-          class="grid grid-cols-3 gap-5 max-xl:grid-cols-2 max-[980px]:flex max-[980px]:flex-wrap"
-        >
-          @for (product of products(); track product.id) {
-            <app-product-card
-              (click)="goDetailedProduct(`${product.id}`)"
-              class="max-[980px]:w-full max-[400px]:min-h-[400px] rounded-xl transition-all duration-[0.3s] ease-[ease-out] hover:scale-[101%] hover:shadow-md hover:shadow-gray-800 cursor-pointer"
-              [product]="product"
-            />
-          }
+        <div class="flex flex-col w-full items-center">
+          <div
+            class="grid grid-cols-3 gap-5 max-xl:grid-cols-2 max-[980px]:flex max-[980px]:flex-wrap"
+          >
+            @for (product of paginatedProducts; track product.id) {
+              <app-product-card
+                (click)="goDetailedProduct(`${product.id}`)"
+                class="max-[980px]:w-full max-[400px]:min-h-[400px] rounded-xl transition-all duration-[0.3s] ease-[ease-out] hover:scale-[101%] hover:shadow-md hover:shadow-gray-800 cursor-pointer"
+                [product]="product"
+              />
+            }
+          </div>
+          <div class="flex justify-center mt-10 gap-2">
+            @for (page of pageNumbers; track page) {
+              <button
+                (click)="changePage(page)"
+                [class.bg-[#6E594BFF]]="currentPageIndex === page"
+                class="px-4 py-2 border border-[#6E594BFF] text-black hover:bg-[#6E594BFF] hover:text-white transition-all duration-300 rounded"
+              >
+                {{ page }}
+              </button>
+            }
+          </div>
 
           @if (products().length < 1) {
             <div
