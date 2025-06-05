@@ -64,6 +64,7 @@ export class AuthService {
               'view_products',
               'manage_customers',
               'view_categories',
+              'manage_my_orders',
             ]
               .map(scope => `${scope}:${environment.ctp_project_key}`)
               .join(' '),
