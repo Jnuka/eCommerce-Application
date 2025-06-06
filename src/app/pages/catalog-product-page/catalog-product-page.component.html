@@ -1,4 +1,4 @@
-@if (currentPage === 'Catalog') {
+@if (currentPage === PAGES.CATALOG) {
   <div
     class="bg-linear-to-r from-[#3F2F2AFF] from-45% via-[#7C573CFF] via-65% to-[#5F4431FF] to-90%"
   >
@@ -25,7 +25,7 @@
               <button
                 class="relative before:content-[''] text-[#cca78d] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
                 (click)="goCatalog()"
-                [disabled]="currentPage === 'Catalog'"
+                [disabled]="currentPage === PAGES.CATALOG"
               >
                 Catalog
               </button>
@@ -34,7 +34,7 @@
               {{ currentPage }}
             </h1>
 
-            @if (currentPage === 'Catalog') {
+            @if (currentPage === PAGES.CATALOG) {
               <div class="flex flex-col gap-5">
                 @for (type of types; track type) {
                   <div
@@ -52,7 +52,7 @@
                       >
                         {{ type.name }}
                       </button>
-                      @if (type.name === 'Coffee') {
+                      @if (type.name === CATEGORIES.COFFEE) {
                         @for (category of categories; track category) {
                           <button
                             class="text-left mb-[10px] cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
@@ -88,7 +88,7 @@
         <button
           class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%] disabled:pointer-events-none"
           (click)="goCatalog()"
-          [disabled]="currentPage === 'Catalog'"
+          [disabled]="currentPage === PAGES.CATALOG"
         >
           Catalog
         </button>
@@ -129,13 +129,13 @@
         }
       </div>
 
-      @if (currentPage !== 'Catalog') {
+      @if (currentPage !== PAGES.CATALOG) {
         <div class="w-full controls">
           <div
             class="w-full flex justify-between gap-10 flex-wrap align-center max-[1090px]:grid max-[1090px]:grid-cols-[repeat(2,1fr)] max-[1090px]:justify-items-center max-[980px]:grid-cols-[repeat(1,1fr)]"
             style="align-items: center"
           >
-            @if (currentType === 'Coffee' && types[0]) {
+            @if (currentType === CATEGORIES.COFFEE && types[0]) {
               <div [formGroup]="Attributes" class="flex gap-[20px]">
                 @for (key of types[0].attributes.slice(0, 3); track key) {
                   <p class="capitalize flex flex-col items-start">

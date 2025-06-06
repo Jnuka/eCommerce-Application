@@ -3,6 +3,7 @@ import { ProductProjectionResponse, ProductVariant } from '../../../products/pro
 import { Router } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 import { UserDataService } from '../../../data/services/user-data.service';
+import { ROUTES_PAGES } from '../../../data/enums/routers';
 
 @Component({
   selector: 'app-product-card',
@@ -33,7 +34,6 @@ export class ProductCardComponent implements OnInit {
 
   public getAttributes(): void {
     if (this.countAttributes > 1) {
-      // console.log('masters', this.masterVariant.attributes);
       // Атрибуты продуктов
       this.attributes = [{ name: '', degree: '' }];
       this.attributes.shift();
@@ -95,8 +95,8 @@ export class ProductCardComponent implements OnInit {
     }
   }
 
-  public async goDetailedProduct(id: string): Promise<void> {
-    await this.router.navigate(['product'], {
+  public goDetailedProduct(id: string): void {
+    void this.router.navigate([ROUTES_PAGES.PRODUCT], {
       queryParams: { productId: id },
     });
   }

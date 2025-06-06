@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class NotFoundPageComponent {
   private router = inject(Router);
-  public async goHome(): Promise<void> {
-    await this.router.navigate(['']);
+  public goHome(): void {
+    void this.router.navigate(['']);
   }
 }

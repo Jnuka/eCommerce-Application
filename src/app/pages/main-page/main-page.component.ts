@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { ROUTES_PAGES } from '../../data/enums/routers';
 
 @Component({
   selector: 'app-main-page',
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
 export class MainPageComponent {
   private router = inject(Router);
 
-  public async goCatalog(): Promise<void> {
-    await this.router.navigate(['catalog']);
+  public goCatalog(): void {
+    void this.router.navigate([ROUTES_PAGES.CATALOG]);
   }
 }
