@@ -1,4 +1,4 @@
-@if (currentPage === 'Catalog') {
+@if (currentPage === PAGES.CATALOG) {
   <div
     class="bg-linear-to-r from-[#3F2F2AFF] from-45% via-[#7C573CFF] via-65% to-[#5F4431FF] to-90%"
   >
@@ -14,18 +14,18 @@
           class="m-auto px-50 flex pt-[50px] mb-[20px] h-screen max-[1032px]:px-[30px] max-md:p-3 max-xl:backdrop-blur-[4px]"
         >
           <div class="flex flex-col gap-[10px]">
-            <nav class="text-[20px] text-[#6E594BFF]">
+            <nav class="text-[20px] text-[var(--text-color)]">
               <button
-                class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#9A7D69FF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+                class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#9A7D69FF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
                 (click)="goHome()"
               >
                 Home
               </button>
               /
               <button
-                class="relative before:content-[''] text-[#cca78d] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
+                class="relative before:content-[''] text-[#cca78d] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0"
                 (click)="goCatalog()"
-                [disabled]="currentPage === 'Catalog'"
+                [disabled]="currentPage === PAGES.CATALOG"
               >
                 Catalog
               </button>
@@ -34,7 +34,7 @@
               {{ currentPage }}
             </h1>
 
-            @if (currentPage === 'Catalog') {
+            @if (currentPage === PAGES.CATALOG) {
               <div class="flex flex-col gap-5">
                 @for (type of types; track type) {
                   <div
@@ -47,15 +47,15 @@
                     />
                     <div class="flex flex-col text-left">
                       <button
-                        class="text-[25px] text-left mb-[15px] cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+                        class="text-[25px] text-left mb-[15px] cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
                         (click)="showProductsFromType(`${type.name}`,`${type.id}`)"
                       >
                         {{ type.name }}
                       </button>
-                      @if (type.name === 'Coffee') {
+                      @if (type.name === CATEGORIES.COFFEE) {
                         @for (category of categories; track category) {
                           <button
-                            class="text-left mb-[10px] cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+                            class="text-left mb-[10px] cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
                             (click)="showProductsFromCategory(`${category.name['en-US']}`, `${category.id}`)"
                           >
                             {{ category.name['en-US'] }}
@@ -79,23 +79,23 @@
     <div class="flex flex-col gap-[10px] min-w-full">
       <nav class="text-[20px]">
         <button
-          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
           (click)="goHome()"
         >
           Home
         </button>
         /
         <button
-          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%] disabled:pointer-events-none"
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%] disabled:pointer-events-none"
           (click)="goCatalog()"
-          [disabled]="currentPage === 'Catalog'"
+          [disabled]="currentPage === PAGES.CATALOG"
         >
           Catalog
         </button>
         @if (currentType) {
           /
           <button
-            class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%] disabled:pointer-events-none"
+            class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%] disabled:pointer-events-none"
             (click)="showProductsFromType(currentType, currentTypeID)"
             [disabled]="currentPage === currentType"
           >
@@ -105,7 +105,7 @@
         @if (currentCategory) {
           /
           <button
-            class="relative before:content-[''] text-[#6E594BFF] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
+            class="relative before:content-[''] text-[var(--text-color)] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0"
           >
             {{ currentCategory }}
           </button>
@@ -120,7 +120,7 @@
         @if (currentPage === 'Coffee') {
           @for (category of categories; track category) {
             <button
-              class="text-left cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+              class="text-left cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
               (click)="showProductsFromCategory(`${category.name['en-US']}`, `${category.id}`)"
             >
               {{ category.name['en-US'] }}
@@ -129,17 +129,17 @@
         }
       </div>
 
-      @if (currentPage !== 'Catalog') {
+      @if (currentPage !== PAGES.CATALOG) {
         <div class="w-full controls">
           <div
             class="w-full flex justify-between gap-10 flex-wrap align-center max-[1090px]:grid max-[1090px]:grid-cols-[repeat(2,1fr)] max-[1090px]:justify-items-center max-[980px]:grid-cols-[repeat(1,1fr)]"
             style="align-items: center"
           >
-            @if (currentType === 'Coffee' && types[0]) {
+            @if (currentType === CATEGORIES.COFFEE && types[0]) {
               <div [formGroup]="Attributes" class="flex gap-[20px]">
                 @for (key of types[0].attributes.slice(0, 3); track key) {
                   <p class="capitalize flex flex-col items-start">
-                    <span class="text-[#6E594BFF] ml-[10px]">{{ key.name }}:</span>
+                    <span class="text-[var(--text-color)] ml-[10px]">{{ key.name }}:</span>
                     <span>
                       <ul class="flex flex-col items-start">
                         @for (value of key.type.values; track value) {
@@ -159,7 +159,7 @@
             }
 
             <div [formGroup]="priceRange" class="flex flex-wrap w-[170px] h-[93px]">
-              <span class="w-[100%] text-left text-[#6E594BFF]">Price range:</span>
+              <span class="w-[100%] text-left text-[var(--text-color)]">Price range:</span>
               <label for="sliderStart" class="example-value-label w-[50%] h-[20px] text-left"
                 >${{ sliderStart.value }}</label
               >
@@ -180,13 +180,13 @@
             <div class="h-[80px] flex flex-col justify-between">
               <button
                 (click)="checkFilters()"
-                class="text-[#f8e4be] p-0.5 rounded-[5px] w-[120px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+                class="text-[var(--button-text-color)] p-0.5 rounded-[5px] w-[120px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
               >
                 Apply filters
               </button>
               <button
                 (click)="resetFilters(); renderProducts()"
-                class="text-[#f8e4be] p-0.5 rounded-[5px] w-[120px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+                class="text-[var(--button-text-color)] p-0.5 rounded-[5px] w-[120px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
               >
                 Reset filters
               </button>
@@ -235,8 +235,8 @@
             @for (page of pageNumbers; track page) {
               <button
                 (click)="changePage(page)"
-                [class.bg-[#6E594BFF]]="currentPageIndex === page"
-                class="px-4 py-2 border border-[#6E594BFF] text-black hover:bg-[#6E594BFF] hover:text-white transition-all duration-300 rounded"
+                [class.bg-[var(--text-color)]]="currentPageIndex === page"
+                class="px-4 py-2 border border-[var(--text-color)] text-black hover:bg-[var(--text-color)] hover:text-white transition-all duration-300 rounded"
               >
                 {{ page }}
               </button>

@@ -77,7 +77,6 @@ export interface ProductData {
 
 export interface CategoryReference {
   id: string;
-  // typeId: ReferenceTypeId;
 }
 
 export interface LocalizedString {

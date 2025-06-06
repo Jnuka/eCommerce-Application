@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { emailValidator, passwordValidator, spacesCheck } from '../../shared/validators';
+import { ROUTES_PAGES } from '../../data/enums/routers';
 
 @Component({
   selector: 'app-login-page',
@@ -53,12 +54,12 @@ export class LoginPageComponent {
     event.stopPropagation();
   }
 
-  public async goRegistration(): Promise<void> {
-    await this.router.navigate(['registration']);
+  public goRegistration(): void {
+    void this.router.navigate([ROUTES_PAGES.REGISTRATION]);
   }
 
-  public async goMain(): Promise<void> {
-    await this.router.navigate(['']);
+  public goMain(): void {
+    void this.router.navigate(['']);
   }
 
   public onSubmit = (): void => {

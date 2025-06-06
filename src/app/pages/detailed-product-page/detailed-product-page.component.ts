@@ -13,6 +13,9 @@ import { ImageSliderComponent } from '../../common-ui/image-slider/image-slider.
 import { MatDialog } from '@angular/material/dialog';
 import { ModalWindowComponent } from '../../common-ui/modal-window/modal-window.component';
 import { map } from 'rxjs';
+import { ROUTES_PAGES } from '../../data/enums/routers';
+import { CATEGORIES } from '../../data/enums/categories';
+import { SUB_CATEGORIES } from '../../data/enums/subCategories';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -21,6 +24,9 @@ import { map } from 'rxjs';
   imports: [NgIf, NgForOf, MatButtonToggleGroup, MatButtonToggle, ImageSliderComponent],
 })
 export class DetailedProductPageComponent implements OnInit {
+  public readonly CATEGORIES = CATEGORIES;
+  public readonly SUB_CATEGORIES = SUB_CATEGORIES;
+
   public pageNum: string | null = '';
   public description = '';
   public products: ProductResponse | undefined;
@@ -36,6 +42,7 @@ export class DetailedProductPageComponent implements OnInit {
   public whichCategory = '';
 
   public productService = inject(ProductsService);
+
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
@@ -109,14 +116,14 @@ export class DetailedProductPageComponent implements OnInit {
         this.masterVariant.attributes.length === 0
       ) {
         if (this.products.masterData.current.name['en-US'] === 'French press') {
-          this.whichCategory = 'french';
+          this.whichCategory = CATEGORIES.FRENCH;
         } else if (this.products.masterData.current.name['en-US'] === 'Filters for aeropress') {
-          this.whichCategory = 'aeropress';
+          this.whichCategory = CATEGORIES.AERO_PRESS;
         } else if (this.products.masterData.current.name['en-US'] === 'Coffee grinder') {
-          this.whichCategory = 'grinder';
+          this.whichCategory = CATEGORIES.GRINDER;
         }
       } else {
-        this.whichCategory = 'coffee';
+        this.whichCategory = CATEGORIES.COFFEE;
       }
       // Картинки
       this.srcImage = [];
@@ -140,7 +147,6 @@ export class DetailedProductPageComponent implements OnInit {
       }
 
       if (this.countAttributes > 1) {
-        // console.log('masters', this.masterVariant.attributes);
         // Атрибуты продуктов
         this.attributes = [{ name: '', degree: '' }];
         this.attributes.shift();
@@ -226,29 +232,29 @@ export class DetailedProductPageComponent implements OnInit {
     }
   }
 
-  public async goCatalog(): Promise<void> {
-    await this.router.navigate(['catalog']);
+  public goCatalog(): void {
+    void this.router.navigate([ROUTES_PAGES.CATALOG]);
   }
 
   public goCategory(category: string): void {
-    void this.router.navigate(['catalog'], {
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
       queryParams: { categories: category },
     });
   }
   public goType(type: string): void {
-    void this.router.navigate(['catalog'], {
-      queryParams: { categories: 'Coffee', type: type },
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
+      queryParams: { categories: CATEGORIES.COFFEE, type: type },
     });
   }
 
   public goAccessories(): void {
-    void this.router.navigate(['catalog'], {
-      queryParams: { categories: 'Accessories' },
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
+      queryParams: { categories: CATEGORIES.ACCESSORIES },
     });
   }
 
-  public async goHome(): Promise<void> {
-    await this.router.navigate(['']);
+  public goHome(): void {
+    void this.router.navigate(['']);
   }
 
   public openDialog(): void {

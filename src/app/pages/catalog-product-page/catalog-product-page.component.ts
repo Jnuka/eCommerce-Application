@@ -22,6 +22,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { map } from 'rxjs';
+import { PAGES } from '../../data/enums/pages';
+import { ROUTES_PAGES } from '../../data/enums/routers';
+import { CATEGORIES } from '../../data/enums/categories';
+import { SUB_CATEGORIES } from '../../data/enums/subCategories';
 
 @Component({
   selector: 'app-catalog-product-page',
@@ -41,7 +45,10 @@ import { map } from 'rxjs';
   ],
 })
 export class CatalogProductPageComponent implements OnInit {
-  public currentPage = 'Catalog';
+  public readonly PAGES = PAGES;
+  public readonly CATEGORIES = CATEGORIES;
+
+  public currentPage = PAGES.CATALOG;
   public currentType = '';
   public currentCategory = '';
   public currentTypeID = '';
@@ -135,13 +142,13 @@ export class CatalogProductPageComponent implements OnInit {
     }
   }
 
-  public async goCatalog(): Promise<void> {
-    this.currentPage = 'Catalog';
+  public goCatalog(): void {
+    this.currentPage = PAGES.CATALOG;
     this.currentType = '';
     this.currentCategory = '';
     this.currentTypeID = '';
     this.currentCategoryID = '';
-    await this.router.navigate(['catalog'], {
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
       queryParams: {},
     });
   }
@@ -153,13 +160,13 @@ export class CatalogProductPageComponent implements OnInit {
   }
 
   public getCategories(category: string): void {
-    void this.router.navigate(['catalog'], {
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
       queryParams: { categories: category },
     });
   }
 
   public getTypeCategories(category: string, type: string): void {
-    void this.router.navigate(['catalog'], {
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
       queryParams: { categories: category, type: type },
     });
   }
@@ -178,7 +185,7 @@ export class CatalogProductPageComponent implements OnInit {
   }
 
   public setPriceRange(): void {
-    if (this.currentType === 'Coffee') {
+    if (this.currentType === CATEGORIES.COFFEE) {
       this.maxPrice = 11;
     } else {
       this.maxPrice = 50;
@@ -193,12 +200,12 @@ export class CatalogProductPageComponent implements OnInit {
         .pipe(
           map(value => {
             this.types = value.results;
-            if (category.slice(0, 6) === 'Coffee') {
-              this.currentType = 'Coffee';
+            if (category.slice(0, 6) === CATEGORIES.COFFEE) {
+              this.currentType = CATEGORIES.COFFEE;
               this.currentTypeID = this.types[0].id;
               this.getTypeCategories(this.currentType, category);
             } else {
-              this.currentType = 'Accessories';
+              this.currentType = CATEGORIES.ACCESSORIES;
               this.currentTypeID = this.types[1].id;
             }
             this.sort.reset();
@@ -212,12 +219,12 @@ export class CatalogProductPageComponent implements OnInit {
         )
         .subscribe();
     } else {
-      if (category.slice(0, 6) === 'Coffee') {
-        this.currentType = 'Coffee';
+      if (category.slice(0, 6) === CATEGORIES.COFFEE) {
+        this.currentType = CATEGORIES.COFFEE;
         this.currentTypeID = this.types[0].id;
         this.getTypeCategories(this.currentType, category);
       } else {
-        this.currentType = 'Accessories';
+        this.currentType = CATEGORIES.ACCESSORIES;
         this.currentTypeID = this.types[1].id;
       }
       this.sort.reset();
@@ -236,14 +243,14 @@ export class CatalogProductPageComponent implements OnInit {
         if (this.categories.length === 0) {
           this.productService.getCategories().subscribe(response => {
             this.categories = response.results;
-            if (type === 'Coffee for espresso') {
+            if (type === SUB_CATEGORIES.COFFEE_FOR_ESPRESSO) {
               this.showProductsFromCategory(type, this.categories[0].id);
             } else {
               this.showProductsFromCategory(type, this.categories[1].id);
             }
           });
         } else {
-          if (type === 'Coffee for espresso') {
+          if (type === SUB_CATEGORIES.COFFEE_FOR_ESPRESSO) {
             this.showProductsFromCategory(type, this.categories[0].id);
           } else {
             this.showProductsFromCategory(type, this.categories[1].id);
@@ -253,9 +260,9 @@ export class CatalogProductPageComponent implements OnInit {
         this.currentType = page;
         this.productService.getTypes().subscribe(response => {
           this.types = response.results;
-          if (page === 'Coffee') {
+          if (page === CATEGORIES.COFFEE) {
             this.showProductsFromType(page, this.types[0].id);
-          } else if (page === 'Accessories') {
+          } else if (page === CATEGORIES.ACCESSORIES) {
             this.showProductsFromType(page, this.types[1].id);
           }
         });
@@ -347,8 +354,8 @@ export class CatalogProductPageComponent implements OnInit {
     this.currentPageIndex = 1;
   }
 
-  public async goDetailedProduct(id: string): Promise<void> {
-    await this.router.navigate(['product'], {
+  public goDetailedProduct(id: string): void {
+    void this.router.navigate([ROUTES_PAGES.PRODUCT], {
       queryParams: { productId: id },
     });
   }

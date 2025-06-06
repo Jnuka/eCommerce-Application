@@ -11,6 +11,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { CustomerSignInResult } from '../data/interfaces/user-data.interfaces';
 import { UserDataService } from '../data/services/user-data.service';
+import { ROUTES_PAGES } from '../data/enums/routers';
 
 @Injectable({
   providedIn: 'root',
@@ -140,7 +141,7 @@ export class AuthService {
     this.cookieService.deleteAll();
     this.customerToken = null;
     this.refreshToken = null;
-    void this.router.navigate(['login']);
+    void this.router.navigate([ROUTES_PAGES.LOGIN]);
   }
 
   private saveTokens(response: CustomerTokenResponse): void {
