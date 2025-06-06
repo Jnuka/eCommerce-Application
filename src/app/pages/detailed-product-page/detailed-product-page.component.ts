@@ -147,7 +147,6 @@ export class DetailedProductPageComponent implements OnInit {
       }
 
       if (this.countAttributes > 1) {
-        // console.log('masters', this.masterVariant.attributes);
         // Атрибуты продуктов
         this.attributes = [{ name: '', degree: '' }];
         this.attributes.shift();
