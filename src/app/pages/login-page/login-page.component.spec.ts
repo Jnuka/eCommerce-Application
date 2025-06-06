@@ -56,16 +56,16 @@ describe('LoginPageComponent', () => {
   });
 
   describe('Navigate', () => {
-    it('should navigate to registration', fakeAsync(async () => {
-      await component.goRegistration();
+    it('should navigate to registration', () => {
+      void component.goRegistration();
       tick();
       expect(routerMock.navigate).toHaveBeenCalledWith(['registration']);
-    }));
+    });
 
-    it('should navigate to main page', fakeAsync(async () => {
-      await component.goMain();
+    it('should navigate to main page', () => {
+      void component.goMain();
       expect(routerMock.navigate).toHaveBeenCalledWith(['']);
-    }));
+    });
   });
 
   describe('Form Submit', () => {

@@ -3,14 +3,14 @@
     <div style="display: flex; justify-content: left">
       <nav class="text-xl max-sm:text-[17px]">
         <button
-          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
           (click)="goHome()"
         >
           Home
         </button>
         /
         <button
-          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+          class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
           (click)="goCatalog()"
         >
           Catalog
@@ -47,8 +47,7 @@
               products.masterData.current.categories[0].id === SUB_CATEGORIES.ID_COFFEE_FOR_ESPRESSO
             ) {
               <button
-                class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[#6E594BFF] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
-                (click)="goType('Coffee for espresso')"
+                class="cursor-pointer relative transition-all duration-[0.3s] ease-[ease-in-out] hover:text-[var(--text-color)] before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
                 (click)="goType(SUB_CATEGORIES.COFFEE_FOR_ESPRESSO)"
               >
                 Coffee for espresso
@@ -57,7 +56,7 @@
             /
           }
           <button
-            class="relative before:content-[''] text-[#6E594BFF] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[#6E594BFF] before:left-0"
+            class="relative before:content-[''] text-[var(--text-color)] before:absolute before:bottom-[-5px] before:w-full before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0"
           >
             {{ products.masterData.current.name['en-US'] }}
           </button>
@@ -105,7 +104,7 @@
           <p class="text-start">{{ description }}</p>
           <button
             (click)="moreDescription()"
-            class="more-btn text-[#f8e4be] text-[13px] p-[8px] rounded-[5px] w-[160px] bg-[#6E594BFF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+            class="more-btn text-[var(--button-text-color)] text-[13px] p-[8px] rounded-[5px] w-[160px] bg-[var(--text-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
           >
             More Information
           </button>
@@ -122,7 +121,7 @@
           <div class="flex flex-col items-start">
             <div *ngIf="attributes?.length" class="flex flex-col items-start">
               <p *ngFor="let role of attributes" class="capitalize">
-                <span class="text-[#6E594BFF]">{{ role.name }}</span
+                <span class="text-[var(--text-color)]">{{ role.name }}</span
                 >: {{ role.degree }}
               </p>
             </div>
@@ -132,7 +131,7 @@
     </div>
     <div class="flex gap-[20px] justify-center">
       <button
-        class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+        class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
       >
         Add to cart
       </button>
@@ -141,28 +140,24 @@
           @if (
             products.masterData.current.categories[0].id === SUB_CATEGORIES.ID_COFFEE_FOR_FILTER
           ) {
-            <button
-              (click)="goType('Coffee for filter')"
-              class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-              (click)="goType(SUB_CATEGORIES.COFFEE_FOR_FILTER)"
-            >
-              Back
+            <button (click)="goType(SUB_CATEGORIES.COFFEE_FOR_FILTER)">
+              Back class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px]
+              bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out]
+              hover:bg-[var(--hover-button-color)]"
             </button>
           } @else if (
             products.masterData.current.categories[0].id === SUB_CATEGORIES.ID_COFFEE_FOR_ESPRESSO
           ) {
-            <button
-              (click)="goType('Coffee for espresso')"
-              class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-              (click)="goType(SUB_CATEGORIES.COFFEE_FOR_ESPRESSO)"
-            >
-              Back
+            <button (click)="goType(SUB_CATEGORIES.COFFEE_FOR_ESPRESSO)">
+              Back class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px]
+              bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out]
+              hover:bg-[var(--hover-button-color)]"
             </button>
           }
         } @else {
           <button
             (click)="goAccessories()"
-            class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
+            class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
           >
             Back
           </button>

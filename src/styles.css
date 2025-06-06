@@ -2,6 +2,11 @@
 @import 'tailwindcss';
 
 :root {
+  --button-color: #524139FF;
+  --button-text-color: #f8e4be;
+  --hover-button-color: #795f53;
+  --text-color: #6E594BFF;
+
   --error-color: #ff3d00;
 
   .mat-mdc-select-panel {
