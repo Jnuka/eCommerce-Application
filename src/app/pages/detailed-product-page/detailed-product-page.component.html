@@ -140,18 +140,20 @@
           @if (
             products.masterData.current.categories[0].id === SUB_CATEGORIES.ID_COFFEE_FOR_FILTER
           ) {
-            <button (click)="goType(SUB_CATEGORIES.COFFEE_FOR_FILTER)">
-              Back class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px]
-              bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out]
-              hover:bg-[var(--hover-button-color)]"
+            <button
+              (click)="goType(SUB_CATEGORIES.COFFEE_FOR_FILTER)"
+              class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
+            >
+              Back
             </button>
           } @else if (
             products.masterData.current.categories[0].id === SUB_CATEGORIES.ID_COFFEE_FOR_ESPRESSO
           ) {
-            <button (click)="goType(SUB_CATEGORIES.COFFEE_FOR_ESPRESSO)">
-              Back class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px]
-              bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out]
-              hover:bg-[var(--hover-button-color)]"
+            <button
+              (click)="goType(SUB_CATEGORIES.COFFEE_FOR_ESPRESSO)"
+              class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
+            >
+              Back
             </button>
           }
         } @else {
