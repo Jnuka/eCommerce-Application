@@ -8,8 +8,7 @@ import { HttpErrorResponse } from './registration.interfaces';
 import { ToastService } from '../helpers/toast.service';
 import { AuthService } from '../auth/auth.service';
 import { CustomerSignInResult } from '../data/interfaces/user-data.interfaces';
-import { CreateCartService } from '../cart/create-cart.service';
-import { UserDataService } from '../data/services/user-data.service';
+import { CartActionsService } from '../cart/cart-actions.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +19,7 @@ export class RegistrationService {
   private ctpApiService = inject(CtpApiService);
   private toastService = inject(ToastService);
   private authService = inject(AuthService);
-  private createCartService = inject(CreateCartService);
-  private userDataService = inject(UserDataService);
+  private cartService = inject(CartActionsService);
 
   public signUp(customerDraft: CustomerDraft): Observable<CustomerSignInResult> {
     return this.ctpApiService.getAccessToken().pipe(
@@ -51,7 +49,7 @@ export class RegistrationService {
         });
       }),
       tap(() => {
-        this.createCartService.createCart(
+        this.cartService.createCart(
           { currency: 'USD' },
           customerDraft.email,
           customerDraft.password,
