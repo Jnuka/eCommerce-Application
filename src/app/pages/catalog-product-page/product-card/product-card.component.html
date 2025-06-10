@@ -41,11 +41,27 @@
         About
       </button>
       <button
-        class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
-        [disabled]="isInCart()"
-        (click)="addToCart()"
+        class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] disabled:border-gray-200 disabled:bg-[#b09e94] disabled:shadow-none disabled:pointer-events-none"
+        [disabled]="isInCart() || (isAddingToCart$ | async)"
+        (click)="addToCart($event)"
       >
-        Add to Card
+        <ng-container *ngIf="isAddingToCart$ | async; else loading"> Add to Card </ng-container>
+        <ng-template #loading>
+          <span class="flex items-center justify-center gap-2">
+            <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            Adding...
+          </span>
+        </ng-template>
       </button>
     </div>
   </div>
