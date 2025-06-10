@@ -87,4 +87,16 @@ export class CartActionsService {
       }),
     );
   }
+
+  public getCart(): Observable<CartResponse> {
+    const token = this.authService.getCustomerToken();
+    const userID = this.userDataService._customerData()?.customer.id;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.get<CartResponse>(
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/customer-id=${userID}`,
+      { headers },
+    );
+  }
 }

@@ -1,3 +1,5 @@
+import { LocalizedString, ProductVariant } from '../products/products.interfaces';
+
 // Create cart
 export interface CartResponse {
   id: string;
@@ -7,10 +9,11 @@ export interface CartResponse {
   lineItems: LineItem[];
 }
 
-interface LineItem {
+export interface LineItem {
   id: string;
   productId: string;
-  name: string;
+  name: LocalizedString;
+  variant: ProductVariant;
 }
 
 export interface MyCartDraft {
@@ -36,10 +39,4 @@ export interface UpdateCartResponse {
   customerId?: string;
   anonymousId?: string;
   lineItems: LineItem[];
-}
-
-interface LineItem {
-  id: string;
-  productId: string;
-  name: string;
 }

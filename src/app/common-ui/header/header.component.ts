@@ -47,4 +47,8 @@ export class HeaderComponent {
   public goCatalog(): void {
     void this.router.navigate([ROUTES_PAGES.CATALOG]);
   }
+
+  public goCart(): void {
+    void this.router.navigate([ROUTES_PAGES.CART]);
+  }
 }

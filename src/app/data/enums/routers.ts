@@ -5,4 +5,5 @@ export const ROUTES_PAGES = {
   REGISTRATION: 'registration',
   PROFILE: 'profile',
   LOGIN: 'login',
+  CART: 'cart',
 };
