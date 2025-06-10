@@ -2,10 +2,10 @@
 @import 'tailwindcss';
 
 :root {
-  --button-color: #524139FF;
+  --button-color: #524139ff;
   --button-text-color: #f8e4be;
   --hover-button-color: #795f53;
-  --text-color: #6E594BFF;
+  --text-color: #6e594bff;
 
   --error-color: #ff3d00;
 

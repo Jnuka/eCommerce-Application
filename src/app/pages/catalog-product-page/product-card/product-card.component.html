@@ -43,6 +43,7 @@
       <button
         class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
         [disabled]="isInCart()"
+        (click)="addToCart()"
       >
         Add to Card
       </button>

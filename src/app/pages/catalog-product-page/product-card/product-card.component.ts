@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { NgFor, NgIf } from '@angular/common';
 import { UserDataService } from '../../../data/services/user-data.service';
 import { ROUTES_PAGES } from '../../../data/enums/routers';
+import { CreateCartService } from '../../../cart/create-cart.service';
+import { UpdateCartService } from '../../../cart/update-cart.service';
 
 @Component({
   selector: 'app-product-card',
@@ -25,11 +27,29 @@ export class ProductCardComponent implements OnInit {
 
   private router = inject(Router);
   private userDataService = inject(UserDataService);
+  private updateCartService = inject(UpdateCartService);
+  private createCartService = inject(CreateCartService);
 
   public ngOnInit(): void {
     this.getPrice();
     this.countAttributes = this.product().masterVariant.attributes.length;
     this.getAttributes();
+  }
+
+  public addToCart(): void {
+    const cart = this.userDataService.customerData()?.cart;
+    const cartId = cart?.id;
+    const version = cart?.version;
+    const productId = this.product().id;
+    const variantId = this.product().masterVariant.id;
+
+    if (cartId && version != null) {
+      this.updateCartService.addToCard(cartId, version, productId, variantId, 1).subscribe({
+        next: () => {
+          this.userDataService.refreshCustomerData();
+        },
+      });
+    }
   }
 
   public getAttributes(): void {
