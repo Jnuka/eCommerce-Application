@@ -45,7 +45,9 @@
         [disabled]="isInCart() || (isAddingToCart$ | async)"
         (click)="addToCart($event)"
       >
-        <ng-container *ngIf="isAddingToCart$ | async; else loading"> Add to Card </ng-container>
+        <ng-container *ngIf="(isAddingToCart$ | async) === false; else loading">
+          Add to Card
+        </ng-container>
         <ng-template #loading>
           <span class="flex items-center justify-center gap-2">
             <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
