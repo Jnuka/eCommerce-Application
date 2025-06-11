@@ -6,6 +6,9 @@ import { UserDataService } from '../../../data/services/user-data.service';
 import { ROUTES_PAGES } from '../../../data/enums/routers';
 import { BehaviorSubject } from 'rxjs';
 import { CartActionsService } from '../../../cart/cart-actions.service';
+import { AuthService } from '../../../auth/auth.service';
+import { CookieService } from 'ngx-cookie-service';
+import { CartResponse } from '../../../cart/cart-actions.interfaces';
 
 @Component({
   selector: 'app-product-card',
@@ -31,6 +34,8 @@ export class ProductCardComponent implements OnInit {
   private router = inject(Router);
   private userDataService = inject(UserDataService);
   private cartService = inject(CartActionsService);
+  private authService = inject(AuthService);
+  private cookieService = inject(CookieService);
 
   public ngOnInit(): void {
     this.getPrice();
@@ -41,22 +46,41 @@ export class ProductCardComponent implements OnInit {
   public addToCart(event: Event): void {
     event.stopPropagation();
     const cart = this.userDataService.customerData()?.cart;
-    const cartId = cart?.id;
-    const version = cart?.version;
-    const productId = this.product().id;
-    const variantId = this.product().masterVariant.id;
+    const email = this.cookieService.get('user_email');
+    const password = this.cookieService.get('user_password');
+    const anonymousId = this.cookieService.get('anonymous_id');
+    if (cart) {
+      this.addProductToCart(cart.id, cart.version);
+      return;
+    }
 
-    if (cartId && version != null) {
-      this.isAddingToCart$.next(true);
-      this.cartService.addToCart(cartId, version, productId, variantId, 1).subscribe({
+    this.isAddingToCart$.next(true);
+
+    if (this.authService.isAuth) {
+      this.cartService.createCart({ currency: 'USD' }, email, password).subscribe({
         next: () => {
-          this.userDataService.refreshCustomerData();
-          this.isAddingToCart$.next(false);
+          const cart = this.userDataService.customerData()?.cart;
+          if (cart) {
+            this.addProductToCart(cart.id, cart.version);
+          } else {
+            this.isAddingToCart$.next(false);
+          }
         },
         error: () => {
           this.isAddingToCart$.next(false);
         },
       });
+    } else {
+      this.cartService
+        .createAnonymousCart({ currency: 'USD', anonymousId: anonymousId })
+        .subscribe({
+          next: (response: CartResponse) => {
+            this.addProductToCart(response.id, response.version);
+          },
+          error: () => {
+            this.isAddingToCart$.next(false);
+          },
+        });
     }
   }
 
@@ -126,6 +150,21 @@ export class ProductCardComponent implements OnInit {
   public goDetailedProduct(id: string): void {
     void this.router.navigate([ROUTES_PAGES.PRODUCT], {
       queryParams: { productId: id },
+    });
+  }
+
+  private addProductToCart(cartId: string, cartVersion: number): void {
+    const productId = this.product().id;
+    const variantId = this.product().masterVariant.id;
+
+    this.cartService.addToCart(cartId, cartVersion, productId, variantId, 1).subscribe({
+      next: () => {
+        this.userDataService.refreshCustomerData();
+        this.isAddingToCart$.next(false);
+      },
+      error: () => {
+        this.isAddingToCart$.next(false);
+      },
     });
   }
 }

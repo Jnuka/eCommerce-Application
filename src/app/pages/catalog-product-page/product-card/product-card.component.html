@@ -46,7 +46,7 @@
         (click)="addToCart($event)"
       >
         <ng-container *ngIf="(isAddingToCart$ | async) === false; else loading">
-          Add to Card
+          Add to Cart
         </ng-container>
         <ng-template #loading>
           <span class="flex items-center justify-center gap-2">

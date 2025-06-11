@@ -15,6 +15,7 @@ interface LineItem {
 
 export interface MyCartDraft {
   currency: string;
+  anonymousId?: string;
 }
 
 // Add to cart
