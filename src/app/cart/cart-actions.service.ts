@@ -13,6 +13,8 @@ import { CookieService } from 'ngx-cookie-service';
   providedIn: 'root',
 })
 export class CartActionsService {
+  public anonymousCart$ = new BehaviorSubject<CartResponse | null>(null);
+  public readonly anonymousCart = this.anonymousCart$.asObservable();
   private http = inject(HttpClient);
   private cartId$ = new BehaviorSubject<string | null>(null);
   private authService = inject(AuthService);
@@ -70,15 +72,24 @@ export class CartActionsService {
 
         const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
 
-        return this.http.post<UpdateCartResponse>(url, body, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-      }),
-      tap(() => {
-        this.userDataService.refreshCustomerData();
+        return this.http
+          .post<UpdateCartResponse>(url, body, {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          })
+          .pipe(
+            switchMap(() => this.getCartById(cartId, token)),
+            tap((updatedCart: CartResponse) => {
+              const isAnonymous = !updatedCart.customerId;
+              if (isAnonymous) {
+                this.anonymousCart$.next(updatedCart);
+              } else {
+                this.userDataService.refreshCustomerData();
+              }
+            }),
+          );
       }),
       catchError((error: HttpErrorResponse) => {
         return throwError(() => error);
@@ -103,11 +114,22 @@ export class CartActionsService {
       .pipe(
         tap(response => {
           this.cartId$.next(response.id);
+          this.anonymousCart$.next(response);
         }),
         catchError((error: HttpErrorResponse) => {
           console.error('Anonymous cart creation error:', error); // eslint-disable-line
           return throwError(() => error);
         }),
       );
+  }
+
+  private getCartById(cartId: string, token: string): Observable<CartResponse> {
+    const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
+    return this.http.get<CartResponse>(url, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
   }
 }

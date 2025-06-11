@@ -1,14 +1,14 @@
-import { Component, computed, inject, input, OnInit } from '@angular/core';
+import { Component, inject, input, OnInit } from '@angular/core';
 import { ProductProjectionResponse, ProductVariant } from '../../../products/products.interfaces';
 import { Router } from '@angular/router';
 import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { UserDataService } from '../../../data/services/user-data.service';
 import { ROUTES_PAGES } from '../../../data/enums/routers';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, switchMap, take } from 'rxjs';
 import { CartActionsService } from '../../../cart/cart-actions.service';
 import { AuthService } from '../../../auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
-import { CartResponse } from '../../../cart/cart-actions.interfaces';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-product-card',
@@ -23,17 +23,29 @@ export class ProductCardComponent implements OnInit {
   public attributes: { name: string; degree: string }[] | undefined;
   public countAttributes = 1;
   public isAddingToCart$ = new BehaviorSubject<boolean>(false);
+  public cartService = inject(CartActionsService);
+  public userDataService = inject(UserDataService);
 
-  public readonly isInCart = computed(() => {
-    const productId = this.product().id?.toString();
-    const cartProductIds = this.userDataService.productIdsFromCart().map(id => id.toString());
+  public isInCart$ = combineLatest([
+    this.cartService.anonymousCart,
+    toObservable(this.userDataService.customerCart$),
+  ]).pipe(
+    map(([anonymousCart, customerCart]) => {
+      const productId = this.product().id?.toString();
 
-    return cartProductIds.includes(productId);
-  });
+      if (this.authService.isAuth && customerCart) {
+        const productIds = customerCart.lineItems.map(item => item.productId.toString());
+        return productId ? productIds.includes(productId) : false;
+      }
+
+      if (!anonymousCart) return false;
+
+      const productIds = anonymousCart.lineItems.map(item => item.productId.toString());
+      return productId ? productIds.includes(productId) : false;
+    }),
+  );
 
   private router = inject(Router);
-  private userDataService = inject(UserDataService);
-  private cartService = inject(CartActionsService);
   private authService = inject(AuthService);
   private cookieService = inject(CookieService);
 
@@ -45,37 +57,59 @@ export class ProductCardComponent implements OnInit {
 
   public addToCart(event: Event): void {
     event.stopPropagation();
-    const cart = this.userDataService.customerData()?.cart;
+    this.isAddingToCart$.next(true);
+
+    const productId = this.product().id;
+    const variantId = this.product().masterVariant.id;
     const email = this.cookieService.get('user_email');
     const password = this.cookieService.get('user_password');
     const anonymousId = this.cookieService.get('anonymous_id');
-    if (cart) {
-      this.addProductToCart(cart.id, cart.version);
-      return;
-    }
-
-    this.isAddingToCart$.next(true);
 
     if (this.authService.isAuth) {
-      this.cartService.createCart({ currency: 'USD' }, email, password).subscribe({
-        next: () => {
-          const cart = this.userDataService.customerData()?.cart;
-          if (cart) {
-            this.addProductToCart(cart.id, cart.version);
-          } else {
-            this.isAddingToCart$.next(false);
-          }
-        },
-        error: () => {
-          this.isAddingToCart$.next(false);
-        },
-      });
+      const cart = this.userDataService.customerData()?.cart;
+      if (cart) {
+        this.addProductToCart(cart.id, cart.version);
+      } else {
+        this.cartService.createCart({ currency: 'USD' }, email, password).subscribe({
+          next: () => {
+            const cart = this.userDataService.customerData()?.cart;
+            if (cart) {
+              this.addProductToCart(cart.id, cart.version);
+            } else {
+              this.isAddingToCart$.next(false);
+            }
+          },
+          error: () => this.isAddingToCart$.next(false),
+        });
+      }
     } else {
-      this.cartService
-        .createAnonymousCart({ currency: 'USD', anonymousId: anonymousId })
+      this.cartService.anonymousCart
+        .pipe(
+          take(1), // 👈 Берём только текущее значение, без реактивного повторения
+          switchMap(cart => {
+            if (cart) {
+              return this.cartService.addToCart(cart.id, cart.version, productId, variantId, 1);
+            } else {
+              return this.cartService
+                .createAnonymousCart({ currency: 'USD', anonymousId })
+                .pipe(
+                  switchMap(response =>
+                    this.cartService.addToCart(
+                      response.id,
+                      response.version,
+                      productId,
+                      variantId,
+                      1,
+                    ),
+                  ),
+                );
+            }
+          }),
+        )
         .subscribe({
-          next: (response: CartResponse) => {
-            this.addProductToCart(response.id, response.version);
+          next: () => {
+            this.userDataService.refreshCustomerData();
+            this.isAddingToCart$.next(false);
           },
           error: () => {
             this.isAddingToCart$.next(false);

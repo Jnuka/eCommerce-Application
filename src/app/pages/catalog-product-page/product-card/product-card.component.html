@@ -42,7 +42,7 @@
       </button>
       <button
         class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] disabled:border-gray-200 disabled:bg-[#b09e94] disabled:shadow-none disabled:pointer-events-none"
-        [disabled]="isInCart() || (isAddingToCart$ | async)"
+        [disabled]="(isInCart$ | async) || (isAddingToCart$ | async)"
         (click)="addToCart($event)"
       >
         <ng-container *ngIf="(isAddingToCart$ | async) === false; else loading">
