@@ -15,6 +15,7 @@ import {
 export class UserDataService {
   public readonly _customerData = signal<CustomerSignInResult | null>(null);
   public readonly customerData = this._customerData;
+  public readonly customerCart$ = computed(() => this._customerData()?.cart || null);
 
   public readonly productIdsFromCart = computed(() => {
     const customerData = this._customerData();

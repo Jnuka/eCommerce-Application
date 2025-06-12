@@ -6,6 +6,18 @@ export interface CustomerTokenResponse {
   token_type: string;
 }
 
+export interface CustomerSignin {
+  email: string;
+  password: string;
+  anonymousCart?: CartResourceIdentifier;
+  anonymousId?: string;
+  anonymousCartSignInMode?: 'MergeWithExistingCustomerCart' | 'UseAsNewActiveCustomerCart';
+}
+
+interface CartResourceIdentifier {
+  id: string;
+}
+
 export interface HttpErrorResponse {
   error: AuthErrorResponse;
 }
