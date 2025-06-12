@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   ProductResponse,
   ProductVariant,
@@ -51,18 +51,9 @@ export class DetailedProductPageComponent implements OnInit {
   public whichCategory = '';
 
   public productService = inject(ProductsService);
-  public productsValues: ProductVariants[] = [{ variant: '', value: '' }];
-
-  public readonly isInCart = computed(() => {
-    if (this.pageNum !== null) {
-      const cartProductIds = this.userDataService.productIdsFromCart().map(id => id.toString());
-      return cartProductIds.includes(this.pageNum);
-    } else {
-      return null;
-    }
-  });
-
-  private toggleButtonValue: string | number | undefined;
+  public productsValues: ProductVariants[] = [{ id: 0, variant: '', value: '' }];
+  public toggleButtonValue: string | number | undefined;
+  public isProductInCart = false;
 
   private router = inject(Router);
   private dialog = inject(MatDialog);
@@ -75,11 +66,27 @@ export class DetailedProductPageComponent implements OnInit {
     this.pageNum = this.activatedRoute.snapshot.queryParamMap.get('productId');
     if (this.pageNum !== null) {
       this.renderProduct(this.pageNum);
+      this.isInCart();
+    }
+  }
+
+  public isInCart(id?: string): void {
+    if (id) {
+      const cartProductIds = this.userDataService
+        .productItemFromCart()
+        .filter(product => product.productId === this.pageNum && product.variant.id === Number(id));
+      this.isProductInCart = cartProductIds.length > 0;
+    } else {
+      const cartProductIds = this.userDataService
+        .productItemFromCart()
+        .filter(product => product.productId === this.pageNum && product.variant.id === 1);
+      this.isProductInCart = cartProductIds.length > 0;
     }
   }
 
   public addToCart(event: Event): void {
     event.stopPropagation();
+    this.isProductInCart = true;
     const cart = this.userDataService.customerData()?.cart;
     const cartId = cart?.id;
     const version = cart?.version;
@@ -117,6 +124,8 @@ export class DetailedProductPageComponent implements OnInit {
     if (this.toggleButtonValue !== undefined) {
       this.toggleSwitch(this.toggleButtonValue);
     }
+    console.log('changeInToggleGroup', event.source.id);
+    this.isInCart(event.source.id);
     /* eslint-enable */
   }
 
@@ -167,6 +176,7 @@ export class DetailedProductPageComponent implements OnInit {
     if (this.masterVariant && this.variants && this.products) {
       if (this.masterVariant.attributes[0].name === VERIFICATION_PURPOSES.nameValue) {
         this.productsValues.push({
+          id: 1,
           variant: 'masterVariant',
           /* eslint-disable */
           value: String(this.masterVariant.attributes[0].value),
@@ -175,6 +185,7 @@ export class DetailedProductPageComponent implements OnInit {
         if (this.variants.length > 0) {
           for (let i = 0; i < this.variants.length; i++) {
             this.productsValues.push({
+              id: i + 2,
               variant: i,
               /* eslint-disable */
               value: String(this.variants[i].attributes[0].value),
@@ -184,6 +195,7 @@ export class DetailedProductPageComponent implements OnInit {
         }
       } else {
         this.productsValues.push({
+          id: 1,
           variant: 'masterVariant',
           /* eslint-disable */
           value: String(this.masterVariant.attributes[4].value),
@@ -192,6 +204,7 @@ export class DetailedProductPageComponent implements OnInit {
         if (this.variants.length > 0) {
           for (let i = 0; i < this.variants.length; i++) {
             this.productsValues.push({
+              id: i + 2,
               variant: i,
               /* eslint-disable */
               value: String(this.variants[i].attributes[4].value),

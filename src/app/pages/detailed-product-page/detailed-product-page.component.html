@@ -81,7 +81,7 @@
               checked
               *ngFor="let value of productsValues.reverse()"
               value="{{ value.value }}"
-              id="{{ value.value }}"
+              id="{{ value.id }}"
               >{{ value.value }}</mat-button-toggle
             >
           </mat-button-toggle-group>
@@ -123,7 +123,7 @@
     <div class="flex gap-[20px] justify-center">
       <button
         class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] disabled:border-[var(--text-disabled-color)] disabled:bg-[var(--text-disabled-color)] disabled:shadow-none disabled:pointer-events-none"
-        [disabled]="isInCart() || (isAddingToCart$ | async)"
+        [disabled]="isProductInCart || (isAddingToCart$ | async)"
         (click)="addToCart($event)"
       >
         <ng-container *ngIf="(isAddingToCart$ | async) === false; else loading">
