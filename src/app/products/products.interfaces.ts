@@ -144,3 +144,8 @@ export interface ProductDiscountReference {
 export interface SearchResponse {
   'searchKeywords.en-US': SearchKeywords[];
 }
+
+export interface ProductVariants {
+  variant: string | number;
+  value: string;
+}

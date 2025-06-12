@@ -1,8 +1,12 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { ProductResponse, ProductVariant } from '../../products/products.interfaces';
+import { Component, computed, inject, OnInit } from '@angular/core';
+import {
+  ProductResponse,
+  ProductVariant,
+  ProductVariants,
+} from '../../products/products.interfaces';
 import { ProductsService } from '../../products/products.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import {
   MatButtonToggle,
   MatButtonToggleChange,
@@ -12,20 +16,25 @@ import { SliderInterface } from '../../common-ui/interfaces/slider.interface';
 import { ImageSliderComponent } from '../../common-ui/image-slider/image-slider.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalWindowComponent } from '../../common-ui/modal-window/modal-window.component';
-import { map } from 'rxjs';
+import { BehaviorSubject, map } from 'rxjs';
 import { ROUTES_PAGES } from '../../data/enums/routers';
 import { CATEGORIES } from '../../data/enums/categories';
 import { SUB_CATEGORIES } from '../../data/enums/subCategories';
+import { VERIFICATION_PURPOSES } from '../../data/enums/verificationPurposes';
+import { CartActionsService } from '../../cart/cart-actions.service';
+import { UserDataService } from '../../data/services/user-data.service';
 
 @Component({
   selector: 'app-detailed-product-page',
   templateUrl: './detailed-product-page.component.html',
   styleUrl: './detailed-product-page.component.css',
-  imports: [NgIf, NgForOf, MatButtonToggleGroup, MatButtonToggle, ImageSliderComponent],
+  imports: [NgIf, NgForOf, MatButtonToggleGroup, MatButtonToggle, ImageSliderComponent, AsyncPipe],
 })
 export class DetailedProductPageComponent implements OnInit {
   public readonly CATEGORIES = CATEGORIES;
   public readonly SUB_CATEGORIES = SUB_CATEGORIES;
+
+  public isAddingToCart$ = new BehaviorSubject<boolean>(false);
 
   public pageNum: string | null = '';
   public description = '';
@@ -42,9 +51,23 @@ export class DetailedProductPageComponent implements OnInit {
   public whichCategory = '';
 
   public productService = inject(ProductsService);
+  public productsValues: ProductVariants[] = [{ variant: '', value: '' }];
+
+  public readonly isInCart = computed(() => {
+    if (this.pageNum !== null) {
+      const cartProductIds = this.userDataService.productIdsFromCart().map(id => id.toString());
+      return cartProductIds.includes(this.pageNum);
+    } else {
+      return null;
+    }
+  });
+
+  private toggleButtonValue: string | number | undefined;
 
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private userDataService = inject(UserDataService);
+  private cartService = inject(CartActionsService);
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -55,10 +78,45 @@ export class DetailedProductPageComponent implements OnInit {
     }
   }
 
+  public addToCart(event: Event): void {
+    event.stopPropagation();
+    const cart = this.userDataService.customerData()?.cart;
+    const cartId = cart?.id;
+    const version = cart?.version;
+    if (this.products) {
+      const productId = this.products.id;
+      let variantId = '';
+
+      for (let i = 0; i < this.productsValues.length; i++) {
+        if (this.productsValues[i].value === this.toggleButtonValue) {
+          if (this.productsValues[i].variant === 'masterVariant') {
+            variantId = this.products.masterData.current.masterVariant.id;
+          } else {
+            variantId = this.products.masterData.current.variants[i - 1].id;
+          }
+        }
+      }
+      if (cartId && version != null) {
+        this.isAddingToCart$.next(true);
+        this.cartService.addToCart(cartId, version, productId, variantId, 1).subscribe({
+          next: () => {
+            this.userDataService.refreshCustomerData();
+            this.isAddingToCart$.next(false);
+          },
+          error: () => {
+            this.isAddingToCart$.next(false);
+          },
+        });
+      }
+    }
+  }
+
   public changeInToggleGroup(event: MatButtonToggleChange): void {
     /* eslint-disable */
-    const toggleButtonValue = event.value;
-    this.toggleSwitch(toggleButtonValue);
+    this.toggleButtonValue = event.value;
+    if (this.toggleButtonValue !== undefined) {
+      this.toggleSwitch(this.toggleButtonValue);
+    }
     /* eslint-enable */
   }
 
@@ -77,7 +135,7 @@ export class DetailedProductPageComponent implements OnInit {
       .subscribe();
   }
 
-  public toggleSwitch(toggleButtonValue?: string): void {
+  public toggleSwitch(toggleButtonValue?: string | number): void {
     if (this.masterVariant && this.variants && this.products) {
       /* eslint-disable */
       if (
@@ -107,6 +165,43 @@ export class DetailedProductPageComponent implements OnInit {
 
   public getParameters(): void {
     if (this.masterVariant && this.variants && this.products) {
+      if (this.masterVariant.attributes[0].name === VERIFICATION_PURPOSES.nameValue) {
+        this.productsValues.push({
+          variant: 'masterVariant',
+          /* eslint-disable */
+          value: String(this.masterVariant.attributes[0].value),
+          /* eslint-enable */
+        });
+        if (this.variants.length > 0) {
+          for (let i = 0; i < this.variants.length; i++) {
+            this.productsValues.push({
+              variant: i,
+              /* eslint-disable */
+              value: String(this.variants[i].attributes[0].value),
+              /* eslint-enable */
+            });
+          }
+        }
+      } else {
+        this.productsValues.push({
+          variant: 'masterVariant',
+          /* eslint-disable */
+          value: String(this.masterVariant.attributes[4].value),
+          /* eslint-enable */
+        });
+        if (this.variants.length > 0) {
+          for (let i = 0; i < this.variants.length; i++) {
+            this.productsValues.push({
+              variant: i,
+              /* eslint-disable */
+              value: String(this.variants[i].attributes[4].value),
+              /* eslint-enable */
+            });
+          }
+        }
+      }
+      this.productsValues.shift();
+      this.toggleButtonValue = this.productsValues[0].value;
       this.description = this.products.masterData.current.description['en-US'];
       this.description = this.shortDescription();
       this.description += '...';
