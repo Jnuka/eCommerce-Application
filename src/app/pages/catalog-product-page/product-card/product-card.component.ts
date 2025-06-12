@@ -85,7 +85,7 @@ export class ProductCardComponent implements OnInit {
     } else {
       this.cartService.anonymousCart
         .pipe(
-          take(1), // 👈 Берём только текущее значение, без реактивного повторения
+          take(1),
           switchMap(cart => {
             if (cart) {
               return this.cartService.addToCart(cart.id, cart.version, productId, variantId, 1);

@@ -117,7 +117,7 @@ export class CartActionsService {
           this.anonymousCart$.next(response);
         }),
         catchError((error: HttpErrorResponse) => {
-          console.error('Anonymous cart creation error:', error); // eslint-disable-line
+          console.log('Anonymous cart creation error:', error); // eslint-disable-line
           return throwError(() => error);
         }),
       );
