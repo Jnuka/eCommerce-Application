@@ -32,6 +32,33 @@
   .disabled-form-control {
     opacity: 0.5;
   }
+
+  .cdk-overlay-backdrop {
+    cursor: pointer;
+  }
+
+  .mat-mdc-dialog-surface {
+    background-color: transparent;
+    overflow-y: inherit;
+  }
+
+  .mat-mdc-dialog-actions {
+    padding: 0;
+    position: absolute;
+    right: 0;
+  }
+  .close-modal {
+    z-index: 2;
+    padding: 20px;
+  }
+
+  .mat-mdc-slider {
+    min-width: 150px;
+  }
+
+  .mat-icon {
+    cursor: pointer;
+  }
 }
 
 .mat-form-field-invalid .mat-mdc-form-field-infix,
@@ -48,4 +75,14 @@
 
 .body {
   font-family: Roboto, sans-serif;
+}
+
+html {
+  --mdc-slider-active-track-height: 6px;
+  --mdc-slider-handle-shape: 50%;
+  --mdc-slider-handle-color: #6e594bff;
+  --mdc-slider-focus-handle-color: #6b3c21;
+  --mdc-slider-hover-handle-color: #795f53;
+  --mdc-slider-active-track-color: #6e594bff;
+  --mdc-slider-inactive-track-color: black;
 }

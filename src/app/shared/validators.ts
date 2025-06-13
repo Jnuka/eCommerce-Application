@@ -84,18 +84,32 @@ export function passwordValidator(): ValidatorFn {
 }
 
 export function ageValidator(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const birthday: Date = control?.value instanceof Date ? control?.value : new Date();
-    const today: Date = new Date();
-    const birthdayDate: Date = new Date(birthday);
+  return (
+    control: AbstractControl<string | number | Date | null | undefined>,
+  ): ValidationErrors | null => {
+    const value = control.value;
+    if (!value) return null;
 
-    const age: number = today.getFullYear() - birthdayDate.getFullYear();
+    let dateValue: string | number | Date;
 
-    if (age < 13) {
-      return { userAge: true };
+    if (typeof value === 'string' || typeof value === 'number' || value instanceof Date) {
+      dateValue = value;
+    } else {
+      return { invalidDate: true };
     }
 
-    return null;
+    const birthday = new Date(dateValue);
+    if (isNaN(birthday.getTime())) return { invalidDate: true };
+
+    const today = new Date();
+    let age = today.getFullYear() - birthday.getFullYear();
+    const monthDiff = today.getMonth() - birthday.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthday.getDate())) {
+      age--;
+    }
+
+    return age < 13 ? { userAge: true } : null;
   };
 }
 
