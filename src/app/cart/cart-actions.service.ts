@@ -130,12 +130,6 @@ export class CartActionsService {
           },
         });
       }),
-      tap(() => {
-        this.userDataService.refreshCustomerData();
-      }),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => error);
-      }),
     );
   }
 

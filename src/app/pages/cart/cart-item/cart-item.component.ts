@@ -14,6 +14,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 export class CartItemComponent implements OnInit {
   public item = input.required<LineItem>();
   public quantityInput = new FormControl(1);
+  public isVisible = true;
   private userDataService = inject(UserDataService);
   private cartService = inject(CartActionsService);
 
@@ -51,5 +52,6 @@ export class CartItemComponent implements OnInit {
         },
       });
     }
+    this.isVisible = false;
   }
 }
