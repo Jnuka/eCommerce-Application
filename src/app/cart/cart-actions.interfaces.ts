@@ -15,6 +15,10 @@ export interface LineItem {
   name: LocalizedString;
   variant: ProductVariant;
   quantity: number;
+  totalPrice: {
+    currencyCode: string;
+    centAmount: number;
+  };
 }
 
 export interface MyCartDraft {
@@ -23,7 +27,7 @@ export interface MyCartDraft {
 
 // Add to cart
 export interface UpdateCart {
-  version: number;
+  version?: number;
   actions: Action[];
 }
 
@@ -33,6 +37,18 @@ export interface Action {
   variantId?: string;
   lineItemId?: string;
   quantity?: number;
+  externalPrice?: {
+    currencyCod: string;
+    centAmount: number;
+  };
+  shippingDetailsToRemove?: {
+    targets: [
+      {
+        addressKey: string;
+        quantity: number;
+      },
+    ];
+  };
 }
 
 export interface UpdateCartResponse {

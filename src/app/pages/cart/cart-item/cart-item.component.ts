@@ -36,4 +36,20 @@ export class CartItemComponent implements OnInit {
       });
     }
   }
+
+  public removeFromCart(): void {
+    const cart = this.userDataService.customerData()?.cart;
+    const cartId = cart?.id;
+    const version = cart?.version;
+    const lineItemId = this.item().id;
+    const quantity = this.quantityInput.value || 1;
+
+    if (cartId && version != null) {
+      this.cartService.removeFromCart(cartId, version, lineItemId, quantity).subscribe({
+        next: () => {
+          this.userDataService.refreshCustomerData();
+        },
+      });
+    }
+  }
 }

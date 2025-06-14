@@ -1,7 +1,7 @@
 <tr class="w-full">
   <td class="product-remove">
     <button
-      (click)="(false)"
+      (click)="removeFromCart()"
       class="cursor-pointer p-3.5 transition-all duration-[0.3s] ease-[ease-out]"
     >
       <img class="w-5" src="/svg/remove.svg" alt="remove" />
@@ -33,6 +33,6 @@
     />
   </td>
   <td>
-    <span class="text-sm"> {{ '$' + item().variant.prices[0].value.centAmount }}</span>
+    <span class="text-sm"> {{ '$' + item().totalPrice.centAmount }}</span>
   </td>
 </tr>
