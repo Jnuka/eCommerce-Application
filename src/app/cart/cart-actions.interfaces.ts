@@ -14,6 +14,7 @@ export interface LineItem {
   productId: string;
   name: LocalizedString;
   variant: ProductVariant;
+  quantity: number;
 }
 
 export interface MyCartDraft {
@@ -27,9 +28,10 @@ export interface UpdateCart {
 }
 
 export interface Action {
-  action: 'addLineItem' | 'removeLineItem';
+  action: 'addLineItem' | 'removeLineItem' | 'changeLineItemQuantity';
   productId?: string;
   variantId?: string;
+  lineItemId?: string;
   quantity?: number;
 }
 

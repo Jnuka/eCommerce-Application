@@ -99,4 +99,43 @@ export class CartActionsService {
       { headers },
     );
   }
+
+  public changeQuantity(
+    cartId: string,
+    version: number,
+    lineItemId: string,
+    quantity: number,
+  ): Observable<UpdateCartResponse> {
+    return this.ctpApiService.getAccessToken().pipe(
+      switchMap((token: string | null) => {
+        if (!token) throw new Error('No access token available');
+
+        const body: UpdateCart = {
+          version,
+          actions: [
+            {
+              action: 'changeLineItemQuantity',
+              lineItemId: `${lineItemId}`,
+              quantity: quantity,
+            },
+          ],
+        };
+
+        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
+
+        return this.http.post<UpdateCartResponse>(url, body, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }),
+      tap(() => {
+        this.userDataService.refreshCustomerData();
+      }),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      }),
+    );
+  }
 }

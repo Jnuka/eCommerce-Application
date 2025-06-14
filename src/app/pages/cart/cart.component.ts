@@ -1,10 +1,11 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CartActionsService } from '../../cart/cart-actions.service';
 import { LineItem } from '../../cart/cart-actions.interfaces';
+import { CartItemComponent } from './cart-item/cart-item.component';
 
 @Component({
   selector: 'app-cart',
-  imports: [],
+  imports: [CartItemComponent],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })

@@ -1,0 +1,38 @@
+<tr class="w-full">
+  <td class="product-remove">
+    <button
+      (click)="(false)"
+      class="cursor-pointer p-3.5 transition-all duration-[0.3s] ease-[ease-out]"
+    >
+      <img class="w-5" src="/svg/remove.svg" alt="remove" />
+    </button>
+  </td>
+  <td>
+    <img
+      [src]="item().variant.images[0].url"
+      class="w-[150px] h-[150px] object-contain"
+      [alt]="item().name['en-US']"
+    />
+  </td>
+  <td>
+    <span class="text-md font-bold">{{ item().name['en-US'] }}</span>
+  </td>
+  <td>
+    <span class="text-sm">{{ '$' + item().variant.prices[0].value.centAmount }}</span>
+  </td>
+  <td>
+    <input
+      matInput
+      type="number"
+      [formControl]="quantityInput"
+      min="1"
+      max=""
+      step="1"
+      autocomplete="off"
+      (input)="changeQuantity()"
+    />
+  </td>
+  <td>
+    <span class="text-sm"> {{ '$' + item().variant.prices[0].value.centAmount }}</span>
+  </td>
+</tr>
