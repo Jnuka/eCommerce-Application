@@ -16,13 +16,16 @@ import { SliderInterface } from '../../common-ui/interfaces/slider.interface';
 import { ImageSliderComponent } from '../../common-ui/image-slider/image-slider.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalWindowComponent } from '../../common-ui/modal-window/modal-window.component';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, switchMap, take } from 'rxjs';
 import { ROUTES_PAGES } from '../../data/enums/routers';
 import { CATEGORIES } from '../../data/enums/categories';
 import { SUB_CATEGORIES } from '../../data/enums/subCategories';
 import { VERIFICATION_PURPOSES } from '../../data/enums/verificationPurposes';
 import { CartActionsService } from '../../cart/cart-actions.service';
 import { UserDataService } from '../../data/services/user-data.service';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../auth/auth.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -53,12 +56,46 @@ export class DetailedProductPageComponent implements OnInit {
   public productService = inject(ProductsService);
   public productsValues: ProductVariants[] = [{ id: 0, variant: '', value: '' }];
   public toggleButtonValue: string | number | undefined;
+  public toggleButtonId: string | undefined;
   public isProductInCart = false;
+
+  public userDataService = inject(UserDataService);
+  public cartService = inject(CartActionsService);
+
+  public isInCart = combineLatest([
+    this.cartService.anonymousCart,
+    toObservable(this.userDataService.customerCart$),
+  ]).pipe(
+    map(([anonymousCart, customerCart]) => {
+      if (this.authService.isAuth && customerCart) {
+        const toggleVariant = this.toggleButtonId ? this.toggleButtonId : 1;
+        return (
+          customerCart.lineItems &&
+          customerCart.lineItems.filter(
+            product =>
+              product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+          ).length > 0
+        );
+      }
+      if (!anonymousCart) {
+        return false;
+      }
+
+      const toggleVariant = this.toggleButtonId ? this.toggleButtonId : 1;
+      return (
+        anonymousCart.lineItems &&
+        anonymousCart.lineItems.filter(
+          product =>
+            product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+        ).length > 0
+      );
+    }),
+  );
 
   private router = inject(Router);
   private dialog = inject(MatDialog);
-  private userDataService = inject(UserDataService);
-  private cartService = inject(CartActionsService);
+  private authService = inject(AuthService);
+  private cookieService = inject(CookieService);
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -66,67 +103,119 @@ export class DetailedProductPageComponent implements OnInit {
     this.pageNum = this.activatedRoute.snapshot.queryParamMap.get('productId');
     if (this.pageNum !== null) {
       this.renderProduct(this.pageNum);
-      this.isInCart();
+      this.isInCart.subscribe(result => (this.isProductInCart = result));
     }
   }
 
-  public isInCart(id?: string): void {
-    if (id) {
-      const cartProductIds = this.userDataService
-        .productItemFromCart()
-        .filter(product => product.productId === this.pageNum && product.variant.id === Number(id));
-      this.isProductInCart = cartProductIds.length > 0;
-    } else {
-      const cartProductIds = this.userDataService
-        .productItemFromCart()
-        .filter(product => product.productId === this.pageNum && product.variant.id === 1);
-      this.isProductInCart = cartProductIds.length > 0;
+  public addProductToCart(cartId: string, cartVersion: number): void {
+    if (this.products) {
+      const variantId = this.getVariantId();
+      const productId = this.products.id;
+
+      this.cartService.addToCart(cartId, cartVersion, productId, variantId, 1).subscribe({
+        next: () => {
+          this.userDataService.refreshCustomerData();
+          this.isAddingToCart$.next(false);
+        },
+        error: () => {
+          this.isAddingToCart$.next(false);
+        },
+      });
     }
+  }
+
+  public getVariantId(): string {
+    if (this.products) {
+      for (let i = 0; i < this.productsValues.length; i++) {
+        if (this.productsValues[i].value === this.toggleButtonValue) {
+          if (this.productsValues[i].variant === VERIFICATION_PURPOSES.masterVariant) {
+            return this.products.masterData.current.masterVariant.id;
+          } else {
+            return this.products.masterData.current.variants[i - 1].id;
+          }
+        }
+      }
+    }
+    return '';
   }
 
   public addToCart(event: Event): void {
     event.stopPropagation();
+
+    this.isAddingToCart$.next(true);
     this.isProductInCart = true;
-    const cart = this.userDataService.customerData()?.cart;
-    const cartId = cart?.id;
-    const version = cart?.version;
+
+    const email = this.cookieService.get('user_email');
+    const password = this.cookieService.get('user_password');
+    const anonymousId = this.cookieService.get('anonymous_id');
+
     if (this.products) {
       const productId = this.products.id;
-      let variantId = '';
+      const variantId = this.getVariantId();
 
-      for (let i = 0; i < this.productsValues.length; i++) {
-        if (this.productsValues[i].value === this.toggleButtonValue) {
-          if (this.productsValues[i].variant === 'masterVariant') {
-            variantId = this.products.masterData.current.masterVariant.id;
-          } else {
-            variantId = this.products.masterData.current.variants[i - 1].id;
-          }
+      if (this.authService.isAuth) {
+        const cart = this.userDataService.customerData()?.cart;
+        if (cart) {
+          this.addProductToCart(cart.id, cart.version);
+        } else {
+          this.cartService.createCart({ currency: 'USD' }, email, password).subscribe({
+            next: () => {
+              const cart = this.userDataService.customerData()?.cart;
+              if (cart) {
+                this.addProductToCart(cart.id, cart.version);
+              } else {
+                this.isAddingToCart$.next(false);
+              }
+            },
+            error: () => this.isAddingToCart$.next(false),
+          });
         }
-      }
-      if (cartId && version != null) {
-        this.isAddingToCart$.next(true);
-        this.cartService.addToCart(cartId, version, productId, variantId, 1).subscribe({
-          next: () => {
-            this.userDataService.refreshCustomerData();
-            this.isAddingToCart$.next(false);
-          },
-          error: () => {
-            this.isAddingToCart$.next(false);
-          },
-        });
+      } else {
+        this.cartService.anonymousCart
+          .pipe(
+            take(1),
+            switchMap(cart => {
+              if (cart) {
+                return this.cartService.addToCart(cart.id, cart.version, productId, variantId, 1);
+              } else {
+                return this.cartService
+                  .createAnonymousCart({ currency: 'USD', anonymousId })
+                  .pipe(
+                    switchMap(response =>
+                      this.cartService.addToCart(
+                        response.id,
+                        response.version,
+                        productId,
+                        variantId,
+                        1,
+                      ),
+                    ),
+                  );
+              }
+            }),
+          )
+          .subscribe({
+            next: () => {
+              this.userDataService.refreshCustomerData();
+              this.isAddingToCart$.next(false);
+            },
+            error: () => {
+              this.isAddingToCart$.next(false);
+            },
+          });
       }
     }
   }
 
   public changeInToggleGroup(event: MatButtonToggleChange): void {
-    /* eslint-disable */
-    this.toggleButtonValue = event.value;
-    if (this.toggleButtonValue !== undefined) {
-      this.toggleSwitch(this.toggleButtonValue);
+    if (typeof event.value === 'string') {
+      this.toggleButtonValue = event.value;
+      if (this.toggleButtonValue !== undefined) {
+        this.toggleSwitch(this.toggleButtonValue);
+      }
+      this.toggleButtonId = event.source.id;
+      this.isInCart.subscribe(result => (this.isProductInCart = result));
     }
-    console.log('changeInToggleGroup', event.source.id);
-    this.isInCart(event.source.id);
-    /* eslint-enable */
   }
 
   public renderProduct(id: string): void {

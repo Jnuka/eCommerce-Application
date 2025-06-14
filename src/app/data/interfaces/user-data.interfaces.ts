@@ -55,6 +55,6 @@ interface LineItem {
   variant: VariantItem;
 }
 
-interface VariantItem {
+export interface VariantItem {
   id: number;
 }
