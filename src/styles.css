@@ -79,6 +79,10 @@
   font-style: normal;
 }
 
+.name-website {
+  font-family: 'Dancing Script', cursive;
+}
+
 .body {
   font-family: Roboto, sans-serif;
 }
