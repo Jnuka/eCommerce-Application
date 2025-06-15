@@ -7,7 +7,6 @@ import { AuthService } from '../auth/auth.service';
 import { UserDataService } from '../data/services/user-data.service';
 import { CtpApiService } from '../data/services/ctp-api.service';
 import { UpdateCart, UpdateCartResponse } from './cart-actions.interfaces';
-import { HttpErrorResponse } from '../auth/auth.interfaces';
 import { CookieService } from 'ngx-cookie-service';
 import { HeaderComponent } from '../common-ui/header/header.component';
 
@@ -73,7 +72,7 @@ export class CartActionsService {
         };
 
         const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-        
+
         return this.http
           .post<UpdateCartResponse>(url, body, {
             headers: {
@@ -99,7 +98,7 @@ export class CartActionsService {
       }),
     );
   }
-  
+
   public createAnonymousCart(cartDraft: MyCartDraft): Observable<CartResponse> {
     const anonymous_token = this.cookieService.get('anonymous_token');
 
@@ -125,8 +124,8 @@ export class CartActionsService {
         }),
       );
   }
-  
-  private getCartById(cartId: string, token: string): Observable<CartResponse> {
+
+  public getCartById(cartId: string, token: string): Observable<CartResponse> {
     const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
     return this.http.get<CartResponse>(url, {
       headers: {
@@ -135,9 +134,8 @@ export class CartActionsService {
       },
     });
   }
-}
 
-public getCart(): Observable<CartResponse> {
+  public getCart(): Observable<CartResponse> {
     const token = this.authService.getCustomerToken();
     const userID = this.userDataService._customerData()?.customer.id;
     const headers = new HttpHeaders({
