@@ -1,3 +1,5 @@
+import { VariantItem } from '../data/interfaces/user-data.interfaces';
+
 // Create cart
 export interface CartResponse {
   id: string;
@@ -11,6 +13,7 @@ interface LineItem {
   id: string;
   productId: string;
   name: string;
+  variant: VariantItem;
 }
 
 export interface MyCartDraft {
