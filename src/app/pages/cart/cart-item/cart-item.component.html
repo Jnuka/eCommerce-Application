@@ -20,8 +20,7 @@
   min="1"
   max=""
   step="1"
-  autocomplete="off"
-  (input)="changeQuantity()"
+  (change)="changeQuantity()"
 />
 <div class="content-center">
   {{ item().totalPrice.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
