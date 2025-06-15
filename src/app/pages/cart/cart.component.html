@@ -11,10 +11,14 @@
         <th>Subtotal</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody class="flex flex-col w-full">
       @for (item of cartItems(); track item.id) {
         <app-cart-item [item]="item" />
       }
     </tbody>
   </table>
+  <div>
+    <span>Total:</span>
+    {{ totalPrice }}
+  </div>
 </div>

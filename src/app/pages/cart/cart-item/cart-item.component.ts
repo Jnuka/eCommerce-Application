@@ -4,6 +4,7 @@ import { UserDataService } from '../../../data/services/user-data.service';
 import { CartActionsService } from '../../../cart/cart-actions.service';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { CartComponent } from '../cart.component';
 
 @Component({
   selector: 'app-cart-item',
@@ -14,7 +15,6 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 export class CartItemComponent implements OnInit {
   public item = input.required<LineItem>();
   public quantityInput = new FormControl(1);
-  public isVisible = true;
   private userDataService = inject(UserDataService);
   private cartService = inject(CartActionsService);
 
@@ -30,10 +30,10 @@ export class CartItemComponent implements OnInit {
     const quantity = this.quantityInput.value || 1;
 
     if (cartId && version != null) {
-      this.cartService.changeQuantity(cartId, version, lineItemId, quantity).subscribe({
-        next: () => {
-          this.userDataService.refreshCustomerData();
-        },
+      this.cartService.changeQuantity(cartId, version, lineItemId, quantity).subscribe(response => {
+        CartComponent.cartItems.set(response.lineItems);
+        CartComponent.total = response.totalPrice.centAmount;
+        this.userDataService.refreshCustomerData();
       });
     }
   }
@@ -46,12 +46,11 @@ export class CartItemComponent implements OnInit {
     const quantity = this.quantityInput.value || 1;
 
     if (cartId && version != null) {
-      this.cartService.removeFromCart(cartId, version, lineItemId, quantity).subscribe({
-        next: () => {
-          this.userDataService.refreshCustomerData();
-        },
+      this.cartService.removeFromCart(cartId, version, lineItemId, quantity).subscribe(response => {
+        CartComponent.cartItems.set(response.lineItems);
+        CartComponent.total = response.totalPrice.centAmount;
+        this.userDataService.refreshCustomerData();
       });
     }
-    this.isVisible = false;
   }
 }

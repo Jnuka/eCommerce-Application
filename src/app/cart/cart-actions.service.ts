@@ -105,7 +105,7 @@ export class CartActionsService {
     version: number,
     lineItemId: string,
     quantity: number,
-  ): Observable<UpdateCartResponse> {
+  ): Observable<CartResponse> {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) throw new Error('No access token available');
@@ -123,7 +123,7 @@ export class CartActionsService {
 
         const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
 
-        return this.http.post<UpdateCartResponse>(url, body, {
+        return this.http.post<CartResponse>(url, body, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ export class CartActionsService {
     version: number,
     lineItemId: string,
     quantity: number,
-  ): Observable<UpdateCartResponse> {
+  ): Observable<CartResponse> {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) throw new Error('No access token available');
@@ -156,7 +156,7 @@ export class CartActionsService {
 
         const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
 
-        return this.http.post<UpdateCartResponse>(url, body, {
+        return this.http.post<CartResponse>(url, body, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',

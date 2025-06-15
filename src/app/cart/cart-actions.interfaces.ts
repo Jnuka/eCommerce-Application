@@ -7,6 +7,10 @@ export interface CartResponse {
   customerId?: string;
   anonymousId?: string;
   lineItems: LineItem[];
+  totalPrice: {
+    currencyCode: string;
+    centAmount: number;
+  };
 }
 
 export interface LineItem {
