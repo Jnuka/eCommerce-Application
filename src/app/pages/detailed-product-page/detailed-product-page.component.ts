@@ -27,6 +27,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
 import { CartComponent } from '../cart/cart.component';
+import { ToastService } from '../../helpers/toast.service';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -98,6 +99,7 @@ export class DetailedProductPageComponent implements OnInit {
   private dialog = inject(MatDialog);
   private authService = inject(AuthService);
   private cookieService = inject(CookieService);
+  private toastService = inject(ToastService);
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -119,6 +121,7 @@ export class DetailedProductPageComponent implements OnInit {
           this.userDataService.refreshCustomerData();
           this.isAddingToCart$.next(false);
           this.isProductInCart = true;
+          this.toastService.success('Product Added');
         },
         error: () => {
           this.isAddingToCart$.next(false);
@@ -167,6 +170,7 @@ export class DetailedProductPageComponent implements OnInit {
               if (cart) {
                 this.addProductToCart(cart.id, cart.version);
               } else {
+                this.toastService.success('Product Added');
                 this.isAddingToCart$.next(false);
                 this.isProductInCart = true;
               }
@@ -203,6 +207,7 @@ export class DetailedProductPageComponent implements OnInit {
               this.userDataService.refreshCustomerData();
               this.isAddingToCart$.next(false);
               this.isProductInCart = true;
+              this.toastService.success('Product Added');
             },
             error: () => {
               this.isAddingToCart$.next(false);
@@ -236,6 +241,7 @@ export class DetailedProductPageComponent implements OnInit {
             CartComponent.total = response.totalPrice.centAmount;
             this.userDataService.refreshCustomerData();
             this.isDeleteFromCart$.next(false);
+            this.toastService.error('Product Removed');
           });
         }
       }
