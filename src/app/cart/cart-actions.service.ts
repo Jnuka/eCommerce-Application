@@ -8,6 +8,7 @@ import { UserDataService } from '../data/services/user-data.service';
 import { CtpApiService } from '../data/services/ctp-api.service';
 import { UpdateCart, UpdateCartResponse } from './cart-actions.interfaces';
 import { HttpErrorResponse } from '../auth/auth.interfaces';
+import { HeaderComponent } from '../common-ui/header/header.component';
 
 @Injectable({
   providedIn: 'root',
@@ -79,7 +80,8 @@ export class CartActionsService {
           },
         });
       }),
-      tap(() => {
+      tap(response => {
+        HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
         this.userDataService.refreshCustomerData();
       }),
       catchError((error: HttpErrorResponse) => {
@@ -130,6 +132,9 @@ export class CartActionsService {
           },
         });
       }),
+      tap(response => {
+        HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+      }),
     );
   }
 
@@ -162,6 +167,9 @@ export class CartActionsService {
             'Content-Type': 'application/json',
           },
         });
+      }),
+      tap(response => {
+        HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
       }),
     );
   }

@@ -11,6 +11,7 @@ export interface CartResponse {
     currencyCode: string;
     centAmount: number;
   };
+  totalLineItemQuantity: number;
 }
 
 export interface LineItem {
@@ -61,4 +62,5 @@ export interface UpdateCartResponse {
   customerId?: string;
   anonymousId?: string;
   lineItems: LineItem[];
+  totalLineItemQuantity: number;
 }

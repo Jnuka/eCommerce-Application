@@ -12,9 +12,15 @@ import { ROUTES_PAGES } from '../../data/enums/routers';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+  public static quantityIndicator = 0;
   public customer = inject(UserDataService).customerData;
   public router = inject(Router);
   private authService = inject(AuthService);
+
+  // eslint-disable-next-line class-methods-use-this
+  public get quantityIndicator(): number {
+    return HeaderComponent.quantityIndicator;
+  }
 
   public isAuthAcc(): boolean {
     return this.authService.isAuth;
