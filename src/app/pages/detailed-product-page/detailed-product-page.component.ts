@@ -26,6 +26,7 @@ import { UserDataService } from '../../data/services/user-data.service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
+import { CartComponent } from '../cart/cart.component';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -38,6 +39,7 @@ export class DetailedProductPageComponent implements OnInit {
   public readonly SUB_CATEGORIES = SUB_CATEGORIES;
 
   public isAddingToCart$ = new BehaviorSubject<boolean>(false);
+  public isDeleteFromCart$ = new BehaviorSubject<boolean>(false);
 
   public pageNum: string | null = '';
   public description = '';
@@ -58,6 +60,7 @@ export class DetailedProductPageComponent implements OnInit {
   public toggleButtonValue: string | number | undefined;
   public toggleButtonId: string | undefined;
   public isProductInCart = false;
+  public isProductDeletedToCart = false;
 
   public userDataService = inject(UserDataService);
   public cartService = inject(CartActionsService);
@@ -144,6 +147,7 @@ export class DetailedProductPageComponent implements OnInit {
 
     this.isAddingToCart$.next(true);
     this.isProductInCart = true;
+    this.isProductDeletedToCart = true;
 
     const email = this.cookieService.get('user_email');
     const password = this.cookieService.get('user_password');
@@ -205,6 +209,36 @@ export class DetailedProductPageComponent implements OnInit {
           });
       }
     }
+  }
+
+  public removeFromCart(event: Event): void {
+    event.stopPropagation();
+    this.isDeleteFromCart$.next(true);
+    const toggleVariant = this.toggleButtonId ? this.toggleButtonId : 1;
+
+    const cart = this.userDataService.customerData()?.cart;
+    if (cart) {
+      const cartId = cart.id;
+      const version = cart.version;
+      const cartProductId = cart.lineItems
+        .filter(
+          product =>
+            product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+        )
+        .map(product => product.id)
+        .join('');
+      if (this.products) {
+        if (cartId && version != null) {
+          this.cartService.removeFromCart(cartId, version, cartProductId, 1).subscribe(response => {
+            CartComponent.cartItems.set(response.lineItems);
+            CartComponent.total = response.totalPrice.centAmount;
+            this.userDataService.refreshCustomerData();
+            this.isDeleteFromCart$.next(false);
+          });
+        }
+      }
+    }
+    this.isProductDeletedToCart = false;
   }
 
   public changeInToggleGroup(event: MatButtonToggleChange): void {

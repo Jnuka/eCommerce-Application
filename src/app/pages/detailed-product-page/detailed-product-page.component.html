@@ -121,31 +121,57 @@
       </div>
     </div>
     <div class="flex gap-[20px] justify-center">
-      <button
-        class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] disabled:border-[var(--text-disabled-color)] disabled:bg-[var(--text-disabled-color)] disabled:shadow-none disabled:pointer-events-none"
-        [disabled]="isProductInCart || (isAddingToCart$ | async)"
-        (click)="addToCart($event)"
-      >
-        <ng-container *ngIf="(isAddingToCart$ | async) === false; else loading">
-          Add to Card
-        </ng-container>
-        <ng-template #loading>
-          <span class="flex items-center justify-center gap-2">
-            <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-              <circle
-                class="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                stroke-width="4"
-              ></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-            </svg>
-            Adding...
-          </span>
-        </ng-template>
-      </button>
+      @if (!isProductDeletedToCart && !isProductInCart) {
+        <button
+          class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
+          (click)="addToCart($event)"
+        >
+          <ng-container *ngIf="(isAddingToCart$ | async) === false; else loading">
+            Add to Card
+          </ng-container>
+          <ng-template #loading>
+            <span class="flex items-center justify-center gap-2">
+              <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              Adding...
+            </span>
+          </ng-template>
+        </button>
+      } @else {
+        <button
+          class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--delete-buutton-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
+          (click)="removeFromCart($event)"
+        >
+          <ng-container *ngIf="(isDeleteFromCart$ | async) === false; else loading">
+            Remove from Card
+          </ng-container>
+          <ng-template #loading>
+            <span class="flex items-center justify-center gap-2">
+              <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              Removing...
+            </span>
+          </ng-template>
+        </button>
+      }
       @if (products) {
         @if (whichCategory === CATEGORIES.COFFEE) {
           @if (
