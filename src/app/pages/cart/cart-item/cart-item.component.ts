@@ -5,10 +5,11 @@ import { CartActionsService } from '../../../cart/cart-actions.service';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { CartComponent } from '../cart.component';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-cart-item',
-  imports: [MatInputModule, ReactiveFormsModule],
+  imports: [MatInputModule, ReactiveFormsModule, CurrencyPipe],
   templateUrl: './cart-item.component.html',
   styleUrl: './cart-item.component.css',
 })

@@ -2,10 +2,11 @@ import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core
 import { CartActionsService } from '../../cart/cart-actions.service';
 import { LineItem } from '../../cart/cart-actions.interfaces';
 import { CartItemComponent } from './cart-item/cart-item.component';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'app-cart',
-  imports: [CartItemComponent],
+  imports: [CartItemComponent, CurrencyPipe],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })

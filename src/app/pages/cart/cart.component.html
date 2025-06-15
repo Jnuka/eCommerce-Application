@@ -1,24 +1,29 @@
-<div class="p-6 flex flex-col gap-4">
+<div class="p-6 flex flex-col gap-5">
   <h2 class="text-2xl">Shopping cart</h2>
-  <table class="" cellspacing="0">
-    <thead>
-      <tr>
-        <th></th>
-        <th></th>
-        <th>Product</th>
-        <th>Price</th>
-        <th>Quantity</th>
-        <th>Subtotal</th>
-      </tr>
-    </thead>
-    <tbody class="flex flex-col w-full">
+  <div class="">
+    <div
+      class="grid grid-cols-[1fr_2fr_4fr_2fr_2fr_2fr] max-[800px]:grid-cols-[1fr_2fr_1fr_1fr_1fr] h-[60px] items-center text-xl max-[680px]:text-sm font-bold border-2 border-[var(--text-color)]"
+    >
+      <div></div>
+      <div class="max-[800px]:hidden"></div>
+      <div>Product</div>
+      <div>Price</div>
+      <div>Quantity</div>
+      <div>Subtotal</div>
+    </div>
+    <div class="flex flex-col w-full">
       @for (item of cartItems(); track item.id) {
-        <app-cart-item [item]="item" />
+        <app-cart-item
+          [item]="item"
+          class="grid grid-cols-[1fr_2fr_4fr_2fr_2fr_2fr] max-[800px]:grid-cols-[1fr_2fr_1fr_1fr_1fr] border-2 border-t-0 border-[var(--text-color)] text-xl max-[680px]:text-sm"
+        />
       }
-    </tbody>
-  </table>
-  <div>
-    <span>Total:</span>
-    {{ totalPrice }}
+    </div>
+  </div>
+  <div
+    class="text-xl font-bold grid grid-cols-[5fr_1fr] max-[950px]:grid-cols-[2fr_1fr] max-[600px]:text-sm"
+  >
+    <span></span>
+    <span>Total price: {{ totalPrice / 100 | currency: 'USD' : 'symbol' : '1.2' }}</span>
   </div>
 </div>
