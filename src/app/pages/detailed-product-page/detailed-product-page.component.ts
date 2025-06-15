@@ -60,7 +60,6 @@ export class DetailedProductPageComponent implements OnInit {
   public toggleButtonValue: string | number | undefined;
   public toggleButtonId: string | undefined;
   public isProductInCart = false;
-  public isProductDeletedToCart = false;
 
   public userDataService = inject(UserDataService);
   public cartService = inject(CartActionsService);
@@ -119,9 +118,11 @@ export class DetailedProductPageComponent implements OnInit {
         next: () => {
           this.userDataService.refreshCustomerData();
           this.isAddingToCart$.next(false);
+          this.isProductInCart = true;
         },
         error: () => {
           this.isAddingToCart$.next(false);
+          this.isProductInCart = false;
         },
       });
     }
@@ -146,8 +147,6 @@ export class DetailedProductPageComponent implements OnInit {
     event.stopPropagation();
 
     this.isAddingToCart$.next(true);
-    this.isProductInCart = true;
-    this.isProductDeletedToCart = true;
 
     const email = this.cookieService.get('user_email');
     const password = this.cookieService.get('user_password');
@@ -169,6 +168,7 @@ export class DetailedProductPageComponent implements OnInit {
                 this.addProductToCart(cart.id, cart.version);
               } else {
                 this.isAddingToCart$.next(false);
+                this.isProductInCart = true;
               }
             },
             error: () => this.isAddingToCart$.next(false),
@@ -202,9 +202,11 @@ export class DetailedProductPageComponent implements OnInit {
             next: () => {
               this.userDataService.refreshCustomerData();
               this.isAddingToCart$.next(false);
+              this.isProductInCart = true;
             },
             error: () => {
               this.isAddingToCart$.next(false);
+              this.isProductInCart = false;
             },
           });
       }
@@ -238,7 +240,6 @@ export class DetailedProductPageComponent implements OnInit {
         }
       }
     }
-    this.isProductDeletedToCart = false;
   }
 
   public changeInToggleGroup(event: MatButtonToggleChange): void {
