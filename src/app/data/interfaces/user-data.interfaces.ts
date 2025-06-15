@@ -52,4 +52,9 @@ interface LineItem {
   id: string;
   productId: string;
   name: string;
+  variant: VariantItem;
+}
+
+export interface VariantItem {
+  id: number;
 }

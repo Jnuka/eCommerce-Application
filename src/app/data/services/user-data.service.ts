@@ -22,6 +22,11 @@ export class UserDataService {
     return customerData?.cart?.lineItems.map(item => item.productId) || [];
   });
 
+  public readonly productItemFromCart = computed(() => {
+    const customerData = this._customerData();
+    return customerData?.cart?.lineItems.map(item => item) || [];
+  });
+
   private http = inject(HttpClient);
   private cookieService = inject(CookieService);
 
