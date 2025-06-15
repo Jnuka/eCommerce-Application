@@ -1,29 +1,43 @@
 <div class="p-6 flex flex-col gap-5">
   <h2 class="text-2xl">Shopping cart</h2>
-  <div class="">
+  @if (cartItems().length < 1) {
+    <div class="col-start-1 col-end-4 text-center flex flex-col gap-[20px] p-20px items-center">
+      <p style="font-size: 30px">Your bag is empty.</p>
+      <p style="font-size: 20px">Let's start shopping.</p>
+      <button
+        (click)="goCatalog()"
+        class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
+      >
+        Catalog
+      </button>
+      <img [src]="`/jpeg/mem.jpg`" alt="meme" class="h-[207px] w-[170px] object-contain" />
+    </div>
+  } @else {
+    <div>
+      <div
+        class="grid grid-cols-[1fr_2fr_4fr_2fr_2fr_2fr] max-[800px]:grid-cols-[1fr_2fr_1fr_1fr_1fr] h-[60px] items-center text-xl max-[680px]:text-sm font-bold border-2 border-[var(--text-color)]"
+      >
+        <div></div>
+        <div class="max-[800px]:hidden"></div>
+        <div>Product</div>
+        <div>Price</div>
+        <div>Quantity</div>
+        <div>Subtotal</div>
+      </div>
+      <div class="flex flex-col w-full">
+        @for (item of cartItems(); track item.id) {
+          <app-cart-item
+            [item]="item"
+            class="grid grid-cols-[1fr_2fr_4fr_2fr_2fr_2fr] max-[800px]:grid-cols-[1fr_2fr_1fr_1fr_1fr] border-2 border-t-0 border-[var(--text-color)] text-xl max-[680px]:text-sm"
+          />
+        }
+      </div>
+    </div>
     <div
-      class="grid grid-cols-[1fr_2fr_4fr_2fr_2fr_2fr] max-[800px]:grid-cols-[1fr_2fr_1fr_1fr_1fr] h-[60px] items-center text-xl max-[680px]:text-sm font-bold border-2 border-[var(--text-color)]"
+      class="text-xl font-bold grid grid-cols-[5fr_1fr] max-[950px]:grid-cols-[2fr_1fr] max-[600px]:text-sm"
     >
-      <div></div>
-      <div class="max-[800px]:hidden"></div>
-      <div>Product</div>
-      <div>Price</div>
-      <div>Quantity</div>
-      <div>Subtotal</div>
+      <span></span>
+      <span>Total price: {{ totalPrice / 100 | currency: 'USD' : 'symbol' : '1.2' }}</span>
     </div>
-    <div class="flex flex-col w-full">
-      @for (item of cartItems(); track item.id) {
-        <app-cart-item
-          [item]="item"
-          class="grid grid-cols-[1fr_2fr_4fr_2fr_2fr_2fr] max-[800px]:grid-cols-[1fr_2fr_1fr_1fr_1fr] border-2 border-t-0 border-[var(--text-color)] text-xl max-[680px]:text-sm"
-        />
-      }
-    </div>
-  </div>
-  <div
-    class="text-xl font-bold grid grid-cols-[5fr_1fr] max-[950px]:grid-cols-[2fr_1fr] max-[600px]:text-sm"
-  >
-    <span></span>
-    <span>Total price: {{ totalPrice / 100 | currency: 'USD' : 'symbol' : '1.2' }}</span>
-  </div>
+  }
 </div>
