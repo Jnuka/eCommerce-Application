@@ -1,5 +1,5 @@
-
-import { LocalizedString, ProductVariant } from '../products/products.interfaces';
+import { VariantItem } from '../data/interfaces/user-data.interfaces';
+import { LocalizedString } from '../products/products.interfaces';
 
 // Create cart
 export interface CartResponse {
@@ -19,7 +19,7 @@ export interface LineItem {
   id: string;
   productId: string;
   name: LocalizedString;
-  variant: ProductVariant;
+  variant: VariantItem;
   quantity: number;
   totalPrice: {
     currencyCode: string;
