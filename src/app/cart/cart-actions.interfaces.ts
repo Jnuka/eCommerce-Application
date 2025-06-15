@@ -1,4 +1,5 @@
 import { VariantItem } from '../data/interfaces/user-data.interfaces';
+import { LocalizedString } from '../products/products.interfaces';
 
 // Create cart
 export interface CartResponse {
@@ -7,13 +8,23 @@ export interface CartResponse {
   customerId?: string;
   anonymousId?: string;
   lineItems: LineItem[];
+  totalPrice: {
+    currencyCode: string;
+    centAmount: number;
+  };
+  totalLineItemQuantity: number;
 }
 
-interface LineItem {
+export interface LineItem {
   id: string;
   productId: string;
-  name: string;
+  name: LocalizedString;
   variant: VariantItem;
+  quantity: number;
+  totalPrice: {
+    currencyCode: string;
+    centAmount: number;
+  };
 }
 
 export interface MyCartDraft {
@@ -23,15 +34,28 @@ export interface MyCartDraft {
 
 // Add to cart
 export interface UpdateCart {
-  version: number;
+  version?: number;
   actions: Action[];
 }
 
 export interface Action {
-  action: 'addLineItem' | 'removeLineItem';
+  action: 'addLineItem' | 'removeLineItem' | 'changeLineItemQuantity';
   productId?: string;
   variantId?: string;
+  lineItemId?: string;
   quantity?: number;
+  externalPrice?: {
+    currencyCod: string;
+    centAmount: number;
+  };
+  shippingDetailsToRemove?: {
+    targets: [
+      {
+        addressKey: string;
+        quantity: number;
+      },
+    ];
+  };
 }
 
 export interface UpdateCartResponse {
@@ -40,10 +64,5 @@ export interface UpdateCartResponse {
   customerId?: string;
   anonymousId?: string;
   lineItems: LineItem[];
-}
-
-interface LineItem {
-  id: string;
-  productId: string;
-  name: string;
+  totalLineItemQuantity: number;
 }

@@ -21,6 +21,8 @@ import {
   CustomCustomerAddress,
 } from '../../../data/interfaces/user-data.interfaces';
 import { PasswordModalComponent } from '../../modals/password-modal/password-modal/password-modal.component';
+import { Router } from '@angular/router';
+import { ROUTES_PAGES } from '../../../data/enums/routers';
 
 @Component({
   selector: 'app-user-profile',
@@ -38,6 +40,7 @@ export class UserProfileComponent {
   public selectedTabIndex = 0;
   private updateService = inject(UpdateUserInfoService);
   private updateAddressesService = inject(UpdateAddressesService);
+  private router = inject(Router);
 
   constructor(private dialog: MatDialog) {}
 
@@ -52,6 +55,10 @@ export class UserProfileComponent {
 
   public get customAddresses(): CustomCustomerAddress[] {
     return this.customer()?.customAddresses ?? [];
+  }
+
+  public goCart(): void {
+    void this.router.navigate([ROUTES_PAGES.CART]);
   }
 
   public openModal(address?: CustomCustomerAddress): void {

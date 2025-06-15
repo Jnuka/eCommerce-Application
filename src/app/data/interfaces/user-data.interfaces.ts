@@ -1,3 +1,5 @@
+import { Attribute, Price, Image } from '../../products/products.interfaces';
+
 export interface Customer {
   id: string;
   email: string;
@@ -57,4 +59,7 @@ interface LineItem {
 
 export interface VariantItem {
   id: number;
+  prices: Price[];
+  images: Image[];
+  attributes: Attribute[];
 }
