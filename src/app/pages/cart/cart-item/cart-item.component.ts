@@ -9,6 +9,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ROUTES_PAGES } from '../../../data/enums/routers';
 import { AuthService } from '../../../auth/auth.service';
+import { HeaderComponent } from '../../../common-ui/header/header.component';
 
 @Component({
   selector: 'app-cart-item',
@@ -42,7 +43,6 @@ export class CartItemComponent implements OnInit {
         if (response) {
           this.cartId = response.id;
           this.cartVersion = response.version;
-          this.userDataService.refreshCustomerData();
         }
       });
     }
@@ -55,7 +55,12 @@ export class CartItemComponent implements OnInit {
         .subscribe(response => {
           CartComponent.cartItems.set(response.lineItems);
           CartComponent.total = response.totalPrice.centAmount;
-          this.userDataService.refreshCustomerData();
+          if (!this.authService.isAuth) {
+            this.cartService.anonymousCart$.next(response);
+          } else {
+            HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+            this.userDataService.refreshCustomerData();
+          }
         });
     }
   }
@@ -72,7 +77,6 @@ export class CartItemComponent implements OnInit {
         if (response) {
           this.cartId = response.id;
           this.cartVersion = response.version;
-          this.userDataService.refreshCustomerData();
         }
       });
     }
@@ -85,7 +89,12 @@ export class CartItemComponent implements OnInit {
         .subscribe(response => {
           CartComponent.cartItems.set(response.lineItems);
           CartComponent.total = response.totalPrice.centAmount;
-          this.userDataService.refreshCustomerData();
+          if (!this.authService.isAuth) {
+            this.cartService.anonymousCart$.next(response);
+          } else {
+            HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+            this.userDataService.refreshCustomerData();
+          }
         });
     }
   }

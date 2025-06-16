@@ -9,6 +9,7 @@ import { UserDataService } from '../../data/services/user-data.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmModalWindowComponent } from '../../common-ui/confirm-modal-window/confirm-modal-window.component';
 import { AuthService } from '../../auth/auth.service';
+import { HeaderComponent } from '../../common-ui/header/header.component';
 
 @Injectable({
   providedIn: 'root',
@@ -74,7 +75,6 @@ export class CartComponent {
         if (response) {
           this.cartId = response.id;
           this.cartVersion = response.version;
-          this.userDataService.refreshCustomerData();
         }
       });
     }
@@ -84,7 +84,12 @@ export class CartComponent {
       this.cartService.clearCart(this.cartId, this.cartVersion, itemArray).subscribe(response => {
         CartComponent.cartItems.set(response.lineItems);
         CartComponent.total = response.totalPrice.centAmount;
-        this.userDataService.refreshCustomerData();
+        if (!this.authService.isAuth) {
+          this.cartService.anonymousCart$.next(response);
+        } else {
+          HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+          this.userDataService.refreshCustomerData();
+        }
       });
     }
   }
