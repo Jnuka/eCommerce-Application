@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { ROUTES_PAGES } from '../../data/enums/routers';
 import { UserDataService } from '../../data/services/user-data.service';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { ToastService } from '../../helpers/toast.service';
 
 @Component({
@@ -20,7 +20,6 @@ import { ToastService } from '../../helpers/toast.service';
     MatLabel,
     ReactiveFormsModule,
     MatFormField,
-    MatError,
   ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
