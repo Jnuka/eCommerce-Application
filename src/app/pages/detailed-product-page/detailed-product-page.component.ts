@@ -26,6 +26,8 @@ import { UserDataService } from '../../data/services/user-data.service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
+import { CartComponent } from '../cart/cart.component';
+import { ToastService } from '../../helpers/toast.service';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -38,6 +40,7 @@ export class DetailedProductPageComponent implements OnInit {
   public readonly SUB_CATEGORIES = SUB_CATEGORIES;
 
   public isAddingToCart$ = new BehaviorSubject<boolean>(false);
+  public isDeleteFromCart$ = new BehaviorSubject<boolean>(false);
 
   public pageNum: string | null = '';
   public description = '';
@@ -96,6 +99,7 @@ export class DetailedProductPageComponent implements OnInit {
   private dialog = inject(MatDialog);
   private authService = inject(AuthService);
   private cookieService = inject(CookieService);
+  private toastService = inject(ToastService);
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -116,9 +120,12 @@ export class DetailedProductPageComponent implements OnInit {
         next: () => {
           this.userDataService.refreshCustomerData();
           this.isAddingToCart$.next(false);
+          this.isProductInCart = true;
+          this.toastService.success('Product Added');
         },
         error: () => {
           this.isAddingToCart$.next(false);
+          this.isProductInCart = false;
         },
       });
     }
@@ -143,7 +150,6 @@ export class DetailedProductPageComponent implements OnInit {
     event.stopPropagation();
 
     this.isAddingToCart$.next(true);
-    this.isProductInCart = true;
 
     const email = this.cookieService.get('user_email');
     const password = this.cookieService.get('user_password');
@@ -164,7 +170,9 @@ export class DetailedProductPageComponent implements OnInit {
               if (cart) {
                 this.addProductToCart(cart.id, cart.version);
               } else {
+                this.toastService.success('Product Added');
                 this.isAddingToCart$.next(false);
+                this.isProductInCart = true;
               }
             },
             error: () => this.isAddingToCart$.next(false),
@@ -198,11 +206,44 @@ export class DetailedProductPageComponent implements OnInit {
             next: () => {
               this.userDataService.refreshCustomerData();
               this.isAddingToCart$.next(false);
+              this.isProductInCart = true;
+              this.toastService.success('Product Added');
             },
             error: () => {
               this.isAddingToCart$.next(false);
+              this.isProductInCart = false;
             },
           });
+      }
+    }
+  }
+
+  public removeFromCart(event: Event): void {
+    event.stopPropagation();
+    this.isDeleteFromCart$.next(true);
+    const toggleVariant = this.toggleButtonId ? this.toggleButtonId : 1;
+
+    const cart = this.userDataService.customerData()?.cart;
+    if (cart) {
+      const cartId = cart.id;
+      const version = cart.version;
+      const cartProductId = cart.lineItems
+        .filter(
+          product =>
+            product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+        )
+        .map(product => product.id)
+        .join('');
+      if (this.products) {
+        if (cartId && version != null) {
+          this.cartService.removeFromCart(cartId, version, cartProductId, 1).subscribe(response => {
+            CartComponent.cartItems.set(response.lineItems);
+            CartComponent.total = response.totalPrice.centAmount;
+            this.userDataService.refreshCustomerData();
+            this.isDeleteFromCart$.next(false);
+            this.toastService.error('Product Removed');
+          });
+        }
       }
     }
   }
