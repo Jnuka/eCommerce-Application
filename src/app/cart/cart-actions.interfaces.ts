@@ -1,4 +1,4 @@
-import { VariantItem } from '../data/interfaces/user-data.interfaces';
+import { DiscountCodeInfo, VariantItem } from '../data/interfaces/user-data.interfaces';
 import { LocalizedString } from '../products/products.interfaces';
 
 // Create cart
@@ -8,6 +8,7 @@ export interface CartResponse {
   customerId?: string;
   anonymousId?: string;
   lineItems: LineItem[];
+  discountCodes?: DiscountCodeInfo[];
   totalPrice: {
     currencyCode: string;
     centAmount: number;

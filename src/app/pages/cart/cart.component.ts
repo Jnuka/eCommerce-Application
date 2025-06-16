@@ -73,16 +73,17 @@ export class CartComponent {
         CartComponent.cartItems.set(response.lineItems);
         CartComponent.total = response.totalPrice.centAmount;
         if (response.discountCodes) {
-        if (response.discountCodes.length !== 0) {
-          this.isDiscount = true;
-          this.cartService
-            .getPromoCodeById(response.discountCodes[0].discountCode.id)
-            .subscribe(response => {
-              this.promoCode.setValue(response.code);
-            });
+          if (response.discountCodes.length !== 0) {
+            this.isDiscount = true;
+            this.cartService
+              .getPromoCodeById(response.discountCodes[0].discountCode.id)
+              .subscribe(response => {
+                this.promoCode.setValue(response.code);
+              });
+          }
         }
-      }
       });
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
