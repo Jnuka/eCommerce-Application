@@ -2,12 +2,13 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, tap, throwError, catchError, map } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { MyCartDraft, CartResponse } from './cart-actions.interfaces';
+import { MyCartDraft, CartResponse, LineItem, Action } from './cart-actions.interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserDataService } from '../data/services/user-data.service';
 import { CtpApiService } from '../data/services/ctp-api.service';
 import { UpdateCart, UpdateCartResponse } from './cart-actions.interfaces';
 import { CookieService } from 'ngx-cookie-service';
+import { HeaderComponent } from '../common-ui/header/header.component';
 
 @Injectable({
   providedIn: 'root',
@@ -86,6 +87,7 @@ export class CartActionsService {
               if (isAnonymous) {
                 this.anonymousCart$.next(updatedCart);
               } else {
+                HeaderComponent.quantityIndicator = updatedCart.totalLineItemQuantity;
                 this.userDataService.refreshCustomerData();
               }
             }),
@@ -149,7 +151,7 @@ export class CartActionsService {
       });
   }
 
-  private getCartById(cartId: string, token: string): Observable<CartResponse> {
+  public getCartById(cartId: string, token: string): Observable<CartResponse> {
     const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
     return this.http.get<CartResponse>(url, {
       headers: {
@@ -157,5 +159,127 @@ export class CartActionsService {
         'Content-Type': 'application/json',
       },
     });
+  }
+
+  public getCart(): Observable<CartResponse> {
+    const token = this.authService.getCustomerToken();
+    const userID = this.userDataService._customerData()?.customer.id;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.get<CartResponse>(
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/customer-id=${userID}`,
+      { headers },
+    );
+  }
+
+  public changeQuantity(
+    cartId: string,
+    version: number,
+    lineItemId: string,
+    quantity: number,
+  ): Observable<CartResponse> {
+    return this.ctpApiService.getAccessToken().pipe(
+      switchMap((token: string | null) => {
+        if (!token) throw new Error('No access token available');
+
+        const body: UpdateCart = {
+          version,
+          actions: [
+            {
+              action: 'changeLineItemQuantity',
+              lineItemId: `${lineItemId}`,
+              quantity: quantity,
+            },
+          ],
+        };
+
+        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
+
+        return this.http.post<CartResponse>(url, body, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }),
+      tap(response => {
+        HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+      }),
+    );
+  }
+
+  public removeFromCart(
+    cartId: string,
+    version: number,
+    lineItemId: string,
+    quantity: number,
+  ): Observable<CartResponse> {
+    return this.ctpApiService.getAccessToken().pipe(
+      switchMap((token: string | null) => {
+        if (!token) throw new Error('No access token available');
+
+        const body: UpdateCart = {
+          version,
+          actions: [
+            {
+              action: 'removeLineItem',
+              lineItemId: `${lineItemId}`,
+              quantity,
+            },
+          ],
+        };
+
+        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
+
+        return this.http.post<CartResponse>(url, body, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }),
+      tap(response => {
+        HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+      }),
+    );
+  }
+
+  public clearCart(
+    cartId: string,
+    version: number,
+    lineItems: LineItem[],
+  ): Observable<CartResponse> {
+    return this.ctpApiService.getAccessToken().pipe(
+      switchMap((token: string | null) => {
+        if (!token) throw new Error('No access token available');
+
+        const body: UpdateCart = {
+          version,
+          actions: [],
+        };
+
+        lineItems.forEach(element => {
+          const item: Action = {
+            action: 'removeLineItem',
+            lineItemId: `${element.id}`,
+            quantity: element.quantity,
+          };
+          body.actions.push(item);
+        });
+
+        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
+
+        return this.http.post<CartResponse>(url, body, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }),
+      tap(response => {
+        HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+      }),
+    );
   }
 }

@@ -1,0 +1,28 @@
+<button (click)="removeFromCart()" class="p-3">
+  <img class="w-5 cursor-pointer" src="/svg/remove.svg" alt="remove" />
+</button>
+<div class="max-[800px]:hidden">
+  <img
+    [src]="item().variant.images[0].url"
+    class="w-[125px] h-[125px] max-[950px]:h-[65px] max-[950px]:w-[65px] object-contain m-[10px] max-[950px]:m-[3px]"
+    [alt]="item().name['en-US']"
+  />
+</div>
+<div class="content-center font-bold">{{ item().name['en-US'] }}</div>
+<div class="content-center">
+  {{ item().variant.prices[0].value.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
+</div>
+<input
+  matInput
+  type="number"
+  class="w-[100px] h-[70px] max-[950px]:w-[60px] max-[950px]:h-[40px] self-center p-3 border-2 border-[var(--text-color)] outline-none"
+  [formControl]="quantityInput"
+  min="1"
+  max=""
+  step="1"
+  autocomplete="off"
+  (input)="changeQuantity()"
+/>
+<div class="content-center">
+  {{ item().totalPrice.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
+</div>
