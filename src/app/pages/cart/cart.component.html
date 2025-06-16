@@ -34,10 +34,21 @@
       </div>
     </div>
     <div
-      class="text-xl font-bold grid grid-cols-[5fr_1fr] max-[950px]:grid-cols-[2fr_1fr] max-[600px]:text-sm"
+      class="flex justify-end text-xl font-bold max-[950px]:grid-cols-[2fr_1fr] max-[600px]:text-sm"
     >
-      <span></span>
-      <span>Total price: {{ totalPrice / 100 | currency: 'USD' : 'symbol' : '1.2' }}</span>
+      @if (isDiscount) {
+        <p>
+          Total price:
+          <span class="line-through">{{
+            (totalPrice / 100 / 80) * 100 | currency: 'USD' : 'symbol' : '1.2'
+          }}</span>
+          <span class="text-[red] font-bold">
+            {{ totalPrice / 100 | currency: 'USD' : 'symbol' : '1.2' }}</span
+          >
+        </p>
+      } @else {
+        <p>Total price: {{ totalPrice / 100 | currency: 'USD' : 'symbol' : '1.2' }}</p>
+      }
     </div>
     <button
       (click)="clearCart()"
@@ -45,11 +56,35 @@
     >
       Clear Shopping Cart
     </button>
-    <button
-      (click)="addPromoCode()"
-      class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[200px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] my-0 m-auto"
-    >
-      Apply
-    </button>
+    <div class="flex justify-center">
+      <div class="flex flex-col items-center">
+        <div class="flex flex-col items-center justify-center">
+          <mat-form-field>
+            <mat-label>Promo Code</mat-label>
+            <input matInput [formControl]="promoCode" type="text" />
+            <mat-error class="h-0">Must contain at least 8 characters</mat-error>
+          </mat-form-field>
+
+          <div class="flex gap-[20px]">
+            <button
+              type="submit"
+              class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[200px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] my-0 m-auto disabled:border-[var(--text-disabled-color)] disabled:bg-[var(--text-disabled-color)] disabled:shadow-none disabled:pointer-events-none"
+              (click)="onSubmit()"
+              [disabled]="isDiscount"
+            >
+              Enter promo code
+            </button>
+            <button
+              type="submit"
+              class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[200px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] my-0 m-auto disabled:border-[var(--text-disabled-color)] disabled:bg-[var(--text-disabled-color)] disabled:shadow-none disabled:pointer-events-none"
+              (click)="deletePromo()"
+              [disabled]="!isDiscount"
+            >
+              Remove promo code
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   }
 </div>

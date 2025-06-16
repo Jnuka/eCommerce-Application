@@ -6,19 +6,38 @@ import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ROUTES_PAGES } from '../../data/enums/routers';
 import { UserDataService } from '../../data/services/user-data.service';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatError, MatFormField, MatInput, MatLabel } from '@angular/material/input';
+import { ToastService } from '../../helpers/toast.service';
 
 @Component({
   selector: 'app-cart',
-  imports: [CartItemComponent, CurrencyPipe],
+  imports: [
+    CartItemComponent,
+    CurrencyPipe,
+    FormsModule,
+    MatInput,
+    MatLabel,
+    ReactiveFormsModule,
+    MatFormField,
+    MatError,
+  ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
 export class CartComponent implements OnInit {
   public static cartItems = signal<LineItem[]>([]);
   public static total = 0;
+  public isDiscount = false;
+  public idPromoCode = '';
+  public codePromoCode = '';
+
+  public promoCode = new FormControl('');
+
   public cartService = inject(CartActionsService);
   private userDataService = inject(UserDataService);
   private router = inject(Router);
+  private toastService = inject(ToastService);
 
   // eslint-disable-next-line class-methods-use-this
   public get totalPrice(): number {
@@ -30,11 +49,36 @@ export class CartComponent implements OnInit {
     return CartComponent.cartItems;
   }
 
+  public onSubmit(): void {
+    const code = this.promoCode.value;
+    if (code) {
+      this.addPromoCode(code);
+    }
+  }
+
+  public deletePromo(): void {
+    const code = this.promoCode.value;
+    if (code) {
+      this.removePromoCode(code);
+    }
+  }
+
   public ngOnInit(): void {
     this.cartService.getCart().subscribe(response => {
       CartComponent.cartItems.set(response.lineItems);
       CartComponent.total = response.totalPrice.centAmount;
     });
+    const cart = this.userDataService.customerData()?.cart;
+    if (cart && cart.discountCodes) {
+      if (cart.discountCodes.length !== 0) {
+        this.isDiscount = true;
+        this.cartService
+          .getPromoCodeById(cart.discountCodes[0].discountCode.id)
+          .subscribe(response => {
+            this.promoCode.setValue(response.code);
+          });
+      }
+    }
   }
 
   public goCatalog(): void {
@@ -56,18 +100,54 @@ export class CartComponent implements OnInit {
     }
   }
 
-  public addPromoCode(): void {
+  public addPromoCode(promo: string): void {
     const cart = this.userDataService.customerData()?.cart;
     const cartId = cart?.id;
-    const version = cart?.version;
-    const code = 'winnerCode';
 
-    if (cartId && version != null) {
-      this.cartService.addDiscontCode(cartId, version, code).subscribe(response => {
-        CartComponent.cartItems.set(response.lineItems);
-        CartComponent.total = response.totalPrice.centAmount;
-        this.userDataService.refreshCustomerData();
-      });
-    }
+    const version = cart?.version;
+    this.cartService.getPromoCodeByKey(promo).subscribe({
+      next: response => {
+        this.codePromoCode = response.code;
+        if (cartId && version != null) {
+          this.cartService
+            .addDiscountCode(cartId, version, this.codePromoCode)
+            .subscribe(response => {
+              CartComponent.cartItems.set(response.lineItems);
+              CartComponent.total = response.totalPrice.centAmount;
+              this.userDataService.refreshCustomerData();
+              this.isDiscount = true;
+            });
+        }
+      },
+      error: () => {
+        this.toastService.error(`Promo code ${this.promoCode.value} not found`);
+      },
+    });
+  }
+
+  public removePromoCode(promo: string): void {
+    const cart = this.userDataService.customerData()?.cart;
+    const cartId = cart?.id;
+
+    const version = cart?.version;
+    this.cartService.getPromoCodeByKey(promo).subscribe({
+      next: response => {
+        this.idPromoCode = response.id;
+        if (cartId && version != null) {
+          this.cartService
+            .removeDiscountCode(cartId, version, this.idPromoCode)
+            .subscribe(response => {
+              CartComponent.cartItems.set(response.lineItems);
+              CartComponent.total = response.totalPrice.centAmount;
+              this.userDataService.refreshCustomerData();
+              this.isDiscount = false;
+              this.promoCode.setValue('');
+            });
+        }
+      },
+      error: () => {
+        this.toastService.error(`Promo code ${this.promoCode.value} not found`);
+      },
+    });
   }
 }

@@ -39,8 +39,14 @@ export interface UpdateCart {
 }
 
 export interface Action {
-  action: 'addLineItem' | 'removeLineItem' | 'changeLineItemQuantity' | 'addDiscountCode';
+  action:
+    | 'addLineItem'
+    | 'removeLineItem'
+    | 'changeLineItemQuantity'
+    | 'addDiscountCode'
+    | 'removeDiscountCode';
   code?: string;
+  discountCode?: DiscountCodeReference;
   productId?: string;
   variantId?: string;
   lineItemId?: string;
@@ -59,6 +65,11 @@ export interface Action {
   };
 }
 
+export interface DiscountCodeReference {
+  id: string;
+  typeId: 'discount-code';
+}
+
 export interface UpdateCartResponse {
   id: string;
   version: number;
@@ -66,4 +77,17 @@ export interface UpdateCartResponse {
   anonymousId?: string;
   lineItems: LineItem[];
   totalLineItemQuantity: number;
+}
+
+export interface DiscountCode {
+  id: string;
+  version: number;
+  code: string;
+  cartDiscounts: CartDiscountReference[];
+  isActive: boolean;
+}
+
+interface CartDiscountReference {
+  id: string;
+  typeId: 'discount-code';
 }

@@ -48,6 +48,27 @@ interface Cart {
   customerId?: string;
   anonymousId?: string;
   lineItems: LineItem[];
+  discountCodes?: DiscountCodeInfo[];
+  totalPrice: {
+    currencyCode: string;
+    centAmount: number;
+  };
+}
+
+export interface DiscountCodeInfo {
+  discountCode: DiscountCodeReference;
+  state:
+    | 'NotActive'
+    | 'NotValid'
+    | 'DoesNotMatchCart'
+    | 'MatchesCart'
+    | 'MaxApplicationReached'
+    | 'ApplicationStoppedByPreviousDiscount';
+}
+
+export interface DiscountCodeReference {
+  id: string;
+  typeId: 'discount-code';
 }
 
 interface LineItem {
