@@ -11,6 +11,7 @@ import { DetailedProductPageComponent } from './pages/detailed-product-page/deta
 import { authOnlyGuard } from './guards/only-auth.guard';
 import { UserProfileComponent } from './pages/user-profile/user-profile/user-profile.component';
 import { ROUTES_PAGES } from './data/enums/routers';
+import { CartComponent } from './pages/cart/cart.component';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,7 @@ export const routes: Routes = [
       { path: ROUTES_PAGES.CATALOG, component: CatalogProductPageComponent },
       { path: ROUTES_PAGES.ABOUT, component: AboutUsPageComponent },
       { path: ROUTES_PAGES.PRODUCT, component: DetailedProductPageComponent },
+      { path: ROUTES_PAGES.CART, component: CartComponent },
       {
         path: ROUTES_PAGES.PROFILE,
         component: UserProfileComponent,

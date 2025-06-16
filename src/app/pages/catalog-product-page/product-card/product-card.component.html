@@ -1,6 +1,6 @@
 <div
-  class="bg-[#ffff] border-1 border-solid border-[#C1B6AD] rounded-xl p-5 flex flex-col gap-3 min-h-full relative max-[500px]:p-2"
-  style="align-items: flex-end"
+  class="bg-[#ffff] border-1 border-solid border-[#C1B6AD] rounded-xl p-5 flex flex-col justify-between gap-3 min-h-full relative max-[500px]:p-2"
+  style="align-items: center"
 >
   <div class="mx-auto flex items-center gap-[5px]">
     @if (product().masterVariant.images[0]) {
@@ -42,11 +42,11 @@
       </button>
       <button
         class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] disabled:border-gray-200 disabled:bg-[#b09e94] disabled:shadow-none disabled:pointer-events-none"
-        [disabled]="isInCart() || (isAddingToCart$ | async)"
+        [disabled]="(isInCart$ | async) || (isAddingToCart$ | async)"
         (click)="addToCart($event)"
       >
         <ng-container *ngIf="(isAddingToCart$ | async) === false; else loading">
-          Add to Card
+          Add to Cart
         </ng-container>
         <ng-template #loading>
           <span class="flex items-center justify-center gap-2">

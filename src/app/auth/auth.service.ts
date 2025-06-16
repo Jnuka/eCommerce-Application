@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { CustomerTokenResponse } from './auth.interfaces';
+import { CustomerSignin, CustomerTokenResponse } from './auth.interfaces';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -35,7 +35,7 @@ export class AuthService {
     return !!this.customerToken;
   }
 
-  public login(payload: { email: string; password: string }): Observable<CustomerSignInResult> {
+  public login(customerSignin: CustomerSignin): Observable<CustomerSignInResult> {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) {
@@ -55,8 +55,8 @@ export class AuthService {
 
         let body = new HttpParams()
           .set('grant_type', 'password')
-          .set('username', payload.email)
-          .set('password', payload.password)
+          .set('username', customerSignin.email)
+          .set('password', customerSignin.password)
           .set(
             'scope',
             [
@@ -82,10 +82,12 @@ export class AuthService {
       }),
       tap((response: CustomerTokenResponse) => {
         this.saveTokens(response);
-        this.cookieService.set('user_email', payload.email);
-        this.cookieService.set('user_password', payload.password);
+        this.cookieService.set('user_email', customerSignin.email);
+        this.cookieService.set('user_password', customerSignin.password);
       }),
-      switchMap(() => this.userDataService.loginCustomer(payload.email, payload.password)),
+      switchMap(() =>
+        this.userDataService.loginCustomer(customerSignin.email, customerSignin.password),
+      ),
       tap(() => {
         this.toastService.success('Successful entry');
       }),

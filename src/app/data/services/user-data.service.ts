@@ -15,10 +15,16 @@ import {
 export class UserDataService {
   public readonly _customerData = signal<CustomerSignInResult | null>(null);
   public readonly customerData = this._customerData;
+  public readonly customerCart$ = computed(() => this._customerData()?.cart || null);
 
   public readonly productIdsFromCart = computed(() => {
     const customerData = this._customerData();
     return customerData?.cart?.lineItems.map(item => item.productId) || [];
+  });
+
+  public readonly productItemFromCart = computed(() => {
+    const customerData = this._customerData();
+    return customerData?.cart?.lineItems.map(item => item) || [];
   });
 
   private http = inject(HttpClient);
