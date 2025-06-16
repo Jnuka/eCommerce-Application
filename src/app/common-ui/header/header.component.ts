@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { UserDataService } from '../../data/services/user-data.service';
+import { ROUTES_PAGES } from '../../data/enums/routers';
 
 @Component({
   selector: 'app-header',
@@ -11,9 +12,15 @@ import { UserDataService } from '../../data/services/user-data.service';
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
+  public static quantityIndicator = 0;
   public customer = inject(UserDataService).customerData;
   public router = inject(Router);
   private authService = inject(AuthService);
+
+  // eslint-disable-next-line class-methods-use-this
+  public get quantityIndicator(): number {
+    return HeaderComponent.quantityIndicator;
+  }
 
   public isAuthAcc(): boolean {
     return this.authService.isAuth;
@@ -23,22 +30,31 @@ export class HeaderComponent {
     this.authService.logout();
   }
 
-  public async goHome(): Promise<void> {
-    await this.router.navigate(['']);
+  public goHome(): void {
+    void this.router.navigate(['']);
   }
-  public async goLogin(): Promise<void> {
-    await this.router.navigate(['login']);
+
+  public goLogin(): void {
+    void this.router.navigate([ROUTES_PAGES.LOGIN]);
   }
-  public async goRegistration(): Promise<void> {
-    await this.router.navigate(['registration']);
+
+  public goRegistration(): void {
+    void this.router.navigate([ROUTES_PAGES.REGISTRATION]);
   }
-  public async goAbout(): Promise<void> {
-    await this.router.navigate(['about']);
+
+  public goAbout(): void {
+    void this.router.navigate([ROUTES_PAGES.ABOUT]);
   }
-  public async goProfile(): Promise<void> {
-    await this.router.navigate(['profile']);
+
+  public goProfile(): void {
+    void this.router.navigate([ROUTES_PAGES.PROFILE]);
   }
+
   public goCatalog(): void {
-    void this.router.navigate(['catalog']);
+    void this.router.navigate([ROUTES_PAGES.CATALOG]);
+  }
+
+  public goCart(): void {
+    void this.router.navigate([ROUTES_PAGES.CART]);
   }
 }

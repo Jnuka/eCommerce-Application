@@ -8,6 +8,9 @@ import { ProductResponse, ProductVariant } from '../../products/products.interfa
 import { ImageSliderComponent } from '../../common-ui/image-slider/image-slider.component';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { NgFor, NgIf } from '@angular/common';
+import { PAGES } from '../../data/enums/pages';
+import { SUB_CATEGORIES } from '../../data/enums/subCategories';
+import { CATEGORIES } from '../../data/enums/categories';
 
 describe('DetailedProductPageComponent', () => {
   let component: DetailedProductPageComponent;
@@ -44,8 +47,20 @@ describe('DetailedProductPageComponent', () => {
       },
     ],
     attributes: [
-      { name: 'weight', value: { key: '250g', label: '250 grams' } },
-      { name: 'roast', value: { key: 'medium', label: 'Medium Roast' } },
+      {
+        name: 'weight',
+        value: { key: '250g', label: '250 grams' },
+        type: {
+          values: [],
+        },
+      },
+      {
+        name: 'roast',
+        value: { key: 'medium', label: 'Medium Roast' },
+        type: {
+          values: [],
+        },
+      },
     ],
   });
 
@@ -123,32 +138,38 @@ describe('DetailedProductPageComponent', () => {
     const coffeeProduct = { ...mockProduct };
     coffeeProduct.masterData.current.name['en-US'] = 'Brownie';
     coffeeProduct.masterData.current.masterVariant.attributes = [
-      { name: 'acidity', value: { key: 'medium', label: 'Medium' } },
+      {
+        name: 'acidity',
+        value: { key: 'medium', label: 'Medium' },
+        type: {
+          values: [],
+        },
+      },
     ];
 
     mockProductsService.getProductById.and.returnValue(of(coffeeProduct));
     component.ngOnInit();
     fixture.detectChanges();
 
-    expect(component.whichCategory).toBe('coffee');
+    expect(component.whichCategory).toBe(CATEGORIES.COFFEE);
     expect(component.countAttributes).toBe(1);
   });
 
   describe('Navigation', () => {
     it('should navigate to category', () => {
-      component.goCategory('Coffee');
+      component.goCategory(CATEGORIES.COFFEE);
       /* eslint-disable */
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['catalog'], {
-        queryParams: { categories: 'Coffee' },
+      expect(mockRouter.navigate).toHaveBeenCalledWith([PAGES.CATALOG], {
+        queryParams: { categories: CATEGORIES.COFFEE },
       });
       /* eslint-enable */
     });
 
     it('should navigate to type', () => {
-      component.goType('Coffee for filter');
+      component.goType(SUB_CATEGORIES.COFFEE_FOR_FILTER);
       /* eslint-disable */
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['catalog'], {
-        queryParams: { categories: 'Coffee', type: 'Coffee for filter' },
+      expect(mockRouter.navigate).toHaveBeenCalledWith([PAGES.CATALOG], {
+        queryParams: { categories: CATEGORIES.COFFEE, type: SUB_CATEGORIES.COFFEE_FOR_FILTER },
       });
       /* eslint-enable */
     });

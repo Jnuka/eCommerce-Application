@@ -1,6 +1,6 @@
 <div
-  class="bg-[#ffff] border-1 border-solid border-[#C1B6AD] rounded-xl p-5 flex flex-col gap-3 min-h-full relative max-[500px]:p-2"
-  style="align-items: flex-end"
+  class="bg-[#ffff] border-1 border-solid border-[#C1B6AD] rounded-xl p-5 flex flex-col justify-between gap-3 min-h-full relative max-[500px]:p-2"
+  style="align-items: center"
 >
   <div class="mx-auto flex items-center gap-[5px]">
     @if (product().masterVariant.images[0]) {
@@ -13,7 +13,7 @@
     <div class="flex flex-col items-start ml-[3px]">
       <div *ngIf="attributes?.length" class="flex flex-col items-start">
         <p *ngFor="let role of attributes" class="capitalize">
-          <span class="text-[#6E594BFF]">{{ role.name }}</span
+          <span class="text-[var(--text-color)]">{{ role.name }}</span
           >: {{ role.degree }}
         </p>
       </div>
@@ -21,7 +21,7 @@
   </div>
   <div class="flex flex-col justify-between items-center gap-[5px]">
     <h2 class="text-md font-bold">{{ product().name['en-US'] }}</h2>
-    <span class="text-md text-[#6E594BFF]">{{ product().metaDescription['en-US'] }}</span>
+    <span class="text-md text-[var(--text-color)]">{{ product().metaDescription['en-US'] }}</span>
     @if (discountPrice !== undefined) {
       <div class="text-[20px]">
         <p>
@@ -32,13 +32,39 @@
     } @else {
       <p class="text-[20px]">Total {{ price }}</p>
     }
-
-    <button
-      (click)="goDetailedProduct(`${product().id}`)"
-      class="text-[#f8e4be] p-2.5 rounded-[5px] w-[160px] bg-[#524139FF] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#795f53]"
-      label="About"
-    >
-      About
-    </button>
+    <div class="flex flex-end gap-[8px]">
+      <button
+        (click)="goDetailedProduct(`${product().id}`)"
+        class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
+        label="About"
+      >
+        About
+      </button>
+      <button
+        class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[160px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] disabled:border-gray-200 disabled:bg-[#b09e94] disabled:shadow-none disabled:pointer-events-none"
+        [disabled]="(isInCart$ | async) || (isAddingToCart$ | async)"
+        (click)="addToCart($event)"
+      >
+        <ng-container *ngIf="(isAddingToCart$ | async) === false; else loading">
+          Add to Cart
+        </ng-container>
+        <ng-template #loading>
+          <span class="flex items-center justify-center gap-2">
+            <svg class="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+              ></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            Adding...
+          </span>
+        </ng-template>
+      </button>
+    </div>
   </div>
 </div>

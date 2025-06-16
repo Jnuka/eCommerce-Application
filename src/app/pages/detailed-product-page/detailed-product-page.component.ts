@@ -1,8 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { ProductResponse, ProductVariant } from '../../products/products.interfaces';
+import {
+  ProductResponse,
+  ProductVariant,
+  ProductVariants,
+} from '../../products/products.interfaces';
 import { ProductsService } from '../../products/products.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import {
   MatButtonToggle,
   MatButtonToggleChange,
@@ -12,15 +16,32 @@ import { SliderInterface } from '../../common-ui/interfaces/slider.interface';
 import { ImageSliderComponent } from '../../common-ui/image-slider/image-slider.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalWindowComponent } from '../../common-ui/modal-window/modal-window.component';
-import { map } from 'rxjs';
+import { BehaviorSubject, combineLatest, map, switchMap, take } from 'rxjs';
+import { ROUTES_PAGES } from '../../data/enums/routers';
+import { CATEGORIES } from '../../data/enums/categories';
+import { SUB_CATEGORIES } from '../../data/enums/subCategories';
+import { VERIFICATION_PURPOSES } from '../../data/enums/verificationPurposes';
+import { CartActionsService } from '../../cart/cart-actions.service';
+import { UserDataService } from '../../data/services/user-data.service';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { AuthService } from '../../auth/auth.service';
+import { CookieService } from 'ngx-cookie-service';
+import { ToastService } from '../../helpers/toast.service';
+import { HeaderComponent } from '../../common-ui/header/header.component';
 
 @Component({
   selector: 'app-detailed-product-page',
   templateUrl: './detailed-product-page.component.html',
   styleUrl: './detailed-product-page.component.css',
-  imports: [NgIf, NgForOf, MatButtonToggleGroup, MatButtonToggle, ImageSliderComponent],
+  imports: [NgIf, NgForOf, MatButtonToggleGroup, MatButtonToggle, ImageSliderComponent, AsyncPipe],
 })
 export class DetailedProductPageComponent implements OnInit {
+  public readonly CATEGORIES = CATEGORIES;
+  public readonly SUB_CATEGORIES = SUB_CATEGORIES;
+
+  public isAddingToCart$ = new BehaviorSubject<boolean>(false);
+  public isDeleteFromCart$ = new BehaviorSubject<boolean>(false);
+
   public pageNum: string | null = '';
   public description = '';
   public products: ProductResponse | undefined;
@@ -36,8 +57,53 @@ export class DetailedProductPageComponent implements OnInit {
   public whichCategory = '';
 
   public productService = inject(ProductsService);
+  public productsValues: ProductVariants[] = [{ id: 0, variant: '', value: '' }];
+  public toggleButtonValue: string | number | undefined;
+  public toggleButtonId: string | undefined;
+  public isProductInCart = false;
+
+  public cartId = '';
+  public cartVersion = 1;
+  public cartProductId = '';
+
+  public userDataService = inject(UserDataService);
+  public cartService = inject(CartActionsService);
+
+  public isInCart = combineLatest([
+    this.cartService.anonymousCart,
+    toObservable(this.userDataService.customerCart$),
+  ]).pipe(
+    map(([anonymousCart, customerCart]) => {
+      if (this.authService.isAuth && customerCart) {
+        const toggleVariant = this.toggleButtonId ? this.toggleButtonId : 1;
+        return (
+          customerCart.lineItems &&
+          customerCart.lineItems.filter(
+            product =>
+              product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+          ).length > 0
+        );
+      }
+      if (!anonymousCart) {
+        return false;
+      }
+
+      const toggleVariant = this.toggleButtonId ? this.toggleButtonId : 1;
+      return (
+        anonymousCart.lineItems &&
+        anonymousCart.lineItems.filter(
+          product =>
+            product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+        ).length > 0
+      );
+    }),
+  );
+
   private router = inject(Router);
   private dialog = inject(MatDialog);
+  private authService = inject(AuthService);
+  private cookieService = inject(CookieService);
+  private toastService = inject(ToastService);
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
@@ -45,14 +111,178 @@ export class DetailedProductPageComponent implements OnInit {
     this.pageNum = this.activatedRoute.snapshot.queryParamMap.get('productId');
     if (this.pageNum !== null) {
       this.renderProduct(this.pageNum);
+      this.isInCart.subscribe(result => (this.isProductInCart = result));
+    }
+  }
+
+  public addProductToCart(cartId: string, cartVersion: number): void {
+    if (this.products) {
+      const variantId = this.getVariantId();
+      const productId = this.products.id;
+
+      this.cartService.addToCart(cartId, cartVersion, productId, variantId, 1).subscribe({
+        next: () => {
+          this.userDataService.refreshCustomerData();
+          this.isAddingToCart$.next(false);
+          this.isProductInCart = true;
+          this.toastService.success('Product Added');
+        },
+        error: () => {
+          this.isAddingToCart$.next(false);
+          this.isProductInCart = false;
+        },
+      });
+    }
+  }
+
+  public getVariantId(): string {
+    if (this.products) {
+      for (let i = 0; i < this.productsValues.length; i++) {
+        if (this.productsValues[i].value === this.toggleButtonValue) {
+          if (this.productsValues[i].variant === VERIFICATION_PURPOSES.masterVariant) {
+            return this.products.masterData.current.masterVariant.id;
+          } else {
+            return this.products.masterData.current.variants[i - 1].id;
+          }
+        }
+      }
+    }
+    return '';
+  }
+
+  public addToCart(event: Event): void {
+    event.stopPropagation();
+
+    this.isAddingToCart$.next(true);
+
+    const email = this.cookieService.get('user_email');
+    const password = this.cookieService.get('user_password');
+    const anonymousId = this.cookieService.get('anonymous_id');
+
+    if (this.products) {
+      const productId = this.products.id;
+      const variantId = this.getVariantId();
+
+      if (this.authService.isAuth) {
+        const cart = this.userDataService.customerData()?.cart;
+        if (cart) {
+          this.addProductToCart(cart.id, cart.version);
+        } else {
+          this.cartService.createCart({ currency: 'USD' }, email, password).subscribe({
+            next: () => {
+              const cart = this.userDataService.customerData()?.cart;
+              if (cart) {
+                this.addProductToCart(cart.id, cart.version);
+              } else {
+                this.toastService.success('Product Added');
+                this.isAddingToCart$.next(false);
+                this.isProductInCart = true;
+              }
+            },
+            error: () => this.isAddingToCart$.next(false),
+          });
+        }
+      } else {
+        this.cartService.anonymousCart
+          .pipe(
+            take(1),
+            switchMap(cart => {
+              if (cart) {
+                return this.cartService.addToCart(cart.id, cart.version, productId, variantId, 1);
+              } else {
+                return this.cartService
+                  .createAnonymousCart({ currency: 'USD', anonymousId })
+                  .pipe(
+                    switchMap(response =>
+                      this.cartService.addToCart(
+                        response.id,
+                        response.version,
+                        productId,
+                        variantId,
+                        1,
+                      ),
+                    ),
+                  );
+              }
+            }),
+          )
+          .subscribe({
+            next: () => {
+              this.userDataService.refreshCustomerData();
+              this.isAddingToCart$.next(false);
+              this.isProductInCart = true;
+              this.toastService.success('Product Added');
+            },
+            error: () => {
+              this.isAddingToCart$.next(false);
+              this.isProductInCart = false;
+            },
+          });
+      }
+    }
+  }
+
+  public removeFromCart(event: Event): void {
+    event.stopPropagation();
+    this.isDeleteFromCart$.next(true);
+    const toggleVariant = this.toggleButtonId ? this.toggleButtonId : 1;
+
+    if (this.authService.isAuth) {
+      const cart = this.userDataService.customerData()?.cart;
+      if (cart) {
+        this.cartId = cart?.id;
+        this.cartVersion = cart?.version;
+        this.cartProductId = cart.lineItems
+          .filter(
+            product =>
+              product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+          )
+          .map(product => product.id)
+          .join('');
+      }
+    } else {
+      this.cartService.anonymousCart.subscribe(response => {
+        if (response) {
+          this.cartId = response.id;
+          this.cartVersion = response.version;
+          this.cartProductId = response.lineItems
+            .filter(
+              product =>
+                product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+            )
+            .map(product => product.id)
+            .join('');
+        }
+      });
+    }
+
+    if (this.products) {
+      if (this.cartId && this.cartVersion != null) {
+        this.cartService
+          .removeFromCart(this.cartId, this.cartVersion, this.cartProductId, 1)
+          .subscribe(response => {
+            HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+            if (!this.authService.isAuth) {
+              this.cartService.anonymousCart$.next(response);
+            } else {
+              this.userDataService.refreshCustomerData();
+            }
+            this.isDeleteFromCart$.next(false);
+            this.toastService.error('Product Removed');
+          });
+      }
     }
   }
 
   public changeInToggleGroup(event: MatButtonToggleChange): void {
-    /* eslint-disable */
-    const toggleButtonValue = event.value;
-    this.toggleSwitch(toggleButtonValue);
-    /* eslint-enable */
+    if (typeof event.value === 'string') {
+      this.toggleButtonValue = event.value;
+      if (this.toggleButtonValue !== undefined) {
+        this.toggleSwitch(this.toggleButtonValue);
+      }
+      this.toggleButtonId = event.source.id;
+      this.isInCart.subscribe(result => (this.isProductInCart = result));
+    }
   }
 
   public renderProduct(id: string): void {
@@ -70,7 +300,7 @@ export class DetailedProductPageComponent implements OnInit {
       .subscribe();
   }
 
-  public toggleSwitch(toggleButtonValue?: string): void {
+  public toggleSwitch(toggleButtonValue?: string | number): void {
     if (this.masterVariant && this.variants && this.products) {
       /* eslint-disable */
       if (
@@ -100,6 +330,47 @@ export class DetailedProductPageComponent implements OnInit {
 
   public getParameters(): void {
     if (this.masterVariant && this.variants && this.products) {
+      if (this.masterVariant.attributes[0].name === VERIFICATION_PURPOSES.nameValue) {
+        this.productsValues.push({
+          id: 1,
+          variant: 'masterVariant',
+          /* eslint-disable */
+          value: String(this.masterVariant.attributes[0].value),
+          /* eslint-enable */
+        });
+        if (this.variants.length > 0) {
+          for (let i = 0; i < this.variants.length; i++) {
+            this.productsValues.push({
+              id: i + 2,
+              variant: i,
+              /* eslint-disable */
+              value: String(this.variants[i].attributes[0].value),
+              /* eslint-enable */
+            });
+          }
+        }
+      } else {
+        this.productsValues.push({
+          id: 1,
+          variant: 'masterVariant',
+          /* eslint-disable */
+          value: String(this.masterVariant.attributes[4].value),
+          /* eslint-enable */
+        });
+        if (this.variants.length > 0) {
+          for (let i = 0; i < this.variants.length; i++) {
+            this.productsValues.push({
+              id: i + 2,
+              variant: i,
+              /* eslint-disable */
+              value: String(this.variants[i].attributes[4].value),
+              /* eslint-enable */
+            });
+          }
+        }
+      }
+      this.productsValues.shift();
+      this.toggleButtonValue = this.productsValues[0].value;
       this.description = this.products.masterData.current.description['en-US'];
       this.description = this.shortDescription();
       this.description += '...';
@@ -109,14 +380,14 @@ export class DetailedProductPageComponent implements OnInit {
         this.masterVariant.attributes.length === 0
       ) {
         if (this.products.masterData.current.name['en-US'] === 'French press') {
-          this.whichCategory = 'french';
+          this.whichCategory = CATEGORIES.FRENCH;
         } else if (this.products.masterData.current.name['en-US'] === 'Filters for aeropress') {
-          this.whichCategory = 'aeropress';
+          this.whichCategory = CATEGORIES.AERO_PRESS;
         } else if (this.products.masterData.current.name['en-US'] === 'Coffee grinder') {
-          this.whichCategory = 'grinder';
+          this.whichCategory = CATEGORIES.GRINDER;
         }
       } else {
-        this.whichCategory = 'coffee';
+        this.whichCategory = CATEGORIES.COFFEE;
       }
       // Картинки
       this.srcImage = [];
@@ -140,7 +411,6 @@ export class DetailedProductPageComponent implements OnInit {
       }
 
       if (this.countAttributes > 1) {
-        // console.log('masters', this.masterVariant.attributes);
         // Атрибуты продуктов
         this.attributes = [{ name: '', degree: '' }];
         this.attributes.shift();
@@ -226,29 +496,29 @@ export class DetailedProductPageComponent implements OnInit {
     }
   }
 
-  public async goCatalog(): Promise<void> {
-    await this.router.navigate(['catalog']);
+  public goCatalog(): void {
+    void this.router.navigate([ROUTES_PAGES.CATALOG]);
   }
 
   public goCategory(category: string): void {
-    void this.router.navigate(['catalog'], {
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
       queryParams: { categories: category },
     });
   }
   public goType(type: string): void {
-    void this.router.navigate(['catalog'], {
-      queryParams: { categories: 'Coffee', type: type },
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
+      queryParams: { categories: CATEGORIES.COFFEE, type: type },
     });
   }
 
   public goAccessories(): void {
-    void this.router.navigate(['catalog'], {
-      queryParams: { categories: 'Accessories' },
+    void this.router.navigate([ROUTES_PAGES.CATALOG], {
+      queryParams: { categories: CATEGORIES.ACCESSORIES },
     });
   }
 
-  public async goHome(): Promise<void> {
-    await this.router.navigate(['']);
+  public goHome(): void {
+    void this.router.navigate(['']);
   }
 
   public openDialog(): void {
