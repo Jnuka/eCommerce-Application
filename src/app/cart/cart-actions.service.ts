@@ -2,7 +2,13 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, tap, throwError, catchError, map } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { MyCartDraft, CartResponse, LineItem, Action } from './cart-actions.interfaces';
+import {
+  MyCartDraft,
+  CartResponse,
+  LineItem,
+  Action,
+  DiscountCode,
+} from './cart-actions.interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserDataService } from '../data/services/user-data.service';
 import { CtpApiService } from '../data/services/ctp-api.service';
@@ -279,6 +285,89 @@ export class CartActionsService {
       }),
       tap(response => {
         HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+      }),
+    );
+  }
+
+  public addDiscountCode(cartId: string, version: number, code: string): Observable<CartResponse> {
+    return this.ctpApiService.getAccessToken().pipe(
+      switchMap((token: string | null) => {
+        if (!token) throw new Error('No access token available');
+
+        const body: UpdateCart = {
+          version,
+          actions: [
+            {
+              action: 'addDiscountCode',
+              code: code,
+            },
+          ],
+        };
+
+        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
+
+        return this.http.post<CartResponse>(url, body, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }),
+    );
+  }
+
+  public getPromoCodeByKey(promo: string): Observable<DiscountCode> {
+    const token = this.authService.getCustomerToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.get<DiscountCode>(
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/discount-codes/key=${promo}`,
+      { headers },
+    );
+  }
+
+  public getPromoCodeById(idCode: string): Observable<DiscountCode> {
+    const token = this.authService.getCustomerToken();
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`,
+    });
+    return this.http.get<DiscountCode>(
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/discount-codes/${idCode}`,
+      { headers },
+    );
+  }
+
+  public removeDiscountCode(
+    cartId: string,
+    version: number,
+    code: string,
+  ): Observable<CartResponse> {
+    return this.ctpApiService.getAccessToken().pipe(
+      switchMap((token: string | null) => {
+        if (!token) throw new Error('No access token available');
+
+        const body: UpdateCart = {
+          version,
+          actions: [
+            {
+              action: 'removeDiscountCode',
+              discountCode: {
+                id: code,
+                typeId: 'discount-code',
+              },
+            },
+          ],
+        };
+
+        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
+
+        return this.http.post<CartResponse>(url, body, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
       }),
     );
   }
