@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal, WritableSignal } from '@angular/core';
+import { Component, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { CartActionsService } from '../../cart/cart-actions.service';
 import { LineItem } from '../../cart/cart-actions.interfaces';
 import { CartItemComponent } from './cart-item/cart-item.component';
@@ -9,7 +9,12 @@ import { UserDataService } from '../../data/services/user-data.service';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormField, MatInput, MatLabel } from '@angular/material/input';
 import { ToastService } from '../../helpers/toast.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmModalWindowComponent } from '../../common-ui/confirm-modal-window/confirm-modal-window.component';
 
+@Injectable({
+  providedIn: 'root',
+})
 @Component({
   selector: 'app-cart',
   imports: [
@@ -24,7 +29,7 @@ import { ToastService } from '../../helpers/toast.service';
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css',
 })
-export class CartComponent implements OnInit {
+export class CartComponent {
   public static cartItems = signal<LineItem[]>([]);
   public static total = 0;
   public isDiscount = false;
@@ -37,6 +42,14 @@ export class CartComponent implements OnInit {
   private userDataService = inject(UserDataService);
   private router = inject(Router);
   private toastService = inject(ToastService);
+  private dialog = inject(MatDialog);
+
+  constructor() {
+    this.cartService.getCart().subscribe(response => {
+      CartComponent.cartItems.set(response.lineItems);
+      CartComponent.total = response.totalPrice.centAmount;
+    });
+  }
 
   // eslint-disable-next-line class-methods-use-this
   public get totalPrice(): number {
@@ -148,5 +161,8 @@ export class CartComponent implements OnInit {
         this.toastService.error(`Promo code ${this.promoCode.value} not found`);
       },
     });
+
+  public openDialog(): void {
+    this.dialog.open(ConfirmModalWindowComponent);
   }
 }

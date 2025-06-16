@@ -131,6 +131,32 @@ export class CartActionsService {
       );
   }
 
+  public loadAnonymousCart(): void {
+    const token = this.cookieService.get('anonymous_token');
+    if (!token) return;
+
+    this.http
+      .get<CartResponse>(
+        `${environment.ctp_api_url}/${environment.ctp_project_key}/me/active-cart`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        },
+      )
+      .subscribe({
+        next: cart => {
+          this.anonymousCart$.next(cart);
+          this.cartId$.next(cart.id);
+        },
+        error: (error: HttpErrorResponse) => {
+          if (error.status !== 404) {
+            console.log('Load anonymous cart error', error); // eslint-disable-line no-console
+          }
+        },
+      });
+  }
+
   public getCartById(cartId: string, token: string): Observable<CartResponse> {
     const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
     return this.http.get<CartResponse>(url, {
