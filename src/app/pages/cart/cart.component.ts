@@ -49,6 +49,17 @@ export class CartComponent {
       CartComponent.cartItems.set(response.lineItems);
       CartComponent.total = response.totalPrice.centAmount;
     });
+    const cart = this.userDataService.customerData()?.cart;
+    if (cart && cart.discountCodes) {
+      if (cart.discountCodes.length !== 0) {
+        this.isDiscount = true;
+        this.cartService
+          .getPromoCodeById(cart.discountCodes[0].discountCode.id)
+          .subscribe(response => {
+            this.promoCode.setValue(response.code);
+          });
+      }
+    }
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -72,24 +83,6 @@ export class CartComponent {
     const code = this.promoCode.value;
     if (code) {
       this.removePromoCode(code);
-    }
-  }
-
-  public ngOnInit(): void {
-    this.cartService.getCart().subscribe(response => {
-      CartComponent.cartItems.set(response.lineItems);
-      CartComponent.total = response.totalPrice.centAmount;
-    });
-    const cart = this.userDataService.customerData()?.cart;
-    if (cart && cart.discountCodes) {
-      if (cart.discountCodes.length !== 0) {
-        this.isDiscount = true;
-        this.cartService
-          .getPromoCodeById(cart.discountCodes[0].discountCode.id)
-          .subscribe(response => {
-            this.promoCode.setValue(response.code);
-          });
-      }
     }
   }
 
@@ -161,6 +154,7 @@ export class CartComponent {
         this.toastService.error(`Promo code ${this.promoCode.value} not found`);
       },
     });
+  }
 
   public openDialog(): void {
     this.dialog.open(ConfirmModalWindowComponent);

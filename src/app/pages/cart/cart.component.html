@@ -52,7 +52,7 @@
     </div>
     <div class="flex justify-between gap-[20px] items-center max-[600px]:flex-col-reverse">
       <button
-        (click)="clearCart()"
+        (click)="openDialog()"
         class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[200px] h-[44px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)]"
       >
         Clear Shopping Cart
@@ -83,11 +83,5 @@
         </div>
       </div>
     </div>
-    <button
-      (click)="openDialog()"
-      class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[200px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] my-0 m-auto"
-    >
-      Clear Shopping Cart
-    </button>
   }
 </div>
