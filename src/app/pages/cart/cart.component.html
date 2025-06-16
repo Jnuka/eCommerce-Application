@@ -40,7 +40,7 @@
       <span>Total price: {{ totalPrice / 100 | currency: 'USD' : 'symbol' : '1.2' }}</span>
     </div>
     <button
-      (click)="clearCart()"
+      (click)="openDialog()"
       class="text-[var(--button-text-color)] p-2.5 rounded-[5px] w-[200px] bg-[var(--button-color)] cursor-pointer transition-all duration-[0.3s] ease-[ease-out] hover:bg-[var(--hover-button-color)] my-0 m-auto"
     >
       Clear Shopping Cart
