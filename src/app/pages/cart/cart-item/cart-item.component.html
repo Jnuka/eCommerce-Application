@@ -22,9 +22,14 @@
   min="1"
   max=""
   step="1"
-  autocomplete="off"
-  (input)="changeQuantity()"
+  (change)="changeQuantity()"
 />
 <div class="content-center">
-  {{ item().totalPrice.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
+  @if (item().totalPrice.centAmount === item().variant.prices[0].value.centAmount) {
+    {{ item().totalPrice.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
+  } @else {
+    <span class="text-[red] font-bold">
+      {{ item().totalPrice.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
+    </span>
+  }
 </div>
