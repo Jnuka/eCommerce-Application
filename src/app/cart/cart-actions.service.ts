@@ -161,9 +161,21 @@ export class CartActionsService {
     });
   }
 
-  public getCart(): Observable<CartResponse> {
+  public getAnonymousCart(): Observable<CartResponse> {
+    const token = this.cookieService.get('anonymous_token');
+
+    return this.http.get<CartResponse>(
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/me/active-cart`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      },
+    );
+  }
+
+  public getCart(userID: string): Observable<CartResponse> {
     const token = this.authService.getCustomerToken();
-    const userID = this.userDataService._customerData()?.customer.id;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
     });

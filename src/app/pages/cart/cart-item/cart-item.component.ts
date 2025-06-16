@@ -8,6 +8,7 @@ import { CartComponent } from '../cart.component';
 import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ROUTES_PAGES } from '../../../data/enums/routers';
+import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-cart-item',
@@ -18,43 +19,74 @@ import { ROUTES_PAGES } from '../../../data/enums/routers';
 export class CartItemComponent implements OnInit {
   public item = input.required<LineItem>();
   public quantityInput = new FormControl(1);
+  public cartId = '';
+  public cartVersion = 1;
   private userDataService = inject(UserDataService);
   private cartService = inject(CartActionsService);
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   public ngOnInit(): void {
     this.quantityInput.setValue(this.item().quantity);
   }
 
   public changeQuantity(): void {
-    const cart = this.userDataService.customerData()?.cart;
-    const cartId = cart?.id;
-    const version = cart?.version;
+    if (this.authService.isAuth) {
+      const cart = this.userDataService.customerData()?.cart;
+      if (cart) {
+        this.cartId = cart?.id;
+        this.cartVersion = cart?.version;
+      }
+    } else {
+      this.cartService.anonymousCart.subscribe(response => {
+        if (response) {
+          this.cartId = response.id;
+          this.cartVersion = response.version;
+          this.userDataService.refreshCustomerData();
+        }
+      });
+    }
     const lineItemId = this.item().id;
     const quantity = this.quantityInput.value || 1;
 
-    if (cartId && version != null) {
-      this.cartService.changeQuantity(cartId, version, lineItemId, quantity).subscribe(response => {
-        CartComponent.cartItems.set(response.lineItems);
-        CartComponent.total = response.totalPrice.centAmount;
-        this.userDataService.refreshCustomerData();
-      });
+    if (this.cartId && this.cartVersion != null) {
+      this.cartService
+        .changeQuantity(this.cartId, this.cartVersion, lineItemId, quantity)
+        .subscribe(response => {
+          CartComponent.cartItems.set(response.lineItems);
+          CartComponent.total = response.totalPrice.centAmount;
+          this.userDataService.refreshCustomerData();
+        });
     }
   }
 
   public removeFromCart(): void {
-    const cart = this.userDataService.customerData()?.cart;
-    const cartId = cart?.id;
-    const version = cart?.version;
+    if (this.authService.isAuth) {
+      const cart = this.userDataService.customerData()?.cart;
+      if (cart) {
+        this.cartId = cart?.id;
+        this.cartVersion = cart?.version;
+      }
+    } else {
+      this.cartService.anonymousCart.subscribe(response => {
+        if (response) {
+          this.cartId = response.id;
+          this.cartVersion = response.version;
+          this.userDataService.refreshCustomerData();
+        }
+      });
+    }
     const lineItemId = this.item().id;
     const quantity = this.quantityInput.value || 1;
 
-    if (cartId && version != null) {
-      this.cartService.removeFromCart(cartId, version, lineItemId, quantity).subscribe(response => {
-        CartComponent.cartItems.set(response.lineItems);
-        CartComponent.total = response.totalPrice.centAmount;
-        this.userDataService.refreshCustomerData();
-      });
+    if (this.cartId && this.cartVersion != null) {
+      this.cartService
+        .removeFromCart(this.cartId, this.cartVersion, lineItemId, quantity)
+        .subscribe(response => {
+          CartComponent.cartItems.set(response.lineItems);
+          CartComponent.total = response.totalPrice.centAmount;
+          this.userDataService.refreshCustomerData();
+        });
     }
   }
 
