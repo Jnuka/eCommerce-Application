@@ -146,20 +146,36 @@ export class CartComponent {
   }
 
   public addPromoCode(promo: string): void {
-    const cart = this.userDataService.customerData()?.cart;
-    const cartId = cart?.id;
+    if (this.authService.isAuth) {
+      const cart = this.userDataService.customerData()?.cart;
+      if (cart) {
+        this.cartId = cart?.id;
+        this.cartVersion = cart?.version;
+      }
+    } else {
+      this.cartService.anonymousCart.subscribe(response => {
+        if (response) {
+          this.cartId = response.id;
+          this.cartVersion = response.version;
+        }
+      });
+    }
 
-    const version = cart?.version;
     this.cartService.getPromoCodeByKey(promo).subscribe({
       next: response => {
         this.codePromoCode = response.code;
-        if (cartId && version != null) {
+        if (this.cartId && this.cartVersion != null) {
           this.cartService
-            .addDiscountCode(cartId, version, this.codePromoCode)
+            .addDiscountCode(this.cartId, this.cartVersion, this.codePromoCode)
             .subscribe(response => {
               CartComponent.cartItems.set(response.lineItems);
               CartComponent.total = response.totalPrice.centAmount;
-              this.userDataService.refreshCustomerData();
+              if (!this.authService.isAuth) {
+                this.cartService.anonymousCart$.next(response);
+              } else {
+                HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+                this.userDataService.refreshCustomerData();
+              }
               this.isDiscount = true;
             });
         }
@@ -171,20 +187,35 @@ export class CartComponent {
   }
 
   public removePromoCode(promo: string): void {
-    const cart = this.userDataService.customerData()?.cart;
-    const cartId = cart?.id;
-
-    const version = cart?.version;
+    if (this.authService.isAuth) {
+      const cart = this.userDataService.customerData()?.cart;
+      if (cart) {
+        this.cartId = cart?.id;
+        this.cartVersion = cart?.version;
+      }
+    } else {
+      this.cartService.anonymousCart.subscribe(response => {
+        if (response) {
+          this.cartId = response.id;
+          this.cartVersion = response.version;
+        }
+      });
+    }
     this.cartService.getPromoCodeByKey(promo).subscribe({
       next: response => {
         this.idPromoCode = response.id;
-        if (cartId && version != null) {
+        if (this.cartId && this.cartVersion != null) {
           this.cartService
-            .removeDiscountCode(cartId, version, this.idPromoCode)
+            .removeDiscountCode(this.cartId, this.cartVersion, this.idPromoCode)
             .subscribe(response => {
               CartComponent.cartItems.set(response.lineItems);
               CartComponent.total = response.totalPrice.centAmount;
-              this.userDataService.refreshCustomerData();
+              if (!this.authService.isAuth) {
+                this.cartService.anonymousCart$.next(response);
+              } else {
+                HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+                this.userDataService.refreshCustomerData();
+              }
               this.isDiscount = false;
               this.promoCode.setValue('');
             });
