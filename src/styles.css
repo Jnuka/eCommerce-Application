@@ -7,6 +7,7 @@
   --hover-button-color: #795f53;
   --text-color: #6e594bff;
   --text-disabled-color: #b09e94;
+  --hover-text-color: #DFC39DFF;
 
   --error-color: #ff3d00;
 
@@ -77,6 +78,10 @@
   font-optical-sizing: auto;
   font-weight: 400;
   font-style: normal;
+}
+
+.name-website {
+  font-family: 'Dancing Script', cursive;
 }
 
 .body {

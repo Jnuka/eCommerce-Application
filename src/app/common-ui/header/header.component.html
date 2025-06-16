@@ -8,23 +8,38 @@
       </button>
     </div>
     @if (isAuthAcc()) {
-      <div class="hidden min-[581px]:flex absolute left-1/2 -translate-x-1/2">
+      <div class="hidden min-[690px]:flex absolute left-1/2 -translate-x-1/2 gap-[20px]">
         <button
           (click)="goCatalog()"
           [disabled]="this.router.url.includes('/catalog')"
-          class="text-white text-[25px] cursor-pointer p-3 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[#DFC39DFF] hover:underline disabled:pointer-events-none"
+          class="text-white text-[25px] cursor-pointer rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[var(--hover-text-color)] disabled:pointer-events-none disabled:text-[var(--hover-text-color)] relative before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
         >
           <span class="title-h1">Catalog</span>
+        </button>
+        <button
+          (click)="goAbout()"
+          [disabled]="this.router.url.includes('/about')"
+          class="text-white text-[25px] cursor-pointer rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[var(--hover-text-color)] disabled:pointer-events-none disabled:text-[var(--hover-text-color)] relative before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+        >
+          <span class="title-h1">About Us</span>
         </button>
       </div>
       <div class="flex justify-end items-center gap-2">
         <button
           (click)="goCatalog()"
           [disabled]="this.router.url.includes('/catalog')"
-          class="block min-[581px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:pointer-events-none"
+          class="block min-[690px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:pointer-events-none"
           title="Catalog"
         >
           <img class="w-5" src="/svg/catalog.svg" alt="catalog" />
+        </button>
+        <button
+          (click)="goAbout()"
+          [disabled]="this.router.url.includes('/about')"
+          class="block min-[690px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:pointer-events-none"
+          title="AboutUs"
+        >
+          <img class="w-5" src="/svg/about.svg" alt="aboutUs" />
         </button>
         <button
           (click)="logout()"
@@ -32,12 +47,6 @@
           title="Log Out"
         >
           <img class="w-5" src="/svg/logOut.svg" alt="logOut" />
-        </button>
-        <button
-          (click)="goAbout()"
-          class="bg-[#6B3C21] text-white cursor-pointer p-3.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
-        >
-          <img class="w-5" src="/svg/about.svg" alt="aboutUs" />
         </button>
         <button
           (click)="goProfile()"
@@ -59,25 +68,40 @@
         </button>
       </div>
     } @else {
-      <div class="hidden min-[581px]:flex absolute left-1/2 -translate-x-1/2">
+      <div class="hidden min-[690px]:flex absolute left-1/2 -translate-x-1/2 gap-[20px]">
         <button
           (click)="goCatalog()"
           [disabled]="this.router.url.includes('/catalog')"
-          class="text-white text-[25px] cursor-pointer p-3 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[#DFC39DFF] hover:underline disabled:pointer-events-none"
+          class="text-white text-[25px] cursor-pointer rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[var(--hover-text-color)] disabled:pointer-events-none disabled:text-[var(--hover-text-color)] relative before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
         >
           <span class="title-h1">Catalog</span>
+        </button>
+        <button
+          (click)="goAbout()"
+          [disabled]="this.router.url.includes('/about')"
+          class="text-white text-[25px] cursor-pointer rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:text-[var(--hover-text-color)] disabled:pointer-events-none disabled:text-[var(--hover-text-color)] relative before:content-[''] before:absolute before:opacity-0 before:bottom-[-5px] before:w-0 before:border before:transition-all before:duration-[0.3s] before:ease-[ease-in-out] before:border-solid before:border-[var(--text-color)] before:left-0 hover:before:w-full hover:before:opacity-[100%]"
+        >
+          <span class="title-h1">About Us</span>
         </button>
       </div>
       <div class="flex justify-end items-center gap-2">
         <button
           (click)="goCatalog()"
           [disabled]="this.router.url.includes('/catalog')"
-          class="block min-[581px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:pointer-events-none"
+          class="block min-[690px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:pointer-events-none"
           title="Catalog"
         >
           <img class="w-5" src="/svg/catalog.svg" alt="catalog" />
         </button>
 
+        <button
+          (click)="goAbout()"
+          [disabled]="this.router.url.includes('/about')"
+          class="block min-[690px]:hidden bg-[#6B3C21] text-white cursor-pointer p-3.5 min-w-[44px] min-h-[44px] rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727] disabled:pointer-events-none"
+          title="AboutUs"
+        >
+          <img class="w-5" src="/svg/about.svg" alt="aboutUs" />
+        </button>
         <button
           (click)="goRegistration()"
           class="bg-[#6B3C21] text-white cursor-pointer p-3.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
@@ -91,12 +115,6 @@
           title="Log In"
         >
           <img class="w-5" src="/svg/logIn.svg" alt="logIn" />
-        </button>
-        <button
-          (click)="goAbout()"
-          class="bg-[#6B3C21] text-white cursor-pointer p-3.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
-        >
-          <img class="w-5" src="/svg/about.svg" alt="aboutUs" />
         </button>
       </div>
     }
