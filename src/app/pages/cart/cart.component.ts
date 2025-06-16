@@ -55,4 +55,19 @@ export class CartComponent implements OnInit {
       });
     }
   }
+
+  public addPromoCode(): void {
+    const cart = this.userDataService.customerData()?.cart;
+    const cartId = cart?.id;
+    const version = cart?.version;
+    const code = 'winnerCode';
+
+    if (cartId && version != null) {
+      this.cartService.addDiscontCode(cartId, version, code).subscribe(response => {
+        CartComponent.cartItems.set(response.lineItems);
+        CartComponent.total = response.totalPrice.centAmount;
+        this.userDataService.refreshCustomerData();
+      });
+    }
+  }
 }

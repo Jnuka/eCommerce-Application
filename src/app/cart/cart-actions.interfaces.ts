@@ -39,7 +39,8 @@ export interface UpdateCart {
 }
 
 export interface Action {
-  action: 'addLineItem' | 'removeLineItem' | 'changeLineItemQuantity';
+  action: 'addLineItem' | 'removeLineItem' | 'changeLineItemQuantity' | 'addDiscountCode';
+  code?: string;
   productId?: string;
   variantId?: string;
   lineItemId?: string;

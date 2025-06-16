@@ -256,4 +256,31 @@ export class CartActionsService {
       }),
     );
   }
+
+  public addDiscontCode(cartId: string, version: number, code: string): Observable<CartResponse> {
+    return this.ctpApiService.getAccessToken().pipe(
+      switchMap((token: string | null) => {
+        if (!token) throw new Error('No access token available');
+
+        const body: UpdateCart = {
+          version,
+          actions: [
+            {
+              action: 'addDiscountCode',
+              code: code,
+            },
+          ],
+        };
+
+        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
+
+        return this.http.post<CartResponse>(url, body, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }),
+    );
+  }
 }
