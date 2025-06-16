@@ -116,6 +116,15 @@
         >
           <img class="w-5" src="/svg/logIn.svg" alt="logIn" />
         </button>
+        <button
+          (click)="goCart()"
+          class="flex bg-[#6B3C21] text-white cursor-pointer p-3.5 rounded-[3px] transition-all duration-[0.3s] ease-[ease-out] hover:bg-[#7e4727]"
+        >
+          <img class="w-5" src="/svg/cart80.svg" alt="cart" />
+          @if (quantityIndicator > 0) {
+            <span>({{ quantityIndicator }})</span>
+          }
+        </button>
       </div>
     }
   </div>

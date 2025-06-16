@@ -29,10 +29,6 @@ export class CartActionsService {
   private ctpApiService = inject(CtpApiService);
   private cookieService = inject(CookieService);
 
-  public getCartId(): Observable<string | null> {
-    return this.cartId$.asObservable();
-  }
-
   public createCart(cartDraft: MyCartDraft, email: string, password: string): Observable<void> {
     const token = this.authService.getCustomerToken();
 
@@ -89,11 +85,11 @@ export class CartActionsService {
           .pipe(
             switchMap(() => this.getCartById(cartId, token)),
             tap((updatedCart: CartResponse) => {
+              HeaderComponent.quantityIndicator = updatedCart.totalLineItemQuantity;
               const isAnonymous = !updatedCart.customerId;
               if (isAnonymous) {
                 this.anonymousCart$.next(updatedCart);
               } else {
-                HeaderComponent.quantityIndicator = updatedCart.totalLineItemQuantity;
                 this.userDataService.refreshCustomerData();
               }
             }),
@@ -148,6 +144,7 @@ export class CartActionsService {
         next: cart => {
           this.anonymousCart$.next(cart);
           this.cartId$.next(cart.id);
+          HeaderComponent.quantityIndicator = cart.totalLineItemQuantity;
         },
         error: (error: HttpErrorResponse) => {
           if (error.status !== 404) {
@@ -167,9 +164,21 @@ export class CartActionsService {
     });
   }
 
-  public getCart(): Observable<CartResponse> {
+  public getAnonymousCart(): Observable<CartResponse> {
+    const token = this.cookieService.get('anonymous_token');
+
+    return this.http.get<CartResponse>(
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/me/active-cart`,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      },
+    );
+  }
+
+  public getCart(userID: string): Observable<CartResponse> {
     const token = this.authService.getCustomerToken();
-    const userID = this.userDataService._customerData()?.customer.id;
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
     });

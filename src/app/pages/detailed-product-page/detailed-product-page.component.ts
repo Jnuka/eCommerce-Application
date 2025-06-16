@@ -26,8 +26,8 @@ import { UserDataService } from '../../data/services/user-data.service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
-import { CartComponent } from '../cart/cart.component';
 import { ToastService } from '../../helpers/toast.service';
+import { HeaderComponent } from '../../common-ui/header/header.component';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -61,6 +61,10 @@ export class DetailedProductPageComponent implements OnInit {
   public toggleButtonValue: string | number | undefined;
   public toggleButtonId: string | undefined;
   public isProductInCart = false;
+
+  public cartId = '';
+  public cartVersion = 1;
+  public cartProductId = '';
 
   public userDataService = inject(UserDataService);
   public cartService = inject(CartActionsService);
@@ -223,27 +227,49 @@ export class DetailedProductPageComponent implements OnInit {
     this.isDeleteFromCart$.next(true);
     const toggleVariant = this.toggleButtonId ? this.toggleButtonId : 1;
 
-    const cart = this.userDataService.customerData()?.cart;
-    if (cart) {
-      const cartId = cart.id;
-      const version = cart.version;
-      const cartProductId = cart.lineItems
-        .filter(
-          product =>
-            product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
-        )
-        .map(product => product.id)
-        .join('');
-      if (this.products) {
-        if (cartId && version != null) {
-          this.cartService.removeFromCart(cartId, version, cartProductId, 1).subscribe(response => {
-            CartComponent.cartItems.set(response.lineItems);
-            CartComponent.total = response.totalPrice.centAmount;
-            this.userDataService.refreshCustomerData();
+    if (this.authService.isAuth) {
+      const cart = this.userDataService.customerData()?.cart;
+      if (cart) {
+        this.cartId = cart?.id;
+        this.cartVersion = cart?.version;
+        this.cartProductId = cart.lineItems
+          .filter(
+            product =>
+              product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+          )
+          .map(product => product.id)
+          .join('');
+      }
+    } else {
+      this.cartService.anonymousCart.subscribe(response => {
+        if (response) {
+          this.cartId = response.id;
+          this.cartVersion = response.version;
+          this.cartProductId = response.lineItems
+            .filter(
+              product =>
+                product.productId === this.pageNum && product.variant.id === Number(toggleVariant),
+            )
+            .map(product => product.id)
+            .join('');
+        }
+      });
+    }
+
+    if (this.products) {
+      if (this.cartId && this.cartVersion != null) {
+        this.cartService
+          .removeFromCart(this.cartId, this.cartVersion, this.cartProductId, 1)
+          .subscribe(response => {
+            HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+            if (!this.authService.isAuth) {
+              this.cartService.anonymousCart$.next(response);
+            } else {
+              this.userDataService.refreshCustomerData();
+            }
             this.isDeleteFromCart$.next(false);
             this.toastService.error('Product Removed');
           });
-        }
       }
     }
   }
