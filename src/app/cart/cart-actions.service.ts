@@ -23,10 +23,6 @@ export class CartActionsService {
   private ctpApiService = inject(CtpApiService);
   private cookieService = inject(CookieService);
 
-  public getCartId(): Observable<string | null> {
-    return this.cartId$.asObservable();
-  }
-
   public createCart(cartDraft: MyCartDraft, email: string, password: string): Observable<void> {
     const token = this.authService.getCustomerToken();
 
@@ -83,11 +79,11 @@ export class CartActionsService {
           .pipe(
             switchMap(() => this.getCartById(cartId, token)),
             tap((updatedCart: CartResponse) => {
+              HeaderComponent.quantityIndicator = updatedCart.totalLineItemQuantity;
               const isAnonymous = !updatedCart.customerId;
               if (isAnonymous) {
                 this.anonymousCart$.next(updatedCart);
               } else {
-                HeaderComponent.quantityIndicator = updatedCart.totalLineItemQuantity;
                 this.userDataService.refreshCustomerData();
               }
             }),
@@ -142,6 +138,7 @@ export class CartActionsService {
         next: cart => {
           this.anonymousCart$.next(cart);
           this.cartId$.next(cart.id);
+          HeaderComponent.quantityIndicator = cart.totalLineItemQuantity;
         },
         error: (error: HttpErrorResponse) => {
           if (error.status !== 404) {

@@ -26,8 +26,8 @@ import { UserDataService } from '../../data/services/user-data.service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
-import { CartComponent } from '../cart/cart.component';
 import { ToastService } from '../../helpers/toast.service';
+import { HeaderComponent } from '../../common-ui/header/header.component';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -237,9 +237,12 @@ export class DetailedProductPageComponent implements OnInit {
       if (this.products) {
         if (cartId && version != null) {
           this.cartService.removeFromCart(cartId, version, cartProductId, 1).subscribe(response => {
-            CartComponent.cartItems.set(response.lineItems);
-            CartComponent.total = response.totalPrice.centAmount;
-            this.userDataService.refreshCustomerData();
+            HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+            if (!this.authService.isAuth) {
+              this.cartService.anonymousCart$.next(response);
+            } else {
+              this.userDataService.refreshCustomerData();
+            }
             this.isDeleteFromCart$.next(false);
             this.toastService.error('Product Removed');
           });
