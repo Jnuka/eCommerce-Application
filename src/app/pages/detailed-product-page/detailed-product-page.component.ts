@@ -115,21 +115,27 @@ export class DetailedProductPageComponent implements OnInit {
     }
   }
 
-  public addProductToCart(cartId: string, cartVersion: number): void {
+  public addProductToCart(): void {
     if (this.products) {
       const variantId: string | number = this.getVariantId();
       const productId = this.products.id;
 
-      this.cartService.addToCart(cartId, cartVersion, productId, variantId, 1).subscribe({
+      const actions: Action[] = [
+        {
+          action: 'addLineItem',
+          productId,
+          variantId: Number(variantId),
+          quantity: 1,
+        },
+      ];
+
+      this.cartService.UpdateCart(actions).subscribe({
         next: () => {
           this.userDataService.refreshCustomerData();
           this.isAddingToCart$.next(false);
-          this.isProductInCart = true;
-          this.toastService.success('Product Added');
         },
         error: () => {
           this.isAddingToCart$.next(false);
-          this.isProductInCart = false;
         },
       });
     }
@@ -162,16 +168,25 @@ export class DetailedProductPageComponent implements OnInit {
       const productId = this.products.id;
       const variantId = this.getVariantId();
 
+      const actions: Action[] = [
+        {
+          action: 'addLineItem',
+          productId,
+          variantId: Number(variantId),
+          quantity: 1,
+        },
+      ];
+
       if (this.authService.isAuth) {
         const cart = this.userDataService.customerData()?.cart;
         if (cart) {
-          this.addProductToCart(cart.id, cart.version);
+          this.addProductToCart();
         } else {
           this.cartService.createCart({ currency: 'USD' }, email, password).subscribe({
             next: () => {
               const cart = this.userDataService.customerData()?.cart;
               if (cart) {
-                this.addProductToCart(cart.id, cart.version);
+                this.addProductToCart();
               } else {
                 this.toastService.success('Product Added');
                 this.isAddingToCart$.next(false);
@@ -187,21 +202,11 @@ export class DetailedProductPageComponent implements OnInit {
             take(1),
             switchMap(cart => {
               if (cart) {
-                return this.cartService.addToCart(cart.id, cart.version, productId, variantId, 1);
+                return this.cartService.UpdateCart(actions);
               } else {
                 return this.cartService
                   .createAnonymousCart({ currency: 'USD', anonymousId })
-                  .pipe(
-                    switchMap(response =>
-                      this.cartService.addToCart(
-                        response.id,
-                        response.version,
-                        productId,
-                        variantId,
-                        1,
-                      ),
-                    ),
-                  );
+                  .pipe(switchMap(() => this.cartService.UpdateCart(actions)));
               }
             }),
           )

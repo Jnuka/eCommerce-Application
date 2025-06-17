@@ -1,6 +1,5 @@
 import { Component, inject, input, OnInit } from '@angular/core';
 import { Action, LineItem } from '../../../cart/cart-actions.interfaces';
-import { UserDataService } from '../../../data/services/user-data.service';
 import { CartActionsService } from '../../../cart/cart-actions.service';
 import { MatInputModule } from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -8,7 +7,6 @@ import { CartComponent } from '../cart.component';
 import { CurrencyPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ROUTES_PAGES } from '../../../data/enums/routers';
-import { AuthService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-cart-item',
@@ -19,12 +17,8 @@ import { AuthService } from '../../../auth/auth.service';
 export class CartItemComponent implements OnInit {
   public item = input.required<LineItem>();
   public quantityInput = new FormControl(1);
-  public cartId = '';
-  public cartVersion = 1;
-  private userDataService = inject(UserDataService);
   private cartService = inject(CartActionsService);
   private router = inject(Router);
-  private authService = inject(AuthService);
 
   public ngOnInit(): void {
     this.quantityInput.setValue(this.item().quantity);

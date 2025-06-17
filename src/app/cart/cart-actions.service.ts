@@ -2,11 +2,16 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, tap, throwError, catchError, map } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { MyCartDraft, CartResponse, Action, DiscountCode } from './cart-actions.interfaces';
+import {
+  MyCartDraft,
+  CartResponse,
+  UpdateCart,
+  Action,
+  DiscountCode,
+} from './cart-actions.interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserDataService } from '../data/services/user-data.service';
 import { CtpApiService } from '../data/services/ctp-api.service';
-import { UpdateCart, UpdateCartResponse } from './cart-actions.interfaces';
 import { CookieService } from 'ngx-cookie-service';
 import { HeaderComponent } from '../common-ui/header/header.component';
 
@@ -42,57 +47,6 @@ export class CartActionsService {
         switchMap(() => this.userDataService.loginCustomer(email, password)),
         map(() => {}), // eslint-disable-line
       );
-  }
-
-  public addToCart(
-    cartId: string,
-    version: number,
-    productId: string,
-    variantId: string,
-    quantity = 1,
-  ): Observable<UpdateCartResponse> {
-    return this.ctpApiService.getAccessToken().pipe(
-      switchMap((token: string | null) => {
-        if (!token) throw new Error('No access token available');
-
-        const body: UpdateCart = {
-          version,
-          actions: [
-            {
-              action: 'addLineItem',
-              productId,
-              variantId: Number(variantId),
-              quantity,
-            },
-          ],
-        };
-
-        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-
-        return this.http
-          .post<UpdateCartResponse>(url, body, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          })
-          .pipe(
-            switchMap(() => this.getCartById(cartId, token)),
-            tap((updatedCart: CartResponse) => {
-              HeaderComponent.quantityIndicator = updatedCart.totalLineItemQuantity;
-              const isAnonymous = !updatedCart.customerId;
-              if (isAnonymous) {
-                this.anonymousCart$.next(updatedCart);
-              } else {
-                this.userDataService.refreshCustomerData();
-              }
-            }),
-          );
-      }),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => error);
-      }),
-    );
   }
 
   public createAnonymousCart(cartDraft: MyCartDraft): Observable<CartResponse> {
@@ -146,16 +100,6 @@ export class CartActionsService {
           }
         },
       });
-  }
-
-  public getCartById(cartId: string, token: string): Observable<CartResponse> {
-    const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-    return this.http.get<CartResponse>(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
   }
 
   public getAnonymousCart(): Observable<CartResponse> {
@@ -221,27 +165,19 @@ export class CartActionsService {
           this.userDataService.refreshCustomerData();
         }
       }),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
+      }),
     );
   }
 
-  public getPromoCodeByKey(promo: string): Observable<DiscountCode> {
+  public getPromoCode(code: string): Observable<DiscountCode> {
     const token = this.authService.getCustomerToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
     });
     return this.http.get<DiscountCode>(
-      `${environment.ctp_api_url}/${environment.ctp_project_key}/discount-codes/key=${promo}`,
-      { headers },
-    );
-  }
-
-  public getPromoCodeById(idCode: string): Observable<DiscountCode> {
-    const token = this.authService.getCustomerToken();
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-    });
-    return this.http.get<DiscountCode>(
-      `${environment.ctp_api_url}/${environment.ctp_project_key}/discount-codes/${idCode}`,
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/discount-codes/${code}`,
       { headers },
     );
   }

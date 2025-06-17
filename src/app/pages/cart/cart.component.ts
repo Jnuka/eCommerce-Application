@@ -61,7 +61,7 @@ export class CartComponent {
         if (cart.discountCodes.length !== 0) {
           this.isDiscount = true;
           this.cartService
-            .getPromoCodeById(cart.discountCodes[0].discountCode.id)
+            .getPromoCode(cart.discountCodes[0].discountCode.id)
             .subscribe(response => {
               this.promoCode.setValue(response.code);
             });
@@ -75,7 +75,7 @@ export class CartComponent {
           if (response.discountCodes.length !== 0) {
             this.isDiscount = true;
             this.cartService
-              .getPromoCodeById(response.discountCodes[0].discountCode.id)
+              .getPromoCode(response.discountCodes[0].discountCode.id)
               .subscribe(response => {
                 this.promoCode.setValue(response.code);
               });
@@ -133,7 +133,7 @@ export class CartComponent {
   }
 
   public addPromoCode(promo: string): void {
-    this.cartService.getPromoCodeByKey(promo).subscribe({
+    this.cartService.getPromoCode(`key=${promo}`).subscribe({
       next: response => {
         this.codePromoCode = response.code;
         const actions: Action[] = [
@@ -155,7 +155,7 @@ export class CartComponent {
   }
 
   public removePromoCode(promo: string): void {
-    this.cartService.getPromoCodeByKey(promo).subscribe({
+    this.cartService.getPromoCode(`key=${promo}`).subscribe({
       next: response => {
         this.idPromoCode = response.id;
         const actions: Action[] = [
