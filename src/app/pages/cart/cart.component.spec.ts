@@ -24,10 +24,10 @@ describe('CartComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-    const req = httpTestingController.expectOne(
+    const request = httpTestingController.expectOne(
       'https://api.eu-central-1.aws.commercetools.com/e-commerce-coffee-shop/me/active-cart',
     );
-    req.flush({
+    request.flush({
       lineItems: [],
       totalPrice: { centAmount: 0 },
       discountCodes: [],

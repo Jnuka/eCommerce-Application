@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AddressesModalComponent } from './addresses-modal.component';
+/* eslint-disable */
 
 describe('AddressesModalComponent', () => {
   let component: AddressesModalComponent;

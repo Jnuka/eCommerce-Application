@@ -6,7 +6,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 
 import { AuthService } from './auth.service';
 import { CtpApiService } from '../data/services/ctp-api.service';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 
@@ -52,6 +52,32 @@ describe('AuthService', () => {
         done();
       },
     });
+  });
+
+  it('should call logout on refresh token failure', done => {
+    service.refreshToken = 'invalid-refresh';
+    spyOn(service['http'], 'post').and.returnValue(throwError(() => ({ status: 400 })));
+    const logoutSpy = spyOn(service, 'logout');
+
+    service.refreshAuthToken().subscribe({
+      error: () => {
+        expect(logoutSpy).toHaveBeenCalled();
+        done();
+      },
+    });
+  });
+  it('should read token from cookies if not already in memory', () => {
+    cookieServiceSpy.get.withArgs('token').and.returnValue('cookie-token');
+    cookieServiceSpy.get.withArgs('refreshToken').and.returnValue('cookie-refresh');
+
+    expect(service.isAuth).toBeTrue();
+  });
+  it('should return current customerToken and refreshToken', () => {
+    service.customerToken = 'token123';
+    service.refreshToken = 'refresh123';
+
+    expect(service.getCustomerToken()).toBe('token123');
+    expect(service.getRefreshToken()).toBe('refresh123');
   });
 
   it('should call logout and delete all cookies', () => {

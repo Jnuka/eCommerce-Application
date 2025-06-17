@@ -6,6 +6,7 @@ import { HttpTestingController } from '@angular/common/http/testing';
 
 import { PasswordModalComponent } from './password-modal.component';
 import { of } from 'rxjs';
+/* eslint-disable */
 
 describe('PasswordModalComponent', () => {
   let httpTestingController: HttpTestingController;
