@@ -27,7 +27,7 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { AuthService } from '../../auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
 import { ToastService } from '../../helpers/toast.service';
-import { HeaderComponent } from '../../common-ui/header/header.component';
+import { Action } from '../../cart/cart-actions.interfaces';
 
 @Component({
   selector: 'app-detailed-product-page',
@@ -229,8 +229,6 @@ export class DetailedProductPageComponent implements OnInit {
     if (this.authService.isAuth) {
       const cart = this.userDataService.customerData()?.cart;
       if (cart) {
-        this.cartId = cart?.id;
-        this.cartVersion = cart?.version;
         this.cartProductId = cart.lineItems
           .filter(
             product =>
@@ -242,8 +240,6 @@ export class DetailedProductPageComponent implements OnInit {
     } else {
       this.cartService.anonymousCart.subscribe(response => {
         if (response) {
-          this.cartId = response.id;
-          this.cartVersion = response.version;
           this.cartProductId = response.lineItems
             .filter(
               product =>
@@ -256,20 +252,17 @@ export class DetailedProductPageComponent implements OnInit {
     }
 
     if (this.products) {
-      if (this.cartId && this.cartVersion != null) {
-        this.cartService
-          .removeFromCart(this.cartId, this.cartVersion, this.cartProductId, 1)
-          .subscribe(response => {
-            HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
-            if (!this.authService.isAuth) {
-              this.cartService.anonymousCart$.next(response);
-            } else {
-              this.userDataService.refreshCustomerData();
-            }
-            this.isDeleteFromCart$.next(false);
-            this.toastService.error('Product Removed');
-          });
-      }
+      const actions: Action[] = [
+        {
+          action: 'removeLineItem',
+          lineItemId: `${this.cartProductId}`,
+          quantity: 1,
+        },
+      ];
+      this.cartService.UpdateCart(actions).subscribe(() => {
+        this.isDeleteFromCart$.next(false);
+        this.toastService.error('Product Removed');
+      });
     }
   }
 
