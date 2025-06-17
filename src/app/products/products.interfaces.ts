@@ -147,6 +147,7 @@ export interface SearchResponse {
 
 export interface ProductVariants {
   id: number;
+  variantId: string;
   variant: string | number;
   value: string;
 }

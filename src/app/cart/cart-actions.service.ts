@@ -67,7 +67,7 @@ export class CartActionsService {
             {
               action: 'addLineItem',
               productId,
-              variantId,
+              variantId: Number(variantId),
               quantity,
             },
           ],

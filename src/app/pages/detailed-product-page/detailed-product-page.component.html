@@ -79,7 +79,7 @@
           <mat-button-toggle-group (change)="changeInToggleGroup($event)">
             <mat-button-toggle
               checked
-              *ngFor="let value of productsValues.reverse()"
+              *ngFor="let value of productsValues"
               value="{{ value.value }}"
               id="{{ value.id }}"
               >{{ value.value }}</mat-button-toggle
