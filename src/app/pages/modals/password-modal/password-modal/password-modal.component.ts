@@ -37,9 +37,9 @@ export class PasswordModalComponent implements OnInit {
     newPassword: FormControl<string>;
   }>;
   constructor(
+    public updatePasswordService: UpdatePasswordService,
+    public dialogReference: MatDialogRef<ProfileModalComponent>,
     private fb: FormBuilder,
-    private dialogReference: MatDialogRef<ProfileModalComponent>,
-    private updatePasswordService: UpdatePasswordService,
     @Inject(MAT_DIALOG_DATA) public data: Customer,
   ) {}
 

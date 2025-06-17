@@ -19,13 +19,13 @@ import { ROUTES_PAGES } from '../data/enums/routers';
 export class AuthService {
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
+  public refreshToken: string | null = null;
+  public customerToken: string | null = null;
+
   private toastService = inject(ToastService);
   private cookieService = inject(CookieService);
   private router = inject(Router);
   private userDataService = inject(UserDataService);
-
-  private customerToken: string | null = null;
-  private refreshToken: string | null = null;
 
   public get isAuth(): boolean {
     if (!this.customerToken) {

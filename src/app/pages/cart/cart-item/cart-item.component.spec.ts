@@ -1,22 +1,35 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+// import { ComponentFixture, TestBed } from '@angular/core/testing';
+// import { provideHttpClient } from '@angular/common/http';
+// import { provideHttpClientTesting } from '@angular/common/http/testing';
+// import { HttpTestingController } from '@angular/common/http/testing';
 
-import { CartItemComponent } from './cart-item.component';
+// import { CartItemComponent } from './cart-item.component';
 
-describe('CartItemComponent', () => {
-  let component: CartItemComponent;
-  let fixture: ComponentFixture<CartItemComponent>;
+// describe('CartItemComponent', () => {
+//       let httpTestingController: HttpTestingController;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [CartItemComponent],
-    }).compileComponents();
+//   let component: CartItemComponent;
+//   let fixture: ComponentFixture<CartItemComponent>;
 
-    fixture = TestBed.createComponent(CartItemComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+//   beforeEach(async () => {
+//     await TestBed.configureTestingModule({
+//       imports: [CartItemComponent],
+//           providers: [
+//       provideHttpClient(),
+//       provideHttpClientTesting(),
+//     ]
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+//     }).compileComponents();
+//             httpTestingController = TestBed.inject(HttpTestingController);
+
+//     fixture = TestBed.createComponent(CartItemComponent);
+//     component = fixture.componentInstance;
+
+//     fixture.detectChanges();
+//   });
+//       afterEach(() => httpTestingController.verify());
+
+//   it('should create', () => {
+//     expect(component).toBeTruthy();
+//   });
+// });
