@@ -57,7 +57,7 @@ export class DetailedProductPageComponent implements OnInit {
   public whichCategory = '';
 
   public productService = inject(ProductsService);
-  public productsValues: ProductVariants[] = [{ id: 0, variant: '', value: '' }];
+  public productsValues: ProductVariants[] = [{ id: 0, variantId: '1', variant: '', value: '' }];
   public toggleButtonValue: string | number | undefined;
   public toggleButtonId: string | undefined;
   public isProductInCart = false;
@@ -117,7 +117,7 @@ export class DetailedProductPageComponent implements OnInit {
 
   public addProductToCart(cartId: string, cartVersion: number): void {
     if (this.products) {
-      const variantId = this.getVariantId();
+      const variantId: string | number = this.getVariantId();
       const productId = this.products.id;
 
       this.cartService.addToCart(cartId, cartVersion, productId, variantId, 1).subscribe({
@@ -136,18 +136,17 @@ export class DetailedProductPageComponent implements OnInit {
   }
 
   public getVariantId(): string {
-    if (this.products) {
-      for (let i = 0; i < this.productsValues.length; i++) {
-        if (this.productsValues[i].value === this.toggleButtonValue) {
-          if (this.productsValues[i].variant === VERIFICATION_PURPOSES.masterVariant) {
-            return this.products.masterData.current.masterVariant.id;
-          } else {
-            return this.products.masterData.current.variants[i - 1].id;
-          }
-        }
-      }
+    if (!this.products) {
+      return '1';
     }
-    return '';
+    const variantId = this.productsValues
+      .map(variant => variant.variantId)
+      .map(variantId => variantId.toString())
+      .find(variantId => {
+        return variantId.toString() === this.toggleButtonId;
+      });
+
+    return variantId ? variantId : '1';
   }
 
   public addToCart(event: Event): void {
@@ -333,6 +332,7 @@ export class DetailedProductPageComponent implements OnInit {
       if (this.masterVariant.attributes[0].name === VERIFICATION_PURPOSES.nameValue) {
         this.productsValues.push({
           id: 1,
+          variantId: this.masterVariant.id,
           variant: 'masterVariant',
           /* eslint-disable */
           value: String(this.masterVariant.attributes[0].value),
@@ -342,6 +342,7 @@ export class DetailedProductPageComponent implements OnInit {
           for (let i = 0; i < this.variants.length; i++) {
             this.productsValues.push({
               id: i + 2,
+              variantId: this.variants[i].id,
               variant: i,
               /* eslint-disable */
               value: String(this.variants[i].attributes[0].value),
@@ -352,6 +353,7 @@ export class DetailedProductPageComponent implements OnInit {
       } else {
         this.productsValues.push({
           id: 1,
+          variantId: this.masterVariant.id,
           variant: 'masterVariant',
           /* eslint-disable */
           value: String(this.masterVariant.attributes[4].value),
@@ -361,6 +363,7 @@ export class DetailedProductPageComponent implements OnInit {
           for (let i = 0; i < this.variants.length; i++) {
             this.productsValues.push({
               id: i + 2,
+              variantId: this.variants[i].id,
               variant: i,
               /* eslint-disable */
               value: String(this.variants[i].attributes[4].value),
@@ -371,6 +374,8 @@ export class DetailedProductPageComponent implements OnInit {
       }
       this.productsValues.shift();
       this.toggleButtonValue = this.productsValues[0].value;
+      this.productsValues.reverse();
+
       this.description = this.products.masterData.current.description['en-US'];
       this.description = this.shortDescription();
       this.description += '...';

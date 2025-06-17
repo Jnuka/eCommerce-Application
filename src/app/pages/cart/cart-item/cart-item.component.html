@@ -25,11 +25,11 @@
   (change)="changeQuantity()"
 />
 <div class="content-center">
-  @if (item().totalPrice.centAmount === item().variant.prices[0].value.centAmount) {
-    {{ item().totalPrice.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
-  } @else {
+  @if (item().variant.prices[0].discounted) {
     <span class="text-[red] font-bold">
       {{ item().totalPrice.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
     </span>
+  } @else {
+    {{ item().totalPrice.centAmount / 100 | currency: 'USD' : 'symbol' : '1.2' }}
   }
 </div>

@@ -49,7 +49,7 @@ export interface Action {
   code?: string;
   discountCode?: DiscountCodeReference;
   productId?: string;
-  variantId?: string;
+  variantId?: number;
   lineItemId?: string;
   quantity?: number;
   externalPrice?: {
