@@ -71,15 +71,6 @@ export interface DiscountCodeReference {
   typeId: 'discount-code';
 }
 
-export interface UpdateCartResponse {
-  id: string;
-  version: number;
-  customerId?: string;
-  anonymousId?: string;
-  lineItems: LineItem[];
-  totalLineItemQuantity: number;
-}
-
 export interface DiscountCode {
   id: string;
   version: number;

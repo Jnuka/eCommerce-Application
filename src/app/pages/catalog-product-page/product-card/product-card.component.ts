@@ -9,6 +9,7 @@ import { CartActionsService } from '../../../cart/cart-actions.service';
 import { AuthService } from '../../../auth/auth.service';
 import { CookieService } from 'ngx-cookie-service';
 import { toObservable } from '@angular/core/rxjs-interop';
+import { Action } from '../../../cart/cart-actions.interfaces';
 
 @Component({
   selector: 'app-product-card',
@@ -50,7 +51,6 @@ export class ProductCardComponent implements OnInit {
   private cookieService = inject(CookieService);
 
   public ngOnInit(): void {
-    this.getPrice();
     this.countAttributes = this.product().masterVariant.attributes.length;
     this.getAttributes();
   }
@@ -64,17 +64,25 @@ export class ProductCardComponent implements OnInit {
     const email = this.cookieService.get('user_email');
     const password = this.cookieService.get('user_password');
     const anonymousId = this.cookieService.get('anonymous_id');
+    const actions: Action[] = [
+      {
+        action: 'addLineItem',
+        productId,
+        variantId: Number(variantId),
+        quantity: 1,
+      },
+    ];
 
     if (this.authService.isAuth) {
       const cart = this.userDataService.customerData()?.cart;
       if (cart) {
-        this.addProductToCart(cart.id, cart.version);
+        this.addProductToCart();
       } else {
         this.cartService.createCart({ currency: 'USD' }, email, password).subscribe({
           next: () => {
             const cart = this.userDataService.customerData()?.cart;
             if (cart) {
-              this.addProductToCart(cart.id, cart.version);
+              this.addProductToCart();
             } else {
               this.isAddingToCart$.next(false);
             }
@@ -88,21 +96,11 @@ export class ProductCardComponent implements OnInit {
           take(1),
           switchMap(cart => {
             if (cart) {
-              return this.cartService.addToCart(cart.id, cart.version, productId, variantId, 1);
+              return this.cartService.UpdateCart(actions);
             } else {
               return this.cartService
                 .createAnonymousCart({ currency: 'USD', anonymousId })
-                .pipe(
-                  switchMap(response =>
-                    this.cartService.addToCart(
-                      response.id,
-                      response.version,
-                      productId,
-                      variantId,
-                      1,
-                    ),
-                  ),
-                );
+                .pipe(switchMap(() => this.cartService.UpdateCart(actions)));
             }
           }),
         )
@@ -167,31 +165,26 @@ export class ProductCardComponent implements OnInit {
     /* eslint-enable */
   }
 
-  public getPrice(): void {
-    if (this.product()) {
-      this.price = new Intl.NumberFormat('en', { style: 'currency', currency: 'USD' }).format(
-        this.product().masterVariant.prices[0].value.centAmount / 100,
-      );
-      if (this.product().masterVariant.prices[0].discounted) {
-        this.discountPrice = new Intl.NumberFormat('en', {
-          style: 'currency',
-          currency: 'USD',
-        }).format(this.product().masterVariant.prices[0].discounted.value.centAmount / 100);
-      }
-    }
-  }
-
   public goDetailedProduct(id: string): void {
     void this.router.navigate([ROUTES_PAGES.PRODUCT], {
       queryParams: { productId: id },
     });
   }
 
-  private addProductToCart(cartId: string, cartVersion: number): void {
+  private addProductToCart(): void {
     const productId = this.product().id;
     const variantId = this.product().masterVariant.id;
 
-    this.cartService.addToCart(cartId, cartVersion, productId, variantId, 1).subscribe({
+    const actions: Action[] = [
+      {
+        action: 'addLineItem',
+        productId,
+        variantId: Number(variantId),
+        quantity: 1,
+      },
+    ];
+
+    this.cartService.UpdateCart(actions).subscribe({
       next: () => {
         this.userDataService.refreshCustomerData();
         this.isAddingToCart$.next(false);

@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { CustomerSignInResult } from '../data/interfaces/user-data.interfaces';
 import { UserDataService } from '../data/services/user-data.service';
 import { ROUTES_PAGES } from '../data/enums/routers';
+import { HeaderComponent } from '../common-ui/header/header.component';
 
 @Injectable({
   providedIn: 'root',
@@ -90,6 +91,7 @@ export class AuthService {
       ),
       tap(() => {
         this.toastService.success('Successful entry');
+        HeaderComponent.quantityIndicator = 0;
       }),
       catchError((error: HttpErrorResponse) => {
         const customError = document.querySelector('.customer-error');
