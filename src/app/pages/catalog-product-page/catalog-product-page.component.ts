@@ -171,15 +171,19 @@ export class CatalogProductPageComponent implements OnInit {
     });
   }
 
+  public updateFilters(): void {
+    this.sort.reset();
+    this.setPriceRange();
+    this.resetFilters();
+    this.resetSearch();
+  }
+
   public showProductsFromType(type: string, id: string): void {
     this.currentPage = type;
     this.currentType = type;
     this.currentCategory = '';
     this.currentTypeID = id;
-    this.sort.reset();
-    this.setPriceRange();
-    this.resetFilters();
-    this.resetSearch();
+    this.updateFilters();
     this.getCategories(this.currentPage);
     this.renderProducts();
   }
@@ -200,41 +204,28 @@ export class CatalogProductPageComponent implements OnInit {
         .pipe(
           map(value => {
             this.types = value.results;
-            if (category.slice(0, 6) === CATEGORIES.COFFEE) {
-              this.currentType = CATEGORIES.COFFEE;
-              this.currentTypeID = this.types[0].id;
-              this.getTypeCategories(this.currentType, category);
-            } else {
-              this.currentType = CATEGORIES.ACCESSORIES;
-              this.currentTypeID = this.types[1].id;
-            }
-            this.sort.reset();
-            this.setPriceRange();
-            this.resetFilters();
-            this.resetSearch();
-            this.currentCategory = category;
-            this.currentCategoryID = id;
-            this.checkFilters();
+            this.showCategory(category, id);
           }),
         )
         .subscribe();
     } else {
-      if (category.slice(0, 6) === CATEGORIES.COFFEE) {
-        this.currentType = CATEGORIES.COFFEE;
-        this.currentTypeID = this.types[0].id;
-        this.getTypeCategories(this.currentType, category);
-      } else {
-        this.currentType = CATEGORIES.ACCESSORIES;
-        this.currentTypeID = this.types[1].id;
-      }
-      this.sort.reset();
-      this.setPriceRange();
-      this.resetFilters();
-      this.resetSearch();
-      this.currentCategory = category;
-      this.currentCategoryID = id;
-      this.checkFilters();
+      this.showCategory(category, id);
     }
+  }
+
+  public showCategory(category: string, id: string): void {
+    if (category.slice(0, 6) === CATEGORIES.COFFEE) {
+      this.currentType = CATEGORIES.COFFEE;
+      this.currentTypeID = this.types[0].id;
+      this.getTypeCategories(this.currentType, category);
+    } else {
+      this.currentType = CATEGORIES.ACCESSORIES;
+      this.currentTypeID = this.types[1].id;
+    }
+    this.updateFilters();
+    this.currentCategory = category;
+    this.currentCategoryID = id;
+    this.checkFilters();
   }
 
   public getCategoriesInfo(page?: string, type?: string): void {

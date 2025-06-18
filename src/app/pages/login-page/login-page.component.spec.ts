@@ -56,11 +56,11 @@ describe('LoginPageComponent', () => {
   });
 
   describe('Navigate', () => {
-    it('should navigate to registration', () => {
+    it('should navigate to registration', fakeAsync(() => {
       void component.goRegistration();
       tick();
       expect(routerMock.navigate).toHaveBeenCalledWith(['registration']);
-    });
+    }));
 
     it('should navigate to main page', () => {
       void component.goMain();

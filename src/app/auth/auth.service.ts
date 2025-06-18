@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { CustomerSignInResult } from '../data/interfaces/user-data.interfaces';
 import { UserDataService } from '../data/services/user-data.service';
 import { ROUTES_PAGES } from '../data/enums/routers';
+import { HeaderComponent } from '../common-ui/header/header.component';
 
 @Injectable({
   providedIn: 'root',
@@ -19,13 +20,13 @@ import { ROUTES_PAGES } from '../data/enums/routers';
 export class AuthService {
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
+  public refreshToken: string | null = null;
+  public customerToken: string | null = null;
+
   private toastService = inject(ToastService);
   private cookieService = inject(CookieService);
   private router = inject(Router);
   private userDataService = inject(UserDataService);
-
-  private customerToken: string | null = null;
-  private refreshToken: string | null = null;
 
   public get isAuth(): boolean {
     if (!this.customerToken) {
@@ -90,6 +91,7 @@ export class AuthService {
       ),
       tap(() => {
         this.toastService.success('Successful entry');
+        HeaderComponent.quantityIndicator = 0;
       }),
       catchError((error: HttpErrorResponse) => {
         const customError = document.querySelector('.customer-error');

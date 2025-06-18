@@ -5,14 +5,13 @@ import { environment } from '../../environments/environment';
 import {
   MyCartDraft,
   CartResponse,
-  LineItem,
+  UpdateCart,
   Action,
   DiscountCode,
 } from './cart-actions.interfaces';
 import { AuthService } from '../auth/auth.service';
 import { UserDataService } from '../data/services/user-data.service';
 import { CtpApiService } from '../data/services/ctp-api.service';
-import { UpdateCart, UpdateCartResponse } from './cart-actions.interfaces';
 import { CookieService } from 'ngx-cookie-service';
 import { HeaderComponent } from '../common-ui/header/header.component';
 
@@ -48,57 +47,6 @@ export class CartActionsService {
         switchMap(() => this.userDataService.loginCustomer(email, password)),
         map(() => {}), // eslint-disable-line
       );
-  }
-
-  public addToCart(
-    cartId: string,
-    version: number,
-    productId: string,
-    variantId: string,
-    quantity = 1,
-  ): Observable<UpdateCartResponse> {
-    return this.ctpApiService.getAccessToken().pipe(
-      switchMap((token: string | null) => {
-        if (!token) throw new Error('No access token available');
-
-        const body: UpdateCart = {
-          version,
-          actions: [
-            {
-              action: 'addLineItem',
-              productId,
-              variantId,
-              quantity,
-            },
-          ],
-        };
-
-        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-
-        return this.http
-          .post<UpdateCartResponse>(url, body, {
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          })
-          .pipe(
-            switchMap(() => this.getCartById(cartId, token)),
-            tap((updatedCart: CartResponse) => {
-              HeaderComponent.quantityIndicator = updatedCart.totalLineItemQuantity;
-              const isAnonymous = !updatedCart.customerId;
-              if (isAnonymous) {
-                this.anonymousCart$.next(updatedCart);
-              } else {
-                this.userDataService.refreshCustomerData();
-              }
-            }),
-          );
-      }),
-      catchError((error: HttpErrorResponse) => {
-        return throwError(() => error);
-      }),
-    );
   }
 
   public createAnonymousCart(cartDraft: MyCartDraft): Observable<CartResponse> {
@@ -154,16 +102,6 @@ export class CartActionsService {
       });
   }
 
-  public getCartById(cartId: string, token: string): Observable<CartResponse> {
-    const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-    return this.http.get<CartResponse>(url, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-  }
-
   public getAnonymousCart(): Observable<CartResponse> {
     const token = this.cookieService.get('anonymous_token');
 
@@ -188,29 +126,30 @@ export class CartActionsService {
     );
   }
 
-  public changeQuantity(
-    cartId: string,
-    version: number,
-    lineItemId: string,
-    quantity: number,
-  ): Observable<CartResponse> {
+  public UpdateCart(actions: Action[]): Observable<CartResponse> {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) throw new Error('No access token available');
-
+        let cartId, cartVersion;
+        if (this.authService.isAuth) {
+          const cart = this.userDataService.customerData()?.cart;
+          if (cart) {
+            cartId = cart.id;
+            cartVersion = cart.version;
+          }
+        } else {
+          this.anonymousCart.subscribe(response => {
+            if (response) {
+              cartId = response.id;
+              cartVersion = response.version;
+            }
+          });
+        }
         const body: UpdateCart = {
-          version,
-          actions: [
-            {
-              action: 'changeLineItemQuantity',
-              lineItemId: `${lineItemId}`,
-              quantity: quantity,
-            },
-          ],
+          version: cartVersion,
+          actions: actions,
         };
-
         const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-
         return this.http.post<CartResponse>(url, body, {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -220,164 +159,26 @@ export class CartActionsService {
       }),
       tap(response => {
         HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
+        if (!this.authService.isAuth) {
+          this.anonymousCart$.next(response);
+        } else {
+          this.userDataService.refreshCustomerData();
+        }
+      }),
+      catchError((error: HttpErrorResponse) => {
+        return throwError(() => error);
       }),
     );
   }
 
-  public removeFromCart(
-    cartId: string,
-    version: number,
-    lineItemId: string,
-    quantity: number,
-  ): Observable<CartResponse> {
-    return this.ctpApiService.getAccessToken().pipe(
-      switchMap((token: string | null) => {
-        if (!token) throw new Error('No access token available');
-
-        const body: UpdateCart = {
-          version,
-          actions: [
-            {
-              action: 'removeLineItem',
-              lineItemId: `${lineItemId}`,
-              quantity,
-            },
-          ],
-        };
-
-        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-
-        return this.http.post<CartResponse>(url, body, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-      }),
-      tap(response => {
-        HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
-      }),
-    );
-  }
-
-  public clearCart(
-    cartId: string,
-    version: number,
-    lineItems: LineItem[],
-  ): Observable<CartResponse> {
-    return this.ctpApiService.getAccessToken().pipe(
-      switchMap((token: string | null) => {
-        if (!token) throw new Error('No access token available');
-
-        const body: UpdateCart = {
-          version,
-          actions: [],
-        };
-
-        lineItems.forEach(element => {
-          const item: Action = {
-            action: 'removeLineItem',
-            lineItemId: `${element.id}`,
-            quantity: element.quantity,
-          };
-          body.actions.push(item);
-        });
-
-        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-
-        return this.http.post<CartResponse>(url, body, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-      }),
-      tap(response => {
-        HeaderComponent.quantityIndicator = response.totalLineItemQuantity;
-      }),
-    );
-  }
-
-  public addDiscountCode(cartId: string, version: number, code: string): Observable<CartResponse> {
-    return this.ctpApiService.getAccessToken().pipe(
-      switchMap((token: string | null) => {
-        if (!token) throw new Error('No access token available');
-
-        const body: UpdateCart = {
-          version,
-          actions: [
-            {
-              action: 'addDiscountCode',
-              code: code,
-            },
-          ],
-        };
-
-        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-
-        return this.http.post<CartResponse>(url, body, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-      }),
-    );
-  }
-
-  public getPromoCodeByKey(promo: string): Observable<DiscountCode> {
+  public getPromoCode(code: string): Observable<DiscountCode> {
     const token = this.authService.getCustomerToken();
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,
     });
     return this.http.get<DiscountCode>(
-      `${environment.ctp_api_url}/${environment.ctp_project_key}/discount-codes/key=${promo}`,
+      `${environment.ctp_api_url}/${environment.ctp_project_key}/discount-codes/${code}`,
       { headers },
-    );
-  }
-
-  public getPromoCodeById(idCode: string): Observable<DiscountCode> {
-    const token = this.authService.getCustomerToken();
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`,
-    });
-    return this.http.get<DiscountCode>(
-      `${environment.ctp_api_url}/${environment.ctp_project_key}/discount-codes/${idCode}`,
-      { headers },
-    );
-  }
-
-  public removeDiscountCode(
-    cartId: string,
-    version: number,
-    code: string,
-  ): Observable<CartResponse> {
-    return this.ctpApiService.getAccessToken().pipe(
-      switchMap((token: string | null) => {
-        if (!token) throw new Error('No access token available');
-
-        const body: UpdateCart = {
-          version,
-          actions: [
-            {
-              action: 'removeDiscountCode',
-              discountCode: {
-                id: code,
-                typeId: 'discount-code',
-              },
-            },
-          ],
-        };
-
-        const url = `${environment.ctp_api_url}/${environment.ctp_project_key}/carts/${cartId}`;
-
-        return this.http.post<CartResponse>(url, body, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
-      }),
     );
   }
 }

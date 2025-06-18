@@ -49,7 +49,7 @@ export interface Action {
   code?: string;
   discountCode?: DiscountCodeReference;
   productId?: string;
-  variantId?: string;
+  variantId?: number;
   lineItemId?: string;
   quantity?: number;
   externalPrice?: {
@@ -69,15 +69,6 @@ export interface Action {
 export interface DiscountCodeReference {
   id: string;
   typeId: 'discount-code';
-}
-
-export interface UpdateCartResponse {
-  id: string;
-  version: number;
-  customerId?: string;
-  anonymousId?: string;
-  lineItems: LineItem[];
-  totalLineItemQuantity: number;
 }
 
 export interface DiscountCode {

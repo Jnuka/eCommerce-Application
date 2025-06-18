@@ -9,8 +9,9 @@ import { ToastService } from '../../helpers/toast.service';
   providedIn: 'root',
 })
 export class CtpApiService {
+  public accessToken$ = new BehaviorSubject<string | null>(null);
+
   private http = inject(HttpClient);
-  private accessToken$ = new BehaviorSubject<string | null>(null);
   private toastService = inject(ToastService);
 
   public getAccessToken(): Observable<string | null> {
