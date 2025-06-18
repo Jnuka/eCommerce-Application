@@ -77,7 +77,6 @@ export interface ProductData {
 
 export interface CategoryReference {
   id: string;
-  // typeId: ReferenceTypeId;
 }
 
 export interface LocalizedString {
@@ -144,4 +143,11 @@ export interface ProductDiscountReference {
 
 export interface SearchResponse {
   'searchKeywords.en-US': SearchKeywords[];
+}
+
+export interface ProductVariants {
+  id: number;
+  variantId: string;
+  variant: string | number;
+  value: string;
 }

@@ -18,6 +18,7 @@ import {
 } from '../../shared/validators';
 import { RegistrationService } from '../../registration/registration.service';
 import { CustomerDraft } from '../../registration/registration.interfaces';
+import { ROUTES_PAGES } from '../../data/enums/routers';
 
 @Component({
   selector: 'app-registration-page',
@@ -103,12 +104,12 @@ export class RegistrationPageComponent {
     });
   }
 
-  public async goLogin(): Promise<void> {
-    await this.router.navigate(['login']);
+  public goLogin(): void {
+    void this.router.navigate([ROUTES_PAGES.LOGIN]);
   }
 
-  public async goMain(): Promise<void> {
-    await this.router.navigate(['']);
+  public goMain(): void {
+    void this.router.navigate(['']);
   }
 
   public onSubmit = (): void => {

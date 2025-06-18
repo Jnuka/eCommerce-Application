@@ -4,12 +4,10 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { AnonymousService } from './anonymous.service';
 import { CookieService } from 'ngx-cookie-service';
-// import { CtpApiService } from '../data/services/ctp-api.service';
 
 describe('AnonymousService', () => {
   let httpTestingController: HttpTestingController;
   let service: AnonymousService;
-  // let ctpApiServiceSpy: jasmine.SpyObj<CtpApiService>;
   let cookieSpyObject: jasmine.SpyObj<CookieService>;
 
   beforeEach(() => {
@@ -39,7 +37,6 @@ describe('AnonymousService', () => {
 
     httpTestingController = TestBed.inject(HttpTestingController);
     service = TestBed.inject(AnonymousService);
-    // ctpApiServiceSpy = TestBed.inject(CtpApiService) as jasmine.SpyObj<CtpApiService>;
   });
 
   afterEach(() => {

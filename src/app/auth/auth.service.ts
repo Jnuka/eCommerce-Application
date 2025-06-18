@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { CustomerTokenResponse } from './auth.interfaces';
+import { CustomerSignin, CustomerTokenResponse } from './auth.interfaces';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, switchMap, tap, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -11,6 +11,8 @@ import { CookieService } from 'ngx-cookie-service';
 import { Router } from '@angular/router';
 import { CustomerSignInResult } from '../data/interfaces/user-data.interfaces';
 import { UserDataService } from '../data/services/user-data.service';
+import { ROUTES_PAGES } from '../data/enums/routers';
+import { HeaderComponent } from '../common-ui/header/header.component';
 
 @Injectable({
   providedIn: 'root',
@@ -18,13 +20,13 @@ import { UserDataService } from '../data/services/user-data.service';
 export class AuthService {
   public http = inject(HttpClient);
   public ctpApiService = inject(CtpApiService);
+  public refreshToken: string | null = null;
+  public customerToken: string | null = null;
+
   private toastService = inject(ToastService);
   private cookieService = inject(CookieService);
   private router = inject(Router);
   private userDataService = inject(UserDataService);
-
-  private customerToken: string | null = null;
-  private refreshToken: string | null = null;
 
   public get isAuth(): boolean {
     if (!this.customerToken) {
@@ -34,7 +36,7 @@ export class AuthService {
     return !!this.customerToken;
   }
 
-  public login(payload: { email: string; password: string }): Observable<CustomerSignInResult> {
+  public login(customerSignin: CustomerSignin): Observable<CustomerSignInResult> {
     return this.ctpApiService.getAccessToken().pipe(
       switchMap((token: string | null) => {
         if (!token) {
@@ -54,8 +56,8 @@ export class AuthService {
 
         let body = new HttpParams()
           .set('grant_type', 'password')
-          .set('username', payload.email)
-          .set('password', payload.password)
+          .set('username', customerSignin.email)
+          .set('password', customerSignin.password)
           .set(
             'scope',
             [
@@ -64,6 +66,7 @@ export class AuthService {
               'view_products',
               'manage_customers',
               'view_categories',
+              'manage_my_orders',
             ]
               .map(scope => `${scope}:${environment.ctp_project_key}`)
               .join(' '),
@@ -80,12 +83,15 @@ export class AuthService {
       }),
       tap((response: CustomerTokenResponse) => {
         this.saveTokens(response);
-        this.cookieService.set('user_email', payload.email);
-        this.cookieService.set('user_password', payload.password);
+        this.cookieService.set('user_email', customerSignin.email);
+        this.cookieService.set('user_password', customerSignin.password);
       }),
-      switchMap(() => this.userDataService.loginCustomer(payload.email, payload.password)),
+      switchMap(() =>
+        this.userDataService.loginCustomer(customerSignin.email, customerSignin.password),
+      ),
       tap(() => {
         this.toastService.success('Successful entry');
+        HeaderComponent.quantityIndicator = 0;
       }),
       catchError((error: HttpErrorResponse) => {
         const customError = document.querySelector('.customer-error');
@@ -139,7 +145,7 @@ export class AuthService {
     this.cookieService.deleteAll();
     this.customerToken = null;
     this.refreshToken = null;
-    void this.router.navigate(['login']);
+    void this.router.navigate([ROUTES_PAGES.LOGIN]);
   }
 
   private saveTokens(response: CustomerTokenResponse): void {

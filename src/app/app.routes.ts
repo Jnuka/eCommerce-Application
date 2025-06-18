@@ -10,6 +10,8 @@ import { noAuthGuard } from './guards/no-auth.guard';
 import { DetailedProductPageComponent } from './pages/detailed-product-page/detailed-product-page.component';
 import { authOnlyGuard } from './guards/only-auth.guard';
 import { UserProfileComponent } from './pages/user-profile/user-profile/user-profile.component';
+import { ROUTES_PAGES } from './data/enums/routers';
+import { CartComponent } from './pages/cart/cart.component';
 
 export const routes: Routes = [
   {
@@ -18,20 +20,21 @@ export const routes: Routes = [
     children: [
       { path: '', component: MainPageComponent },
       {
-        path: 'login',
+        path: ROUTES_PAGES.LOGIN,
         component: LoginPageComponent,
         canActivate: [noAuthGuard],
       },
       {
-        path: 'registration',
+        path: ROUTES_PAGES.REGISTRATION,
         component: RegistrationPageComponent,
         canActivate: [noAuthGuard],
       },
-      { path: 'catalog', component: CatalogProductPageComponent },
-      { path: 'about', component: AboutUsPageComponent },
-      { path: 'product', component: DetailedProductPageComponent },
+      { path: ROUTES_PAGES.CATALOG, component: CatalogProductPageComponent },
+      { path: ROUTES_PAGES.ABOUT, component: AboutUsPageComponent },
+      { path: ROUTES_PAGES.PRODUCT, component: DetailedProductPageComponent },
+      { path: ROUTES_PAGES.CART, component: CartComponent },
       {
-        path: 'profile',
+        path: ROUTES_PAGES.PROFILE,
         component: UserProfileComponent,
         canActivate: [authOnlyGuard],
       },

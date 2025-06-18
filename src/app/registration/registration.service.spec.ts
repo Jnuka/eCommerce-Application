@@ -15,7 +15,10 @@ describe('RegistrationService', () => {
   let service: RegistrationService;
   const ctpApiServiceSpy = jasmine.createSpyObj<CtpApiService>('CtpApiService', ['getAccessToken']);
   const toastServiceSpy = jasmine.createSpyObj<ToastService>('ToastService', ['success']);
-  const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', ['login']);
+  const authServiceSpy = jasmine.createSpyObj<AuthService>('AuthService', [
+    'login',
+    'getCustomerToken',
+  ]);
 
   const testCustomer: Customer = {
     id: 'test-id',

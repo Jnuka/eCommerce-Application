@@ -4,6 +4,7 @@ import { CtpApiService } from './data/services/ctp-api.service';
 import { AnonymousService } from './anonymous/anonymous.service';
 import { AuthService } from './auth/auth.service';
 import { UserDataService } from './data/services/user-data.service';
+import { CartActionsService } from './cart/cart-actions.service';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,7 @@ export class AppComponent implements OnInit {
   private anonymousService = inject(AnonymousService);
   private authService = inject(AuthService);
   private userDataService = inject(UserDataService);
+  private cartService = inject(CartActionsService);
 
   public ngOnInit(): void {
     this.ctpApiService.init();
@@ -26,7 +28,11 @@ export class AppComponent implements OnInit {
         login$.subscribe();
       }
     } else if (!this.anonymousService.isAnonymousAuth) {
-      this.anonymousService.authenticate().subscribe();
+      this.anonymousService.authenticate().subscribe({
+        next: () => this.cartService.loadAnonymousCart(),
+      });
+    } else {
+      this.cartService.loadAnonymousCart();
     }
   }
 }
